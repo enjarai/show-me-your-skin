@@ -1,0 +1,7 @@
+{
+  "gui.showmeyourskin.armorScreen.headSlider": "Helmet: %d%%",
+  "gui.showmeyourskin.armorScreen.chestSlider": "Chestplate: %d%%",
+  "gui.showmeyourskin.armorScreen.legsSlider": "Leggings: %d%%",
+  "gui.showmeyourskin.armorScreen.feetSlider": "Boots: %d%%",
+  "gui.showmeyourskin.armorScreen.glintTooltip": "Toggle Enchantment Glint"
+}

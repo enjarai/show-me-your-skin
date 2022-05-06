@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "showmeyourskin",
+  "version": "${version}",
+
+  "name": "Show Me Your Skin!",
+  "description": "#TODO",
+  "authors": [
+    "enjarai"
+  ],
+  "contact": {
+    "sources": "https://github.com/enjarai/show-me-your-skin",
+    "issues": "https://github.com/enjarai/show-me-your-skin/issues"
+  },
+
+  "license": "MIT",
+  "icon": "assets/showmeyourskin/icon.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "nl.enjarai.showmeyourskin.ShowMeYourSkin"
+    ],
+    "modmenu": [
+      "nl.enjarai.showmeyourskin.config.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "showmeyourskin.mixins.json"
+  ],
+  "accessWidener" : "showmeyourskin.accesswidener",
+
+  "depends": {
+    "fabric": "*",
+    "minecraft": "1.18.x"
+  }
+}
