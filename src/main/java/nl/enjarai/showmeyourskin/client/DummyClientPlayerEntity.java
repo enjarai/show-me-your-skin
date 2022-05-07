@@ -6,6 +6,7 @@ import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -22,6 +23,7 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
 
     private static DummyClientPlayerEntity instance;
     private Identifier skinIdentifier = null;
+    private PlayerEntity player = null;
 
     public static DummyClientPlayerEntity getInstance() {
         if (instance == null) instance = new DummyClientPlayerEntity();
@@ -30,13 +32,16 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
 
     private DummyClientPlayerEntity() {
         super(MinecraftClient.getInstance(), DummyClientWorld.getInstance(), DummyClientPlayNetworkHandler.getInstance(), null, null,false, false);
+        setUuid(UUID.randomUUID());
         MinecraftClient.getInstance().getSkinProvider().loadSkin(getGameProfile(), (type, identifier, texture) -> {
             skinIdentifier = identifier;
         }, true);
     }
 
-    public DummyClientPlayerEntity(Identifier skinIdentifier) {
+    public DummyClientPlayerEntity(@Nullable PlayerEntity player, UUID uuid, Identifier skinIdentifier) {
         super(MinecraftClient.getInstance(), DummyClientWorld.getInstance(), DummyClientPlayNetworkHandler.getInstance(), null, null,false, false);
+        this.player = player;
+        setUuid(uuid);
         this.skinIdentifier = skinIdentifier;
     }
 
@@ -53,11 +58,6 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
     @Override
     public Identifier getSkinTexture() {
         return skinIdentifier == null ? DefaultSkinHelper.getTexture(this.getUuid()) : skinIdentifier;
-    }
-
-    @Override
-    public UUID getUuid() {
-        return getGameProfile().getId();
     }
 
     @Nullable
@@ -78,6 +78,9 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
 
     @Override
     public ItemStack getEquippedStack(EquipmentSlot slot) {
+        if (player != null) {
+            return player.getEquippedStack(slot);
+        }
         return switch (slot) {
             case HEAD -> HEAD_ARMOR;
             case CHEST -> CHEST_ARMOR;

@@ -55,14 +55,12 @@ public class ModConfig {
         overrides.remove(uuid);
     }
 
-    public ArmorScreen getScreen(@Nullable PlayerEntity player, Screen parent) {
-        player = player == null ? DummyClientPlayerEntity.getInstance() : player;
+    public ArmorScreen getScreen(PlayerEntity player, Screen parent) {
         return new ArmorScreen(player, getOrCreateOverride(player.getUuid()), parent);
     }
 
-    public ArmorScreen getGlobalScreen(@Nullable PlayerEntity player, Screen parent) {
-        player = player == null ? DummyClientPlayerEntity.getInstance() : player;
-        return new ArmorScreen(player, global, parent);
+    public ArmorScreen getGlobalScreen(Screen parent) {
+        return new ArmorScreen(DummyClientPlayerEntity.getInstance(), global, parent);
     }
 
 

@@ -44,13 +44,12 @@ public abstract class SocialInteractionsPlayerListEntryMixin {
     )
     private void createButtons(MinecraftClient client, SocialInteractionsScreen parent, UUID uuid, String name, Supplier<Identifier> skinTexture, CallbackInfo ci) {
         armorOverrideButton = getButton(parent, 20, 20, 20, 78, button -> {
-            PlayerEntity player;
+            PlayerEntity player = null;
             if (client.world != null) {
                 player = client.world.getPlayerByUuid(uuid);
-            } else {
-                player = new DummyClientPlayerEntity(skinTexture.get());
             }
-            client.setScreen(ModConfig.INSTANCE.getScreen(player, parent));
+            client.setScreen(ModConfig.INSTANCE.getScreen(
+                    new DummyClientPlayerEntity(player, uuid, skinTexture.get()), parent));
             updateButtonState(true);
         }, new TranslatableText("gui.showmeyourskin.armorScreen.openButtonTooltip"));
 

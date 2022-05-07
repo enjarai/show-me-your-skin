@@ -20,8 +20,8 @@ public class ModKeyBindings {
     }
 
     public static void tick(MinecraftClient client) {
-        while (OPEN_SETTINGS.wasPressed() && client.player != null) {
-            client.setScreen(ModConfig.INSTANCE.getGlobalScreen(client.player, null));
+        while (OPEN_SETTINGS.wasPressed()) {
+            client.setScreen(ModConfig.INSTANCE.getGlobalScreen(null));
         }
     }
 }
