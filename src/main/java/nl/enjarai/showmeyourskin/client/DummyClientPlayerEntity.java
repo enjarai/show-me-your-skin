@@ -35,6 +35,11 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
         }, true);
     }
 
+    public DummyClientPlayerEntity(Identifier skinIdentifier) {
+        super(MinecraftClient.getInstance(), DummyClientWorld.getInstance(), DummyClientPlayNetworkHandler.getInstance(), null, null,false, false);
+        this.skinIdentifier = skinIdentifier;
+    }
+
     @Override
     public boolean isPartVisible(PlayerModelPart modelPart) {
         return true;

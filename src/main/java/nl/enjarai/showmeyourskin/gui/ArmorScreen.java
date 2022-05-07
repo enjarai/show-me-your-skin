@@ -15,20 +15,17 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
+import nl.enjarai.showmeyourskin.config.ModConfig;
 import org.jetbrains.annotations.Nullable;
 
 public class ArmorScreen extends Screen {
-    private static final Identifier TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen.png");
+    public static final Identifier TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen.png");
     private static final Text GLINT_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.glintTooltip");
+    private static final Text COMBAT_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.combatTooltip");
 
     private final Screen parent;
-    private PlayerEntity player;
-    private ArmorConfig armorConfig;
-
-    protected ArmorScreen(Screen parent) {
-        super(new TranslatableText("gui.showmeyourskin.armorScreen.title"));
-        this.parent = parent;
-    }
+    private final PlayerEntity player;
+    private final ArmorConfig armorConfig;
 
     public ArmorScreen(PlayerEntity player, ArmorConfig armorConfig, Screen parent) {
         super(new TranslatableText("gui.showmeyourskin.armorScreen.title"));
@@ -46,7 +43,7 @@ public class ArmorScreen extends Screen {
     }
 
     private int getWindowTop() {
-        return 32;
+        return (this.height - (16 + 16 * getHeightIterations())) / 2;
     }
 
     private int getWindowBottom() {
@@ -55,23 +52,6 @@ public class ArmorScreen extends Screen {
 
     private int getHeightIterations() {
         return 10;
-    }
-
-    private SliderWidget getTransparencySlider(EquipmentSlot slot, int x, int y, String translationKey) {
-        var initialValue = armorConfig.getTransparency(slot);
-
-        return new SliderWidget(getWindowLeft() + x, getWindowTop() + y,
-                77, 20, new TranslatableText(translationKey, initialValue), initialValue / 100f) {
-            @Override
-            protected void updateMessage() {
-                setMessage(new TranslatableText(translationKey, (byte) (this.value * 100)));
-            }
-
-            @Override
-            protected void applyValue() {
-                armorConfig.setTransparency(slot, (byte) (this.value * 100));
-            }
-        };
     }
 
     private TexturedButtonWidget getButton(int x, int y, int u, int v, ButtonWidget.PressAction pressAction, @Nullable Text tooltip) {
@@ -97,6 +77,23 @@ public class ArmorScreen extends Screen {
         }, tooltip);
     }
 
+    private SliderWidget getTransparencySlider(EquipmentSlot slot, int x, int y, String translationKey) {
+        var initialValue = armorConfig.getTransparency(slot);
+
+        return new SliderWidget(getWindowLeft() + x, getWindowTop() + y,
+                77, 20, new TranslatableText(translationKey, initialValue), initialValue / 100f) {
+            @Override
+            protected void updateMessage() {
+                setMessage(new TranslatableText(translationKey, (byte) (this.value * 100)));
+            }
+
+            @Override
+            protected void applyValue() {
+                armorConfig.setTransparency(slot, (byte) (this.value * 100));
+            }
+        };
+    }
+
     private TexturedButtonWidget getGlintButton(EquipmentSlot slot, int x, int y) {
         return getToggleButton(getWindowLeft() + x, getWindowTop() + y, 0, 38,
                 armorConfig.getGlint(slot), b -> armorConfig.setGlint(slot, b), GLINT_TOOLTIP);
@@ -117,6 +114,9 @@ public class ArmorScreen extends Screen {
         addDrawableChild(getGlintButton(EquipmentSlot.CHEST, 94, 35));
         addDrawableChild(getGlintButton(EquipmentSlot.LEGS, 94, 59));
         addDrawableChild(getGlintButton(EquipmentSlot.FEET, 94, 83));
+
+        addDrawableChild(getToggleButton(getWindowLeft() + 14, getWindowTop() + 107, 40, 38,
+                armorConfig.showInCombat, b -> armorConfig.showInCombat = b, COMBAT_TOOLTIP));
 
         addDrawableChild(getButton(getWindowLeft() + 14, getWindowBottom() - 31, 0, 78, button -> close(), null));
     }
@@ -152,7 +152,7 @@ public class ArmorScreen extends Screen {
     @Override
     public void close() {
         assert this.client != null;
-        ShowMeYourSkin.CONFIG.saveConfigFile(ShowMeYourSkin.CONFIG_FILE);
+        ModConfig.INSTANCE.save();
         this.client.setScreen(this.parent);
     }
 }

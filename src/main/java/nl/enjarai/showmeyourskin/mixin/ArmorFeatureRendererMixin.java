@@ -13,7 +13,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.util.Identifier;
-import nl.enjarai.showmeyourskin.ShowMeYourSkin;
+import nl.enjarai.showmeyourskin.config.ModConfig;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -45,7 +45,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
     )
     private boolean toggleGlint(boolean original) {
         if (entity instanceof PlayerEntity player) {
-            return original && ShowMeYourSkin.CONFIG.getApplicable(player.getUuid()).getGlint(slot);
+            return original && ModConfig.INSTANCE.getApplicable(player.getUuid()).getGlint(slot);
         }
         return original;
     }
@@ -57,7 +57,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
     )
     private void armorTransparency(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, boolean usesSecondLayer, A model, boolean legs, float red, float green, float blue, String overlay, CallbackInfo ci) {
         if (entity instanceof PlayerEntity player) {
-            var t = ShowMeYourSkin.CONFIG.getApplicable(player.getUuid()).getTransparency(slot);
+            var t = ModConfig.INSTANCE.getApplicable(player.getUuid()).getTransparency(slot);
             if (t < 100) {
                 if (t > 0) {
                     VertexConsumer vertexConsumer = ItemRenderer.getDirectItemGlintConsumer(vertexConsumers, RenderLayer.getEntityTranslucent(getArmorTexture(item, legs, overlay)), false, usesSecondLayer);

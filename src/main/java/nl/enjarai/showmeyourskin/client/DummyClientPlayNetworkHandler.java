@@ -2,8 +2,6 @@ package nl.enjarai.showmeyourskin.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.util.telemetry.TelemetrySender;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
 

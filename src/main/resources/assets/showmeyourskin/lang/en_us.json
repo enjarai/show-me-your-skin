@@ -1,7 +1,12 @@
 {
+  "category.showmeyourskin.showmeyourskin": "Show Me Your Skin!",
+  "key.showmeyourskin.open_settings": "Open global settings",
   "gui.showmeyourskin.armorScreen.headSlider": "Helmet: %d%%",
   "gui.showmeyourskin.armorScreen.chestSlider": "Chestplate: %d%%",
   "gui.showmeyourskin.armorScreen.legsSlider": "Leggings: %d%%",
   "gui.showmeyourskin.armorScreen.feetSlider": "Boots: %d%%",
-  "gui.showmeyourskin.armorScreen.glintTooltip": "Toggle Enchantment Glint"
+  "gui.showmeyourskin.armorScreen.glintTooltip": "Toggle enchantment glint",
+  "gui.showmeyourskin.armorScreen.combatTooltip": "Disable transparency in combat",
+  "gui.showmeyourskin.armorScreen.openButtonTooltip": "Open armor transparency override",
+  "gui.showmeyourskin.armorScreen.deleteButtonTooltip": "Delete armor transparency override"
 }

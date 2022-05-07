@@ -5,7 +5,10 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ArmorFeatureRendererMixin",
-    "LivingEntityRendererMixin"
+    "ClientPlayerEntityMixin",
+    "LivingEntityRendererMixin",
+    "OtherClientPlayerEntityMixin",
+    "SocialInteractionsPlayerListEntryMixin"
   ],
   "injectors": {
     "defaultRequire": 1

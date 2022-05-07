@@ -29,7 +29,11 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
+	// Mod Menu integration.
 	modImplementation "com.terraformersmc:modmenu:${modmenu_version}"
+
+	// Make it easier to test skin compat.
+	modImplementation "com.ptsmods:devlogin:2.0"
 }
 
 processResources {

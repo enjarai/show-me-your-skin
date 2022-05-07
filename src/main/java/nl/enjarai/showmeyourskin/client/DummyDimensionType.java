@@ -1,7 +1,6 @@
 package nl.enjarai.showmeyourskin.client;
 
 import net.minecraft.tag.BlockTags;
-import net.minecraft.util.Identifier;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.util.OptionalLong;

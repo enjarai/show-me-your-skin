@@ -5,6 +5,8 @@ import net.minecraft.entity.EquipmentSlot;
 import java.util.HashMap;
 
 public class ArmorConfig {
+    public static final ArmorConfig VANILLA_VALUES = new ArmorConfig();
+
     public final HashMap<EquipmentSlot, ArmorPieceConfig> pieces = new HashMap<>();
     public boolean showInCombat = true;
 
