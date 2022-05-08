@@ -22,6 +22,7 @@ public class ArmorScreen extends Screen {
     public static final Identifier TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen.png");
     private static final Text GLINT_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.glintTooltip");
     private static final Text COMBAT_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.combatTooltip");
+    private static final Text NAME_TAG_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.nameTagTooltip");
 
     private final Screen parent;
     private final PlayerEntity player;
@@ -117,6 +118,8 @@ public class ArmorScreen extends Screen {
 
         addDrawableChild(getToggleButton(getWindowLeft() + 14, getWindowTop() + 107, 40, 38,
                 armorConfig.showInCombat, b -> armorConfig.showInCombat = b, COMBAT_TOOLTIP));
+        addDrawableChild(getToggleButton(getWindowLeft() + 38, getWindowTop() + 107, 80, 38,
+                armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP));
 
         addDrawableChild(getButton(getWindowLeft() + 14, getWindowBottom() - 31, 0, 78, button -> close(), null));
     }

@@ -3,6 +3,7 @@ package nl.enjarai.showmeyourskin.mixin;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.entity.LivingEntity;
 import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
+import nl.enjarai.showmeyourskin.config.ModConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,6 +17,9 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity> {
             cancellable = true
     )
     private void removeLabel(T livingEntity, CallbackInfoReturnable<Boolean> cir) {
-        if (livingEntity instanceof DummyClientPlayerEntity) cir.setReturnValue(false);
+        if (
+                livingEntity instanceof DummyClientPlayerEntity ||
+                !ModConfig.INSTANCE.getApplicable(livingEntity.getUuid()).showNameTag
+        ) cir.setReturnValue(false);
     }
 }
