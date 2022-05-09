@@ -34,6 +34,10 @@ public class ArmorConfig {
         pieces.get(slot).enchantGlint = glint;
     }
 
+    public boolean shouldTransformCape() {
+        return getTransparency(EquipmentSlot.CHEST) > 0;
+    }
+
     public static class ArmorPieceConfig {
         public byte transparency = 100;
         public boolean enchantGlint = true;

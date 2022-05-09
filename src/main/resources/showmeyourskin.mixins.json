@@ -8,6 +8,7 @@
     "ClientPlayerEntityMixin",
     "LivingEntityRendererMixin",
     "OtherClientPlayerEntityMixin",
+    "PlayerEntityModelMixin",
     "SocialInteractionsPlayerListEntryMixin"
   ],
   "injectors": {

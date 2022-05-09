@@ -1,5 +1,6 @@
 package nl.enjarai.showmeyourskin.client;
 
+import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
@@ -34,7 +35,7 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
         super(MinecraftClient.getInstance(), DummyClientWorld.getInstance(), DummyClientPlayNetworkHandler.getInstance(), null, null,false, false);
         setUuid(UUID.randomUUID());
         MinecraftClient.getInstance().getSkinProvider().loadSkin(getGameProfile(), (type, identifier, texture) -> {
-            skinIdentifier = identifier;
+            if (type == MinecraftProfileTexture.Type.SKIN) skinIdentifier = identifier;
         }, true);
     }
 

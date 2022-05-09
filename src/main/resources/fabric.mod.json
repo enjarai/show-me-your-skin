@@ -4,11 +4,12 @@
   "version": "${version}",
 
   "name": "Show Me Your Skin!",
-  "description": "#TODO",
+  "description": "A mod to hide or customize armor rendering.",
   "authors": [
     "enjarai"
   ],
   "contact": {
+    "homepage": "https://enjarai.nl/",
     "sources": "https://github.com/enjarai/show-me-your-skin",
     "issues": "https://github.com/enjarai/show-me-your-skin/issues"
   },
