@@ -34,5 +34,12 @@
   "depends": {
     "fabric": "*",
     "minecraft": "1.18.x"
+  },
+
+  "custom": {
+    "projects": {
+      "modrinth": "bD7YqcA3",
+      "curseforge": 622010
+    }
   }
 }
