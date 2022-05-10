@@ -45,6 +45,8 @@ jobs:
         with:
           file: gradle.properties
           all: true
+        env:
+          JAVA_HOME: /usr/local/openjdk-17
       - name: publish mod
         uses: Kir-Antipov/mc-publish@v2.1
         with:
