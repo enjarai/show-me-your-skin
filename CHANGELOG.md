@@ -1,1 +1,1 @@
-- Add russian (by DearFox), ukrainian (by KikuGie) and dutch (by me) translations.
+- Backport to 1.18.1
