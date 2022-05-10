@@ -39,7 +39,14 @@ jobs:
           name: Artifacts
           path: build/libs/
 
-      # The part that publishes the compiled mod
+  # The part that publishes the compiled mod
+  publish:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: download build artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: Artifacts
       - name: read gradle.properties
         uses: madhead/read-java-properties@latest
         id: gradle
