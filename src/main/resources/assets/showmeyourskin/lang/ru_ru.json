@@ -1,0 +1,13 @@
+{
+  "category.showmeyourskin.showmeyourskin": "Show Me Your Skin!",
+  "key.showmeyourskin.open_settings": "Открыть глобальные настройки",
+  "gui.showmeyourskin.armorScreen.headSlider": "Шлем: %d%%",
+  "gui.showmeyourskin.armorScreen.chestSlider": "Нагрудник: %d%%",
+  "gui.showmeyourskin.armorScreen.legsSlider": "Поножи: %d%%",
+  "gui.showmeyourskin.armorScreen.feetSlider": "Ботинки: %d%%",
+  "gui.showmeyourskin.armorScreen.glintTooltip": "Эффект зачарования",
+  "gui.showmeyourskin.armorScreen.combatTooltip": "Автоматически отключать прозрачность в бою",
+  "gui.showmeyourskin.armorScreen.nameTagTooltip": "Показывать ник игрока",
+  "gui.showmeyourskin.armorScreen.openButtonTooltip": "Открыть настройки прозрачности брони",
+  "gui.showmeyourskin.armorScreen.deleteButtonTooltip": "Сбросить настройки прозрачности"
+}

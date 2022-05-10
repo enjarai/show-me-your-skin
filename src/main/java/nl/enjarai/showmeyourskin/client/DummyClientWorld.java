@@ -14,6 +14,17 @@ public class DummyClientWorld extends ClientWorld {
     }
 
     private DummyClientWorld() {
-        super(DummyClientPlayNetworkHandler.getInstance(), new Properties(Difficulty.EASY, false, true), null, RegistryEntry.of( DummyDimensionType.getInstance()), 0, 0, () -> null, null, false, 0L);
+        super(
+                DummyClientPlayNetworkHandler.getInstance(),
+                new Properties(Difficulty.EASY, false, true),
+                null,
+                RegistryEntry.of(DummyDimensionType.getInstance()),
+                0,
+                0,
+                () -> null,
+                null,
+                false,
+                0L
+        );
     }
 }

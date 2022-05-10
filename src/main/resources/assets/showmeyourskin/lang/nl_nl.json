@@ -1,0 +1,13 @@
+{
+  "category.showmeyourskin.showmeyourskin": "Show Me Your Skin!",
+  "key.showmeyourskin.open_settings": "Open Globale Instellingen",
+  "gui.showmeyourskin.armorScreen.headSlider": "Helm: %d%%",
+  "gui.showmeyourskin.armorScreen.chestSlider": "Kuras: %d%%",
+  "gui.showmeyourskin.armorScreen.legsSlider": "Beenstukken: %d%%",
+  "gui.showmeyourskin.armorScreen.feetSlider": "Laarzen: %d%%",
+  "gui.showmeyourskin.armorScreen.glintTooltip": "Activeer betoveringsgloed",
+  "gui.showmeyourskin.armorScreen.combatTooltip": "Deactiveer automatisch de transparantie in een gevecht",
+  "gui.showmeyourskin.armorScreen.nameTagTooltip": "Laat het naamplaatje van de speler zien",
+  "gui.showmeyourskin.armorScreen.openButtonTooltip": "Open harnas transparantie overschrijving",
+  "gui.showmeyourskin.armorScreen.deleteButtonTooltip": "Verwijder transparantie overschrijving"
+}
