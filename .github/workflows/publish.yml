@@ -44,6 +44,8 @@ jobs:
     needs: build
     runs-on: ubuntu-20.04
     steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
       - name: download build artifacts
         uses: actions/download-artifact@v2
         with:
