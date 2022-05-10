@@ -121,7 +121,7 @@ public class ArmorScreen extends Screen {
         addDrawableChild(getToggleButton(getWindowLeft() + 38, getWindowTop() + 107, 80, 38,
                 armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP));
 
-        addDrawableChild(getButton(getWindowLeft() + 14, getWindowBottom() - 31, 0, 78, button -> close(), null));
+        addDrawableChild(getButton(getWindowLeft() + 14, getWindowBottom() - 31, 0, 78, button -> onClose(), null));
     }
 
     @Override
@@ -153,7 +153,7 @@ public class ArmorScreen extends Screen {
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         assert this.client != null;
         ModConfig.INSTANCE.save();
         this.client.setScreen(this.parent);
