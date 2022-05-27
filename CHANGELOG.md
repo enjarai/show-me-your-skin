@@ -1,1 +1,1 @@
-- Add russian (by DearFox), ukrainian (by KikuGie) and dutch (by me) translations.
+- Add button to toggle Elytra visibility.
