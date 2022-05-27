@@ -8,6 +8,7 @@
   "gui.showmeyourskin.armorScreen.glintTooltip": "Ефект зачаровування",
   "gui.showmeyourskin.armorScreen.combatTooltip": "Автоматично вимикати прозорість в бою",
   "gui.showmeyourskin.armorScreen.nameTagTooltip": "Показувати нік гравця",
+  "gui.showmeyourskin.armorScreen.showElytraTooltip": "Показувати елітри",
   "gui.showmeyourskin.armorScreen.openButtonTooltip": "Відкрити параметри прозорості броні",
   "gui.showmeyourskin.armorScreen.deleteButtonTooltip": "Скинути налаштування прозорості"
 }

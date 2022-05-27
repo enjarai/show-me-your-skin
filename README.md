@@ -10,6 +10,7 @@ All the armor hiding options you could ever need, in one intuitive GUI.
 Including:
 
 - Individual armor piece transparency/invisibility
+- Elytra hiding
 - Enchantment glint removal
 - Player name tag display toggle
 - Context-sensitive armor hiding

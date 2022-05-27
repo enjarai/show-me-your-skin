@@ -8,6 +8,7 @@
   "gui.showmeyourskin.armorScreen.glintTooltip": "Эффект зачарования",
   "gui.showmeyourskin.armorScreen.combatTooltip": "Автоматически отключать прозрачность в бою",
   "gui.showmeyourskin.armorScreen.nameTagTooltip": "Показывать ник игрока",
+  "gui.showmeyourskin.armorScreen.showElytraTooltip": "Показывать элитры",
   "gui.showmeyourskin.armorScreen.openButtonTooltip": "Открыть настройки прозрачности брони",
   "gui.showmeyourskin.armorScreen.deleteButtonTooltip": "Сбросить настройки прозрачности"
 }

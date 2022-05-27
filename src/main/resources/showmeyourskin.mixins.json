@@ -6,6 +6,7 @@
   "mixins": [
     "ArmorFeatureRendererMixin",
     "ClientPlayerEntityMixin",
+    "ElytraFeatureRendererMixin",
     "LivingEntityRendererMixin",
     "OtherClientPlayerEntityMixin",
     "PlayerEntityModelMixin",

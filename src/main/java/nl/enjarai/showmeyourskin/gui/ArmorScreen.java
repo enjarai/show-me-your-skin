@@ -23,6 +23,7 @@ public class ArmorScreen extends Screen {
     private static final Text GLINT_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.glintTooltip");
     private static final Text COMBAT_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.combatTooltip");
     private static final Text NAME_TAG_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.nameTagTooltip");
+    private static final Text SHOW_ELYTRA_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.showElytraTooltip");
 
     private final Screen parent;
     private final PlayerEntity player;
@@ -35,27 +36,27 @@ public class ArmorScreen extends Screen {
         this.parent = parent;
     }
 
-    private int getWindowLeft() {
+    protected int getWindowLeft() {
         return (this.width - 238) / 2;
     }
 
-    private int getWindowRight() {
+    protected int getWindowRight() {
         return getWindowLeft() + 236;
     }
 
-    private int getWindowTop() {
+    protected int getWindowTop() {
         return (this.height - (16 + 16 * getHeightIterations())) / 2;
     }
 
-    private int getWindowBottom() {
+    protected int getWindowBottom() {
         return getWindowTop() + 16 + 16 * getHeightIterations();
     }
 
-    private int getHeightIterations() {
+    protected int getHeightIterations() {
         return 10;
     }
 
-    private TexturedButtonWidget getButton(int x, int y, int u, int v, ButtonWidget.PressAction pressAction, @Nullable Text tooltip) {
+    protected TexturedButtonWidget getButton(int x, int y, int u, int v, ButtonWidget.PressAction pressAction, @Nullable Text tooltip) {
         return new TexturedButtonWidget(x, y, 20, 20, u, v, TEXTURE, pressAction) {
             @Override
             public void renderTooltip(MatrixStack matrices, int mouseX, int mouseY) {
@@ -66,7 +67,7 @@ public class ArmorScreen extends Screen {
         };
     }
 
-    private TexturedButtonWidget getToggleButton(int x, int y, int u, int v, boolean initial, BooleanConsumer toggleAction, @Nullable Text tooltip) {
+    protected TexturedButtonWidget getToggleButton(int x, int y, int u, int v, boolean initial, BooleanConsumer toggleAction, @Nullable Text tooltip) {
         var state = new Object() {
             boolean enabled = initial;
         };
@@ -78,7 +79,7 @@ public class ArmorScreen extends Screen {
         }, tooltip);
     }
 
-    private SliderWidget getTransparencySlider(EquipmentSlot slot, int x, int y, String translationKey) {
+    protected SliderWidget getTransparencySlider(EquipmentSlot slot, int x, int y, String translationKey) {
         var initialValue = armorConfig.getTransparency(slot);
 
         return new SliderWidget(getWindowLeft() + x, getWindowTop() + y,
@@ -95,7 +96,7 @@ public class ArmorScreen extends Screen {
         };
     }
 
-    private TexturedButtonWidget getGlintButton(EquipmentSlot slot, int x, int y) {
+    protected TexturedButtonWidget getGlintButton(EquipmentSlot slot, int x, int y) {
         return getToggleButton(getWindowLeft() + x, getWindowTop() + y, 0, 38,
                 armorConfig.getGlint(slot), b -> armorConfig.setGlint(slot, b), GLINT_TOOLTIP);
     }
@@ -120,6 +121,8 @@ public class ArmorScreen extends Screen {
                 armorConfig.showInCombat, b -> armorConfig.showInCombat = b, COMBAT_TOOLTIP));
         addDrawableChild(getToggleButton(getWindowLeft() + 38, getWindowTop() + 107, 80, 38,
                 armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP));
+        addDrawableChild(getToggleButton(getWindowLeft() + 62, getWindowTop() + 107, 120, 38,
+                armorConfig.showElytra, b -> armorConfig.showElytra = b, SHOW_ELYTRA_TOOLTIP));
 
         addDrawableChild(getButton(getWindowLeft() + 14, getWindowBottom() - 31, 0, 78, button -> close(), null));
     }

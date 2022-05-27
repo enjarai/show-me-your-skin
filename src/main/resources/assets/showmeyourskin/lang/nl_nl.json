@@ -8,6 +8,7 @@
   "gui.showmeyourskin.armorScreen.glintTooltip": "Activeer betoveringsgloed",
   "gui.showmeyourskin.armorScreen.combatTooltip": "Deactiveer automatisch de transparantie in een gevecht",
   "gui.showmeyourskin.armorScreen.nameTagTooltip": "Laat het naamplaatje van de speler zien",
+  "gui.showmeyourskin.armorScreen.showElytraTooltip": "Laat Dekschild zien",
   "gui.showmeyourskin.armorScreen.openButtonTooltip": "Open harnas transparantie overschrijving",
   "gui.showmeyourskin.armorScreen.deleteButtonTooltip": "Verwijder transparantie overschrijving"
 }

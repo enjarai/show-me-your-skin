@@ -9,7 +9,6 @@ import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.gui.ArmorScreen;
 import nl.enjarai.showmeyourskin.util.CombatLogger;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

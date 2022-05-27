@@ -8,6 +8,7 @@
   "gui.showmeyourskin.armorScreen.glintTooltip": "Enable enchantment glint",
   "gui.showmeyourskin.armorScreen.combatTooltip": "Automatically disable transparency in combat",
   "gui.showmeyourskin.armorScreen.nameTagTooltip": "Show player name tag",
+  "gui.showmeyourskin.armorScreen.showElytraTooltip": "Show Elytra",
   "gui.showmeyourskin.armorScreen.openButtonTooltip": "Open armor transparency override",
   "gui.showmeyourskin.armorScreen.deleteButtonTooltip": "Delete transparency override"
 }

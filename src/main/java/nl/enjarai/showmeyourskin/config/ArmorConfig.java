@@ -10,6 +10,7 @@ public class ArmorConfig {
     public final HashMap<EquipmentSlot, ArmorPieceConfig> pieces = new HashMap<>();
     public boolean showInCombat = true;
     public boolean showNameTag = true;
+    public boolean showElytra = true;
 
     public ArmorConfig() {
         pieces.put(EquipmentSlot.HEAD, new ArmorPieceConfig());
