@@ -1,8 +1,12 @@
 package nl.enjarai.showmeyourskin.client;
 
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.Difficulty;
+import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 
 public class DummyClientWorld extends ClientWorld {
 
@@ -17,7 +21,7 @@ public class DummyClientWorld extends ClientWorld {
         super(
                 DummyClientPlayNetworkHandler.getInstance(),
                 new Properties(Difficulty.EASY, false, true),
-                null,
+                RegistryKey.of(Registry.WORLD_KEY, ShowMeYourSkin.id("dummy")),
                 RegistryEntry.of(DummyDimensionType.getInstance()),
                 0,
                 0,

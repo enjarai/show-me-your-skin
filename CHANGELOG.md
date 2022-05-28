@@ -1,1 +1,2 @@
 - Add support for Elytra Trinket.
+- Fix compatibility with the Bobby mod.
