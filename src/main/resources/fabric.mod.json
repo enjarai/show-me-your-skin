@@ -27,7 +27,8 @@
     ]
   },
   "mixins": [
-    "showmeyourskin.mixins.json"
+    "showmeyourskin.mixins.json",
+    "showmeyourskin.compat.elytratrinket.mixins.json"
   ],
   "accessWidener" : "showmeyourskin.accesswidener",
 
