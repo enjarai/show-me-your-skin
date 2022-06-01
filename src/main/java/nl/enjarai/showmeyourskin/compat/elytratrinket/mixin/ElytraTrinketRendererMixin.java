@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Pseudo
-@Mixin(targets = "top.theillusivec4.elytratrinket.client.ElytraTrinketRenderer", remap = false)
+@Mixin(targets = "top.theillusivec4.elytratrinket.client.ElytraTrinketRenderer")
 public abstract class ElytraTrinketRendererMixin<T extends LivingEntity, M extends EntityModel<T>> extends ElytraFeatureRenderer<T, M> {
     public ElytraTrinketRendererMixin(FeatureRendererContext<T, M> context, EntityModelLoader loader) {
         super(context, loader);

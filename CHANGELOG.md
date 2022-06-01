@@ -1,2 +1,1 @@
-- Add support for Elytra Trinket.
-- Fix compatibility with the Bobby mod.
+- Fix mistake in elytra trinket compat causing crash.
