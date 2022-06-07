@@ -1,1 +1,1 @@
-- Fix mistake in elytra trinket compat causing crash.
+- Update to 1.19

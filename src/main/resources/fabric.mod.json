@@ -23,7 +23,7 @@
       "nl.enjarai.showmeyourskin.ShowMeYourSkin"
     ],
     "modmenu": [
-      "nl.enjarai.showmeyourskin.config.ModMenuIntegration"
+      "nl.enjarai.showmeyourskin.compat.modmenu.ModMenuIntegration"
     ]
   },
   "mixins": [
@@ -34,7 +34,7 @@
 
   "depends": {
     "fabric": "*",
-    "minecraft": "1.18.x"
+    "minecraft": "1.19.x"
   },
 
   "custom": {

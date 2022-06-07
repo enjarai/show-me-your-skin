@@ -8,7 +8,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ModConfig;
@@ -51,13 +51,13 @@ public abstract class SocialInteractionsPlayerListEntryMixin {
             client.setScreen(ModConfig.INSTANCE.getScreen(
                     new DummyClientPlayerEntity(player, uuid, skinTexture.get()), parent));
             updateButtonState(true);
-        }, new TranslatableText("gui.showmeyourskin.armorScreen.openButtonTooltip"));
+        }, Text.translatable("gui.showmeyourskin.armorScreen.openButtonTooltip"));
 
         overrideDeleteButton = getButton(parent, 10, 16, 10, 120, button -> {
             ModConfig.INSTANCE.deleteOverride(uuid);
             ModConfig.INSTANCE.save();
             updateButtonState(false);
-        }, new TranslatableText("gui.showmeyourskin.armorScreen.deleteButtonTooltip"));
+        }, Text.translatable("gui.showmeyourskin.armorScreen.deleteButtonTooltip"));
 
         updateButtonState(ModConfig.INSTANCE.getOverride(uuid) != null);
 
@@ -100,7 +100,7 @@ public abstract class SocialInteractionsPlayerListEntryMixin {
         overrideDeleteButton.visible = overrideExists;
     }
 
-    private TexturedButtonWidget getButton(SocialInteractionsScreen parent, int width, int height, int u, int v, ButtonWidget.PressAction pressAction, TranslatableText tooltip) {
+    private TexturedButtonWidget getButton(SocialInteractionsScreen parent, int width, int height, int u, int v, ButtonWidget.PressAction pressAction, Text tooltip) {
         var orderedTooltip = List.of(tooltip.asOrderedText());
         return new TexturedButtonWidget(0, 0, width, height, u, v, 20,
                 ArmorScreen.TEXTURE, 256, 256, pressAction,

@@ -11,7 +11,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
@@ -20,17 +19,17 @@ import org.jetbrains.annotations.Nullable;
 
 public class ArmorScreen extends Screen {
     public static final Identifier TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen.png");
-    private static final Text GLINT_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.glintTooltip");
-    private static final Text COMBAT_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.combatTooltip");
-    private static final Text NAME_TAG_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.nameTagTooltip");
-    private static final Text SHOW_ELYTRA_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.showElytraTooltip");
+    private static final Text GLINT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.glintTooltip");
+    private static final Text COMBAT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.combatTooltip");
+    private static final Text NAME_TAG_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.nameTagTooltip");
+    private static final Text SHOW_ELYTRA_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.showElytraTooltip");
 
     private final Screen parent;
     private final PlayerEntity player;
     private final ArmorConfig armorConfig;
 
     public ArmorScreen(PlayerEntity player, ArmorConfig armorConfig, Screen parent) {
-        super(new TranslatableText("gui.showmeyourskin.armorScreen.title"));
+        super(Text.translatable("gui.showmeyourskin.armorScreen.title"));
         this.player = player;
         this.armorConfig = armorConfig;
         this.parent = parent;
@@ -83,10 +82,10 @@ public class ArmorScreen extends Screen {
         var initialValue = armorConfig.getTransparency(slot);
 
         return new SliderWidget(getWindowLeft() + x, getWindowTop() + y,
-                77, 20, new TranslatableText(translationKey, initialValue), initialValue / 100f) {
+                77, 20, Text.translatable(translationKey, initialValue), initialValue / 100f) {
             @Override
             protected void updateMessage() {
-                setMessage(new TranslatableText(translationKey, (byte) (this.value * 100)));
+                setMessage(Text.translatable(translationKey, (byte) (this.value * 100)));
             }
 
             @Override
