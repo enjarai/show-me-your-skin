@@ -1,1 +1,2 @@
-- Fix mistake in elytra trinket compat causing crash.
+- Added armor fade-out after combat.
+- Fixed some minor edge-cases with capes and combat.

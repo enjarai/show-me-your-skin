@@ -3,6 +3,7 @@ package nl.enjarai.showmeyourskin.config;
 import net.minecraft.entity.EquipmentSlot;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class ArmorConfig {
     public static final ArmorConfig VANILLA_VALUES = new ArmorConfig();
@@ -19,6 +20,10 @@ public class ArmorConfig {
         pieces.put(EquipmentSlot.FEET, new ArmorPieceConfig());
     }
 
+    /**
+     * Use only for modifying values, when applying the transparency,
+     * use {@link ModConfig#getApplicableTransparency(UUID, EquipmentSlot)}
+     */
     public byte getTransparency(EquipmentSlot slot) {
         return pieces.get(slot).transparency;
     }
