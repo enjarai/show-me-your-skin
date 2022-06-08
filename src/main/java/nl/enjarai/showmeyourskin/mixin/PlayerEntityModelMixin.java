@@ -5,6 +5,7 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import nl.enjarai.showmeyourskin.config.ModConfig;
+import nl.enjarai.showmeyourskin.util.CombatLogger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,7 +23,8 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> {
     )
     private void fixCapeAngle(T livingEntity, float f, float g, float h, float i, float j, CallbackInfo ci) {
         if (livingEntity instanceof PlayerEntity &&
-                !ModConfig.INSTANCE.getApplicable(livingEntity.getUuid()).shouldTransformCape()) {
+                !ModConfig.INSTANCE.getApplicable(livingEntity.getUuid()).shouldTransformCape() &&
+                !CombatLogger.INSTANCE.isInCombat(livingEntity.getUuid())) {
             if (livingEntity.isInSneakingPose()) {
                 cloak.pivotZ = 1.4F;
                 cloak.pivotY = 1.85F;

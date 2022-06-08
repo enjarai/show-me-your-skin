@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.MathHelper;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.gui.ArmorScreen;
@@ -25,14 +27,30 @@ public class ModConfig {
             .disableHtmlEscaping() // We'll be able to use custom chars without them being saved differently
             .create();
 
-    public long combatCooldown = 16;
+    public float combatCooldown = 16;
+    public float fadeOutTime = 2;
     public final ArmorConfig global = new ArmorConfig();
     public final HashMap<UUID, ArmorConfig> overrides = new HashMap<>();
 
 
+    public ArmorConfig getOverrideOrGlobal(UUID uuid) {
+        return overrides.getOrDefault(uuid, global);
+    }
+
     public ArmorConfig getApplicable(UUID uuid) {
-        var applicable = overrides.getOrDefault(uuid, global);
+        var applicable = getOverrideOrGlobal(uuid);
         return applicable.showInCombat && CombatLogger.INSTANCE.isInCombat(uuid) ? ArmorConfig.VANILLA_VALUES : applicable;
+    }
+
+    public float getApplicableTransparency(UUID uuid, EquipmentSlot slot) {
+        var applicable = getOverrideOrGlobal(uuid);
+        var normal = applicable.getTransparency(slot) / 100f;
+
+        // Only apply modifications if enabled and player is in combat.
+        if (applicable.showInCombat && CombatLogger.INSTANCE.isInCombat(uuid)) {
+            return MathHelper.clampedLerp(normal, 1f, CombatLogger.INSTANCE.getFade(uuid));
+        }
+        return normal;
     }
 
     public ArmorConfig getOverride(UUID uuid) {
