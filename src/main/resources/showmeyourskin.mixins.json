@@ -9,8 +9,7 @@
     "ElytraFeatureRendererMixin",
     "LivingEntityRendererMixin",
     "OtherClientPlayerEntityMixin",
-    "PlayerEntityModelMixin",
-    "SocialInteractionsPlayerListEntryMixin"
+    "PlayerEntityModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
