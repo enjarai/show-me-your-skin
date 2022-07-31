@@ -7,6 +7,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.config.ModConfig;
@@ -27,7 +28,7 @@ public class ConfigScreen extends Screen {
     private boolean initialized = false;
 
     public ConfigScreen(Screen parent) {
-        super(Text.translatable("gui.showmeyourskin.armorScreen.title"));
+        super(new TranslatableText("gui.showmeyourskin.armorScreen.title"));
         this.parent = parent;
     }
 
@@ -47,7 +48,7 @@ public class ConfigScreen extends Screen {
         );
         globalConfig = new ConfigEntryWidget(
                 client, playerSelector, getSelectorLeft() + 11, getSelectorTop() + 63,
-                Text.translatable("gui.showmeyourskin.armorScreen.global"), () -> GLOBAL_ICON
+                new TranslatableText("gui.showmeyourskin.armorScreen.global"), () -> GLOBAL_ICON
         );
         playerSelector.linkDefault(globalConfig);
 
@@ -84,7 +85,7 @@ public class ConfigScreen extends Screen {
         var hovered = playerSelector.getHovered(mouseX, mouseY);
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         textRenderer.draw(
-                matrices, hovered == null ? Text.translatable("gui.showmeyourskin.armorScreen.playerSelector") : hovered.getName(),
+                matrices, hovered == null ? new TranslatableText("gui.showmeyourskin.armorScreen.playerSelector") : hovered.getName(),
                 getSelectorLeft() + 11, getSelectorTop() + 52, TEXT_COLOR
         );
 

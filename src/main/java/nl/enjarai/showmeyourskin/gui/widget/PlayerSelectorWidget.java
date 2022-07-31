@@ -10,6 +10,7 @@ import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
 
@@ -64,7 +65,7 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
             var profile = dummyPlayer.getGameProfile();
             entries.add(new PlayerSelectorEntry(
                     client, this, profile.getId(),
-                    Text.literal(profile.getName()), dummyPlayer::getSkinTexture
+                    new LiteralText(profile.getName()), dummyPlayer::getSkinTexture
             ));
         } else {
             for (UUID uuid : client.player.networkHandler.getPlayerUuids()) {
@@ -74,7 +75,7 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
                     String playerName = playerListEntry.getProfile().getName();
                     entries.add(new PlayerSelectorEntry(
                             client, this, playerUuid,
-                            Text.literal(playerName), playerListEntry::getSkinTexture
+                            new LiteralText(playerName), playerListEntry::getSkinTexture
                     ));
                 }
             }

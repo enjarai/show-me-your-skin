@@ -12,6 +12,7 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +33,7 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
         if (instance == null) instance = new DummyClientPlayerEntity() {
             @Override
             public Text getName() {
-                return Text.translatable("gui.showmeyourskin.armorScreen.global");
+                return new TranslatableText("gui.showmeyourskin.armorScreen.global");
             }
         };
         return instance;
