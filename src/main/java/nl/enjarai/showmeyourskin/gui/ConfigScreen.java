@@ -3,6 +3,8 @@ package nl.enjarai.showmeyourskin.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -21,6 +23,7 @@ public class ConfigScreen extends Screen {
     private ConfigEntryWidget globalConfig;
     private PlayerSelectorWidget playerSelector;
     private ArmorConfigWindow armorConfigWindow;
+    private ButtonWidget backButton;
     private boolean initialized = false;
 
     public ConfigScreen(Screen parent) {
@@ -38,30 +41,37 @@ public class ConfigScreen extends Screen {
 
     @Override
     protected void init() {
-        if (!initialized) {
-            playerSelector = new PlayerSelectorWidget(client, width, height, getSelectorLeft() + 44, getSelectorTop() + 63, 187, this::loadArmorConfigWindow);
-            globalConfig = new ConfigEntryWidget(client, playerSelector, getSelectorLeft() + 11, getSelectorTop() + 63, "Global", () -> GLOBAL_ICON);
-            playerSelector.linkDefault(globalConfig);
-            playerSelector.updateEntries();
+        playerSelector = new PlayerSelectorWidget(
+                client, width, height, getSelectorLeft() + 44, getSelectorTop() + 63,
+                187, this::loadArmorConfigWindow
+        );
+        globalConfig = new ConfigEntryWidget(
+                client, playerSelector, getSelectorLeft() + 11, getSelectorTop() + 63,
+                Text.translatable("gui.showmeyourskin.armorScreen.global"), () -> GLOBAL_ICON
+        );
+        playerSelector.linkDefault(globalConfig);
 
-            initialized = true;
-        } else {
-            playerSelector.updatePosition(width, height, getSelectorLeft() + 44, getSelectorTop() + 63);
-            globalConfig.updatePosition(getSelectorLeft() + 11, getSelectorTop() + 63);
-        }
+        backButton = new TexturedButtonWidget(
+                getSelectorLeft() - 20, getSelectorTop() + 52, 20, 20,
+                0, 78, ArmorConfigWindow.TEXTURE, button -> close()
+        );
+        // TODO add global toggle button with keybind
+
+        playerSelector.updateEntries();
     }
 
     private void fixChildren() {
         clearChildren();
         addDrawableChild(globalConfig);
         addDrawableChild(playerSelector);
+        addDrawableChild(backButton);
         addDrawableChild(armorConfigWindow);
     }
 
     private void loadArmorConfigWindow(ConfigEntryWidget entry) {
         armorConfigWindow = new ArmorConfigWindow(
-                this, getSelectorLeft(), getSelectorTop() + 100,
-                entry.getDummyPlayer(), entry.getArmorConfig()
+                this, getSelectorLeft(), Math.max(getSelectorTop() + 100, (height - 160) / 2),
+                entry.getName(), entry.getDummyPlayer(), entry.getArmorConfig()
         );
 
         fixChildren();
@@ -71,9 +81,10 @@ public class ConfigScreen extends Screen {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         renderBackground(matrices);
 
+        var hovered = playerSelector.getHovered(mouseX, mouseY);
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         textRenderer.draw(
-                matrices, Text.literal(playerSelector.getSelected().name),
+                matrices, hovered == null ? Text.translatable("gui.showmeyourskin.armorScreen.playerSelector") : hovered.getName(),
                 getSelectorLeft() + 11, getSelectorTop() + 52, TEXT_COLOR
         );
 

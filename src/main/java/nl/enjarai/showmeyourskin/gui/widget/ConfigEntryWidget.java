@@ -13,6 +13,7 @@ import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
@@ -31,12 +32,12 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
     public int y;
     public final MinecraftClient client;
     public final PlayerSelectorWidget parent;
-    public final String name;
+    private final Text name;
     public final Supplier<Identifier> texture;
     protected ArmorConfig armorConfig;
     public boolean selected = false;
 
-    public ConfigEntryWidget(MinecraftClient client, PlayerSelectorWidget parent, int x, int y, String name, Supplier<Identifier> texture) {
+    public ConfigEntryWidget(MinecraftClient client, PlayerSelectorWidget parent, int x, int y, Text name, Supplier<Identifier> texture) {
         this.client = client;
         this.parent = parent;
         this.x = x;
@@ -115,6 +116,10 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
 
     public PlayerEntity getDummyPlayer() {
         return DummyClientPlayerEntity.getInstance();
+    }
+
+    public Text getName() {
+        return name;
     }
 
     @Override

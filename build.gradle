@@ -33,7 +33,7 @@ dependencies {
 	modImplementation "com.terraformersmc:modmenu:${modmenu_version}"
 
 	// Make it easier to test skin compat.
-	modImplementation "com.ptsmods:devlogin:2.0"
+	modImplementation 'com.ptsmods:devlogin:2.1'
 }
 
 processResources {

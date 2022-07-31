@@ -3,6 +3,7 @@ package nl.enjarai.showmeyourskin.gui.widget;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.AbstractParentElement;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
@@ -28,6 +29,7 @@ import java.util.List;
 
 public class ArmorConfigWindow extends AbstractParentElement implements Drawable, Element, Selectable {
     public static final Identifier TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen.png");
+    private static final int TEXT_COLOR = 0x303030;
     private static final Text GLINT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.glintTooltip");
     private static final Text COMBAT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.combatTooltip");
     private static final Text NAME_TAG_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.nameTagTooltip");
@@ -37,14 +39,16 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     private final Screen parent;
     public int x;
     public int y;
+    private final Text name;
     private final PlayerEntity player;
     private final ArmorConfig armorConfig;
 
-    public ArmorConfigWindow(Screen parent, int x, int y, PlayerEntity player, ArmorConfig armorConfig) {
+    public ArmorConfigWindow(Screen parent, int x, int y, Text name, PlayerEntity player, ArmorConfig armorConfig) {
         super();
         this.parent = parent;
         this.x = x;
         this.y = y;
+        this.name = name;
         this.player = player;
         this.armorConfig = armorConfig;
 
@@ -68,8 +72,6 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
                 armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP));
         buttons.add(getToggleButton(getWindowLeft() + 62, getWindowTop() + 107, 120, 38,
                 armorConfig.showElytra, b -> armorConfig.showElytra = b, SHOW_ELYTRA_TOOLTIP));
-
-//        drawables.add(getButton(getWindowLeft() + 14, getWindowBottom() - 31, 0, 78, button -> close(), null));
     }
 
     protected int getWindowLeft() {
@@ -146,6 +148,12 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
 
         var playerX = getWindowRight() - 59;
         var playerY = getWindowTop() + 155;
+
+        var textRenderer = MinecraftClient.getInstance().textRenderer;
+        textRenderer.draw(
+                matrices, name,
+                getWindowRight() - 110, getWindowTop() + 10, TEXT_COLOR
+        );
 
         InventoryScreen.drawEntity(playerX, playerY, 70, -mouseX + playerX, -mouseY + playerY - 110, player);
     }

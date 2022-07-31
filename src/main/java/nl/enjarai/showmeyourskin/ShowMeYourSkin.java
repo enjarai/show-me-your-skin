@@ -1,9 +1,11 @@
 package nl.enjarai.showmeyourskin;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
+import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.client.ModKeyBindings;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import org.slf4j.Logger;
@@ -19,6 +21,9 @@ public class ShowMeYourSkin implements ModInitializer {
 
 		ModKeyBindings.register();
 		ClientTickEvents.END_CLIENT_TICK.register(this::tick);
+
+		// Pre-load the dummy player for the config screen to avoid lag spikes later.
+		ClientLifecycleEvents.CLIENT_STARTED.register((client) -> DummyClientPlayerEntity.getInstance());
 	}
 
 	public void tick(MinecraftClient client) {

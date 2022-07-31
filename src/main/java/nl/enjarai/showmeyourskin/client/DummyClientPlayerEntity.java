@@ -11,6 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,10 +25,16 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
 
     private static DummyClientPlayerEntity instance;
     private Identifier skinIdentifier = null;
+    private String model = null;
     private PlayerEntity player = null;
 
     public static DummyClientPlayerEntity getInstance() {
-        if (instance == null) instance = new DummyClientPlayerEntity();
+        if (instance == null) instance = new DummyClientPlayerEntity() {
+            @Override
+            public Text getName() {
+                return Text.translatable("gui.showmeyourskin.armorScreen.global");
+            }
+        };
         return instance;
     }
 
@@ -35,7 +42,13 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
         super(MinecraftClient.getInstance(), DummyClientWorld.getInstance(), DummyClientPlayNetworkHandler.getInstance(), null, null,false, false);
         setUuid(UUID.randomUUID());
         MinecraftClient.getInstance().getSkinProvider().loadSkin(getGameProfile(), (type, identifier, texture) -> {
-            if (type == MinecraftProfileTexture.Type.SKIN) skinIdentifier = identifier;
+            if (type == MinecraftProfileTexture.Type.SKIN) {
+                skinIdentifier = identifier;
+                model = texture.getMetadata("model");
+                if (model == null) {
+                    model = "default";
+                }
+            }
         }, true);
     }
 
@@ -58,13 +71,18 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
 
     @Override
     public Identifier getSkinTexture() {
-        return skinIdentifier == null ? DefaultSkinHelper.getTexture(this.getUuid()) : skinIdentifier;
+        return skinIdentifier == null ? DefaultSkinHelper.getTexture(getUuid()) : skinIdentifier;
     }
 
     @Nullable
     @Override
     protected PlayerListEntry getPlayerListEntry() {
         return null;
+    }
+
+    @Override
+    public String getModel() {
+        return model == null ? DefaultSkinHelper.getModel(getUuid()) : model;
     }
 
     @Override

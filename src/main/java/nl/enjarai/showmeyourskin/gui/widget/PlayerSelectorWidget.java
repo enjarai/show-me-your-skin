@@ -10,6 +10,7 @@ import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
 
 import javax.annotation.Nullable;
@@ -27,6 +28,7 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
     protected int height;
     protected Consumer<ConfigEntryWidget> onSelect;
     private final List<ConfigEntryWidget> entries = Lists.newArrayList();
+    private final List<ConfigEntryWidget> allEntries = Lists.newArrayList();
     private int scroll = 0;
     private ConfigEntryWidget selected;
     private ConfigEntryWidget defaultSelected;
@@ -55,26 +57,36 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
 
     public void updateEntries() {
         entries.clear();
+        allEntries.clear();
 
         if (client.player == null) {
             var dummyPlayer = DummyClientPlayerEntity.getInstance();
             var profile = dummyPlayer.getGameProfile();
             entries.add(new PlayerSelectorEntry(
                     client, this, profile.getId(),
-                    profile.getName(), dummyPlayer::getSkinTexture)
-            );
+                    Text.literal(profile.getName()), dummyPlayer::getSkinTexture
+            ));
         } else {
             for (UUID uuid : client.player.networkHandler.getPlayerUuids()) {
                 PlayerListEntry playerListEntry = client.player.networkHandler.getPlayerListEntry(uuid);
                 if (playerListEntry != null) {
                     UUID playerUuid = playerListEntry.getProfile().getId();
                     String playerName = playerListEntry.getProfile().getName();
-                    entries.add(new PlayerSelectorEntry(client, this, playerUuid, playerName, playerListEntry::getSkinTexture));
+                    entries.add(new PlayerSelectorEntry(
+                            client, this, playerUuid,
+                            Text.literal(playerName), playerListEntry::getSkinTexture
+                    ));
                 }
             }
         }
 
-        this.entries.sort((player1, player2) -> player1.name.compareToIgnoreCase(player2.name));
+        entries.sort((player1, player2) -> player1.getName().getString().compareToIgnoreCase(player2.getName().getString()));
+
+        allEntries.addAll(this.entries);
+        if (defaultSelected != null && !allEntries.contains(defaultSelected)) {
+            allEntries.add(defaultSelected);
+        }
+
         setSelected(null);
     }
 
@@ -94,11 +106,23 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
         return selected;
     }
 
-    private int getChildX(ConfigEntryWidget child) {
+    @Nullable
+    public ConfigEntryWidget getHovered(int mouseX, int mouseY) {
+        for (ConfigEntryWidget entry : allEntries) {
+            var x = getEntryX(entry);
+            var y = getEntryY(entry);
+            if (mouseX >= x && mouseX < x + entry.getWidth() && mouseY >= y && mouseY < y + entry.getHeight()) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    private int getEntryX(ConfigEntryWidget child) {
         return x + getEntries().indexOf(child) * 30 - scroll;
     }
 
-    private int getChildY(ConfigEntryWidget child) {
+    private int getEntryY(ConfigEntryWidget child) {
         return y;
     }
 
@@ -117,12 +141,12 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
         );
         var players = getEntries();
         for (int i = 0; i < players.size(); i++) {
-            var child = players.get(i);
-            var x = getChildX(child);
-            var y = getChildY(child);
-            child.directRender(
+            var entry = players.get(i);
+            var x = getEntryX(entry);
+            var y = getEntryY(entry);
+            entry.directRender(
                     matrices, i, x, y, mouseX, mouseY,
-                    mouseX >= x && mouseX < x + child.getWidth() && mouseY >= y && mouseY < y + child.getHeight(),
+                    mouseX >= x && mouseX < x + entry.getWidth() && mouseY >= y && mouseY < y + entry.getHeight(),
                     delta
             );
         }
@@ -142,8 +166,8 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height) {
             for (var child : getEntries()) {
-                var childX = getChildX(child);
-                var childY = getChildY(child);
+                var childX = getEntryX(child);
+                var childY = getEntryY(child);
                 if (mouseX >= childX && mouseX < childX + child.getWidth() && mouseY >= childY && mouseY < childY + child.getHeight()) {
                     return child.mouseClicked(mouseX, mouseY, button);
                 }
@@ -154,7 +178,7 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        scroll += amount * 30;
+        scroll -= amount * 30;
         if (scroll < 0) {
             scroll = 0;
         } else if (scroll > getMaxScroll()) {
