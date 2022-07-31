@@ -10,10 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(OtherClientPlayerEntity.class)
 public abstract class OtherClientPlayerEntityMixin {
-
-
     @Inject(
-            method = "damage",
+            method = "damage(Lnet/minecraft/entity/damage/DamageSource;F)Z",
             at = @At(value = "HEAD")
     )
     private void triggerCombat(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {

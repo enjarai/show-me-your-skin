@@ -1,6 +1,8 @@
 {
   "category.showmeyourskin.showmeyourskin": "Show Me Your Skin!",
   "key.showmeyourskin.open_settings": "Открыть глобальные настройки",
+  "gui.showmeyourskin.armorScreen.global": "Глобальные настройки",
+  "gui.showmeyourskin.armorScreen.playerSelector": "Настройки брони",
   "gui.showmeyourskin.armorScreen.headSlider": "Шлем: %d%%",
   "gui.showmeyourskin.armorScreen.chestSlider": "Нагрудник: %d%%",
   "gui.showmeyourskin.armorScreen.legsSlider": "Поножи: %d%%",

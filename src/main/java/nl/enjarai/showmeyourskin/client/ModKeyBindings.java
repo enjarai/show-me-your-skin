@@ -5,6 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import nl.enjarai.showmeyourskin.config.ModConfig;
+import nl.enjarai.showmeyourskin.gui.ConfigScreen;
 import org.lwjgl.glfw.GLFW;
 
 public class ModKeyBindings {
@@ -21,7 +22,8 @@ public class ModKeyBindings {
 
     public static void tick(MinecraftClient client) {
         while (OPEN_SETTINGS.wasPressed()) {
-            client.setScreen(ModConfig.INSTANCE.getGlobalScreen(null));
+            client.setScreen(new ConfigScreen(null));
+//            client.setScreen(ModConfig.INSTANCE.getGlobalScreen(null));
         }
     }
 }

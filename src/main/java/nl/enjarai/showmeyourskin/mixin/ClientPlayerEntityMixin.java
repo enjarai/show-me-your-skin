@@ -6,12 +6,13 @@ import nl.enjarai.showmeyourskin.util.CombatLogger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin {
     @Inject(
-            method = "damage",
+            method = "damage(Lnet/minecraft/entity/damage/DamageSource;F)Z",
             at = @At(value = "HEAD")
     )
     private void triggerCombat(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {

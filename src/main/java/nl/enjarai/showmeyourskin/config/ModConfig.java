@@ -9,7 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
-import nl.enjarai.showmeyourskin.gui.ArmorScreen;
+import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
 import nl.enjarai.showmeyourskin.util.CombatLogger;
 
 import java.io.*;
@@ -70,14 +70,6 @@ public class ModConfig {
 
     public void deleteOverride(UUID uuid) {
         overrides.remove(uuid);
-    }
-
-    public ArmorScreen getScreen(PlayerEntity player, Screen parent) {
-        return new ArmorScreen(player, getOrCreateOverride(player.getUuid()), parent);
-    }
-
-    public ArmorScreen getGlobalScreen(Screen parent) {
-        return new ArmorScreen(DummyClientPlayerEntity.getInstance(), global, parent);
     }
 
 

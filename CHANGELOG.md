@@ -1,2 +1,3 @@
-- Added armor fade-out after combat.
-- Fixed some minor edge-cases with capes and combat.
+- Removed integration with social interactions screen.
+- Added custom ui for overrides instead.
+- Fixed #15 and #20.

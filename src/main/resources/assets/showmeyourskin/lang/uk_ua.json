@@ -1,6 +1,8 @@
 {
   "category.showmeyourskin.showmeyourskin": "Show Me Your Skin!",
   "key.showmeyourskin.open_settings": "Відкрити глобальні параметри",
+  "gui.showmeyourskin.armorScreen.global": "Глобальнi параметри",
+  "gui.showmeyourskin.armorScreen.playerSelector": "Налаштування бронi",
   "gui.showmeyourskin.armorScreen.headSlider": "Шолом: %d%%",
   "gui.showmeyourskin.armorScreen.chestSlider": "Нагрудник: %d%%",
   "gui.showmeyourskin.armorScreen.legsSlider": "Наголінники: %d%%",
