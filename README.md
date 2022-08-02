@@ -45,7 +45,6 @@ configurable amount of seconds after a player is damaged.
 
 ## Per-player overrides
 
-Override values per player in multiplayer, 
-giving the vanilla social interactions screen an actual use!
+Override values per player in multiplayer using a fancy custom ui.
 
 ![](img/overrides.gif)
