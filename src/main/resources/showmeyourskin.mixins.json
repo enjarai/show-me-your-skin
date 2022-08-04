@@ -4,14 +4,17 @@
   "package": "nl.enjarai.showmeyourskin.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
     "ArmorFeatureRendererMixin",
     "ClientPlayerEntityMixin",
     "ElytraFeatureRendererMixin",
     "LivingEntityRendererMixin",
     "OtherClientPlayerEntityMixin",
-    "PlayerEntityModelMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+    "PlayerEntityModelMixin",
+    "CapeFeatureRendererMixin"
+  ]
 }

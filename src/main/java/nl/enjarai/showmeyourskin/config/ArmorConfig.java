@@ -1,6 +1,8 @@
 package nl.enjarai.showmeyourskin.config;
 
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Items;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -40,8 +42,8 @@ public class ArmorConfig {
         pieces.get(slot).enchantGlint = glint;
     }
 
-    public boolean shouldTransformCape() {
-        return getTransparency(EquipmentSlot.CHEST) > 0;
+    public boolean shouldTransformCape(PlayerEntity player) {
+        return getTransparency(EquipmentSlot.CHEST) > 0 && !(player.getEquippedStack(EquipmentSlot.CHEST).isOf(Items.ELYTRA) && !showElytra);
     }
 
     public static class ArmorPieceConfig {

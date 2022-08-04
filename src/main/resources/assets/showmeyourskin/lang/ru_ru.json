@@ -1,6 +1,10 @@
 {
   "category.showmeyourskin.showmeyourskin": "Show Me Your Skin!",
   "key.showmeyourskin.open_settings": "Открыть глобальные настройки",
+  "key.showmeyourskin.global_toggle": "Переключить мод",
+  "key.showmeyourskin.global_toggle.enable": "Включена настройка рендеринга брони.",
+  "key.showmeyourskin.global_toggle.disable": "Отключена настройка рендеринга брони.",
+  "gui.showmeyourskin.armorScreen.globalToggleTooltip": "Глобальное переключение, нажмите %1$s, чтобы переключиться в игре.",
   "gui.showmeyourskin.armorScreen.global": "Глобальные настройки",
   "gui.showmeyourskin.armorScreen.playerSelector": "Настройки брони",
   "gui.showmeyourskin.armorScreen.headSlider": "Шлем: %d%%",

@@ -1,6 +1,10 @@
 {
   "category.showmeyourskin.showmeyourskin": "Show Me Your Skin!",
-  "key.showmeyourskin.open_settings": "Open Globale Instellingen",
+  "key.showmeyourskin.open_settings": "Open Harnas Configuratie",
+  "key.showmeyourskin.global_toggle": "Globale Schakelaar",
+  "key.showmeyourskin.global_toggle.enable": "Harnas render aanpassingen aangezet.",
+  "key.showmeyourskin.global_toggle.disable": "Harnas render aanpassingen uitgezet.",
+  "gui.showmeyourskin.armorScreen.globalToggleTooltip": "Globale schakel, druk op %1$s om aan of uit te zetten in het spel.",
   "gui.showmeyourskin.armorScreen.global": "Globaal",
   "gui.showmeyourskin.armorScreen.playerSelector": "Harnas Configuratie",
   "gui.showmeyourskin.armorScreen.headSlider": "Helm: %d%%",
