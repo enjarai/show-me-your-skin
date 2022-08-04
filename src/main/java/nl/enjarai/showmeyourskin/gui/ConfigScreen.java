@@ -1,6 +1,7 @@
 package nl.enjarai.showmeyourskin.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -9,10 +10,12 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
+import nl.enjarai.showmeyourskin.client.ModKeyBindings;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
 import nl.enjarai.showmeyourskin.gui.widget.ConfigEntryWidget;
 import nl.enjarai.showmeyourskin.gui.widget.PlayerSelectorWidget;
+import nl.enjarai.showmeyourskin.gui.widget.ToggleButtonWidget;
 
 public class ConfigScreen extends Screen {
     public static final Identifier SELECTOR_TEXTURE = ShowMeYourSkin.id("textures/gui/config_screen.png");
@@ -24,6 +27,7 @@ public class ConfigScreen extends Screen {
     private PlayerSelectorWidget playerSelector;
     private ArmorConfigWindow armorConfigWindow;
     private ButtonWidget backButton;
+    private ButtonWidget globalToggle;
     private boolean initialized = false;
 
     public ConfigScreen(Screen parent) {
@@ -55,7 +59,13 @@ public class ConfigScreen extends Screen {
                 getSelectorLeft() - 20, getSelectorTop() + 52, 20, 20,
                 0, 78, ArmorConfigWindow.TEXTURE, button -> close()
         );
-        // TODO add global toggle button with keybind
+        globalToggle = new ToggleButtonWidget(
+                this, getSelectorLeft() - 20, getSelectorTop() + 76,
+                0, 160, SELECTOR_TEXTURE, ModConfig.INSTANCE.globalEnabled,
+                (enabled) -> ModConfig.INSTANCE.globalEnabled = enabled,
+                Text.translatable("gui.showmeyourskin.armorScreen.globalToggleTooltip",
+                        KeyBindingHelper.getBoundKeyOf(ModKeyBindings.GLOBAL_TOGGLE).getLocalizedText())
+        );
 
         playerSelector.updateEntries();
     }
@@ -65,6 +75,7 @@ public class ConfigScreen extends Screen {
         addDrawableChild(globalConfig);
         addDrawableChild(playerSelector);
         addDrawableChild(backButton);
+        addDrawableChild(globalToggle);
         addDrawableChild(armorConfigWindow);
     }
 

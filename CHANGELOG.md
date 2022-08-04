@@ -1,3 +1,2 @@
-- Removed integration with social interactions screen.
-- Added custom ui for overrides instead.
-- Fixed #15 and #20.
+- Added global toggle button and keybind.
+- Fix cape not showing when hiding elytra.

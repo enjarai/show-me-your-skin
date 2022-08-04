@@ -27,6 +27,7 @@ public class ModConfig {
             .disableHtmlEscaping() // We'll be able to use custom chars without them being saved differently
             .create();
 
+    public boolean globalEnabled = true;
     public float combatCooldown = 16;
     public float fadeOutTime = 2;
     public final ArmorConfig global = new ArmorConfig();
@@ -39,10 +40,14 @@ public class ModConfig {
 
     public ArmorConfig getApplicable(UUID uuid) {
         var applicable = getOverrideOrGlobal(uuid);
-        return applicable.showInCombat && CombatLogger.INSTANCE.isInCombat(uuid) ? ArmorConfig.VANILLA_VALUES : applicable;
+        return !globalEnabled || applicable.showInCombat && CombatLogger.INSTANCE.isInCombat(uuid) ? ArmorConfig.VANILLA_VALUES : applicable;
     }
 
     public float getApplicableTransparency(UUID uuid, EquipmentSlot slot) {
+        if (!globalEnabled) {
+            return ArmorConfig.VANILLA_VALUES.getTransparency(slot) / 100f;
+        }
+
         var applicable = getOverrideOrGlobal(uuid);
         var normal = applicable.getTransparency(slot) / 100f;
 

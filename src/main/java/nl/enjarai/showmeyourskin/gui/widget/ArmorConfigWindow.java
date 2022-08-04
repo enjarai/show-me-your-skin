@@ -16,20 +16,26 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
+import nl.enjarai.showmeyourskin.config.ModConfig;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class ArmorConfigWindow extends AbstractParentElement implements Drawable, Element, Selectable {
     public static final Identifier TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen.png");
+    public static final Identifier OVERLAY_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_disabled.png");
     private static final int TEXT_COLOR = 0x303030;
+    private static final int OVERLAY_COLOR = 0x80808080;
     private static final Text GLINT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.glintTooltip");
     private static final Text COMBAT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.combatTooltip");
     private static final Text NAME_TAG_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.nameTagTooltip");
@@ -66,12 +72,12 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         buttons.add(getGlintButton(EquipmentSlot.LEGS, 94, 59));
         buttons.add(getGlintButton(EquipmentSlot.FEET, 94, 83));
 
-        buttons.add(getToggleButton(getWindowLeft() + 14, getWindowTop() + 107, 40, 38,
-                armorConfig.showInCombat, b -> armorConfig.showInCombat = b, COMBAT_TOOLTIP));
-        buttons.add(getToggleButton(getWindowLeft() + 38, getWindowTop() + 107, 80, 38,
-                armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP));
-        buttons.add(getToggleButton(getWindowLeft() + 62, getWindowTop() + 107, 120, 38,
-                armorConfig.showElytra, b -> armorConfig.showElytra = b, SHOW_ELYTRA_TOOLTIP));
+        buttons.add(new ToggleButtonWidget(parent, getWindowLeft() + 14, getWindowTop() + 107, 40, 38,
+                TEXTURE, armorConfig.showInCombat, b -> armorConfig.showInCombat = b, COMBAT_TOOLTIP));
+        buttons.add(new ToggleButtonWidget(parent, getWindowLeft() + 38, getWindowTop() + 107, 80, 38,
+                TEXTURE, armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP));
+        buttons.add(new ToggleButtonWidget(parent, getWindowLeft() + 62, getWindowTop() + 107, 120, 38,
+                TEXTURE, armorConfig.showElytra, b -> armorConfig.showElytra = b, SHOW_ELYTRA_TOOLTIP));
     }
 
     protected int getWindowLeft() {
@@ -94,29 +100,6 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         return 10;
     }
 
-    protected TexturedButtonWidget getButton(int x, int y, int u, int v, ButtonWidget.PressAction pressAction, @Nullable Text tooltip) {
-        return new TexturedButtonWidget(x, y, 20, 20, u, v, TEXTURE, pressAction) {
-            @Override
-            public void renderTooltip(MatrixStack matrices, int mouseX, int mouseY) {
-                if (tooltip != null) {
-                    parent.renderTooltip(matrices, tooltip, mouseX, mouseY);
-                }
-            }
-        };
-    }
-
-    protected TexturedButtonWidget getToggleButton(int x, int y, int u, int v, boolean initial, BooleanConsumer toggleAction, @Nullable Text tooltip) {
-        var state = new Object() {
-            boolean enabled = initial;
-        };
-        return getButton(x, y, u + (initial ? 0 : 20), v, button -> {
-            ((TexturedButtonWidget) button).u += state.enabled ? 20 : -20;
-            state.enabled = !state.enabled;
-
-            toggleAction.accept(state.enabled);
-        }, tooltip);
-    }
-
     protected SliderWidget getTransparencySlider(EquipmentSlot slot, int x, int y, String translationKey) {
         var initialValue = armorConfig.getTransparency(slot);
 
@@ -131,19 +114,33 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
             protected void applyValue() {
                 armorConfig.setTransparency(slot, (byte) (this.value * 100));
             }
+
+            @Override
+            public void playDownSound(SoundManager soundManager) {
+                soundManager.play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            }
+
+            @Override
+            public void onRelease(double mouseX, double mouseY) {
+            }
         };
     }
 
     protected TexturedButtonWidget getGlintButton(EquipmentSlot slot, int x, int y) {
-        return getToggleButton(getWindowLeft() + x, getWindowTop() + y, 0, 38,
-                armorConfig.getGlint(slot), b -> armorConfig.setGlint(slot, b), GLINT_TOOLTIP);
+        return new ToggleButtonWidget(parent, getWindowLeft() + x, getWindowTop() + y, 0, 38,
+                TEXTURE, armorConfig.getGlint(slot), b -> armorConfig.setGlint(slot, b), GLINT_TOOLTIP);
     }
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        renderBackground(matrices);
+        renderBackground(matrices, TEXTURE, -999);
         for (var drawable : buttons) {
-            drawable.render(matrices, mouseX, mouseY, delta);
+            drawable.render(
+                    matrices,
+                    isEditable() ? mouseX : -1,
+                    isEditable() ? mouseY : -1,
+                    delta
+            );
         }
 
         var playerX = getWindowRight() - 59;
@@ -156,23 +153,34 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         );
 
         InventoryScreen.drawEntity(playerX, playerY, 70, -mouseX + playerX, -mouseY + playerY - 110, player);
+
+        if (!isEditable()) {
+            renderBackground(matrices, OVERLAY_TEXTURE, 999);
+        }
     }
 
-    public void renderBackground(MatrixStack matrices) {
+    public void renderBackground(MatrixStack matrices, Identifier backgroundTexture, int zIndex) {
         int leftSide = getWindowLeft() + 3;
         int topSide = getWindowTop();
         int iterationsNeeded = getHeightIterations();
 
-        RenderSystem.setShaderTexture(0, TEXTURE);
+        RenderSystem.setShaderTexture(0, backgroundTexture);
+        RenderSystem.enableBlend();
 
         matrices.push();
-        matrices.translate(0, 0, -999);
+        matrices.translate(0, 0, zIndex);
         drawTexture(matrices, leftSide, topSide, 1, 1, 236, 8);
         for(int i = 0; i < iterationsNeeded; ++i) {
             drawTexture(matrices, leftSide, topSide + 8 + 16 * i, 1, 10, 236, 16);
         }
         drawTexture(matrices, leftSide, topSide + 8 + 16 * iterationsNeeded, 1, 27, 236, 8);
         matrices.pop();
+
+        RenderSystem.disableBlend();
+    }
+
+    private boolean isEditable() {
+        return ModConfig.INSTANCE.globalEnabled;
     }
 
     @Override
@@ -182,6 +190,11 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     @Override
     public List<? extends Element> children() {
         return buttons;
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return isEditable() && super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
