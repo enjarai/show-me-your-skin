@@ -64,7 +64,7 @@ public class ConfigScreen extends Screen {
                 this, getSelectorLeft() - 20, getSelectorTop() + 76,
                 0, 160, SELECTOR_TEXTURE, ModConfig.INSTANCE.globalEnabled,
                 (enabled) -> ModConfig.INSTANCE.globalEnabled = enabled,
-                Text.translatable("gui.showmeyourskin.armorScreen.globalToggleTooltip",
+                new TranslatableText("gui.showmeyourskin.armorScreen.globalToggleTooltip",
                         KeyBindingHelper.getBoundKeyOf(ModKeyBindings.GLOBAL_TOGGLE).getLocalizedText())
         );
 

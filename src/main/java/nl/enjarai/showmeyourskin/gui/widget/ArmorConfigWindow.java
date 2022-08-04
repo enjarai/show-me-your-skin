@@ -37,10 +37,10 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     public static final Identifier OVERLAY_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_disabled.png");
     private static final int TEXT_COLOR = 0x303030;
     private static final int OVERLAY_COLOR = 0x80808080;
-    private static final Text GLINT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.glintTooltip");
-    private static final Text COMBAT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.combatTooltip");
-    private static final Text NAME_TAG_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.nameTagTooltip");
-    private static final Text SHOW_ELYTRA_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.showElytraTooltip");
+    private static final Text GLINT_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.glintTooltip");
+    private static final Text COMBAT_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.combatTooltip");
+    private static final Text NAME_TAG_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.nameTagTooltip");
+    private static final Text SHOW_ELYTRA_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.showElytraTooltip");
 
     private final List<ClickableWidget> buttons = Lists.newArrayList();
     private final Screen parent;

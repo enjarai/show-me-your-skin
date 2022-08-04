@@ -5,6 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.gui.ConfigScreen;
 import org.lwjgl.glfw.GLFW;
@@ -37,7 +38,7 @@ public class ModKeyBindings {
             ModConfig.INSTANCE.save();
             if (client.player != null) {
                 client.player.sendMessage(
-                        Text.translatable(
+                        new TranslatableText(
                                 "key.showmeyourskin." +
                                         (ModConfig.INSTANCE.globalEnabled ? "global_toggle.enable" : "global_toggle.disable")
                         ),
