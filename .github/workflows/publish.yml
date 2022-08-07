@@ -89,6 +89,7 @@ jobs:
           game-versions: |
             ${{ steps.minecraft_version.outputs.value }}
             1.19.1
+            1.19.2
           java: |
             17
             18
