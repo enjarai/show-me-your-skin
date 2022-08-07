@@ -10,11 +10,12 @@
   },
   "client": [
     "ArmorFeatureRendererMixin",
+    "CapeFeatureRendererMixin",
     "ClientPlayerEntityMixin",
     "ElytraFeatureRendererMixin",
     "LivingEntityRendererMixin",
     "OtherClientPlayerEntityMixin",
     "PlayerEntityModelMixin",
-    "CapeFeatureRendererMixin"
+    "fabric.ArmorRendererMixin"
   ]
 }

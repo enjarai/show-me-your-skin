@@ -15,7 +15,9 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import nl.enjarai.showmeyourskin.config.ModConfig;
+import nl.enjarai.showmeyourskin.util.ArmorContext;
 import nl.enjarai.showmeyourskin.util.CombatLogger;
+import nl.enjarai.showmeyourskin.util.MixinHooks;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,20 +26,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ArmorFeatureRenderer.class)
+@Mixin(value = ArmorFeatureRenderer.class, priority = 999)
 public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> {
     @Shadow protected abstract Identifier getArmorTexture(ArmorItem item, boolean legs, @Nullable String overlay);
 
-    private EquipmentSlot slot;
-    private T entity;
-
     @Inject(
             method = "renderArmor",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ArmorItem;getSlotType()Lnet/minecraft/entity/EquipmentSlot;")
+            at = @At(value = "HEAD")
     )
     private void captureContext(MatrixStack matrices, VertexConsumerProvider vertexConsumers, T entity, EquipmentSlot armorSlot, int light, A model, CallbackInfo ci) {
-        this.slot = armorSlot;
-        this.entity = entity;
+        MixinHooks.setContext(new ArmorContext(armorSlot, entity));
     }
 
     @ModifyVariable(
@@ -46,8 +44,10 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
             index = 10
     )
     private boolean toggleGlint(boolean original) {
-        if (entity instanceof PlayerEntity player) {
-            return original && ModConfig.INSTANCE.getApplicable(player.getUuid()).getGlint(slot);
+        var ctx = MixinHooks.getContext();
+
+        if (ctx != null && ctx.getEntity() instanceof PlayerEntity) {
+            return original && ctx.getApplicableGlint();
         }
         return original;
     }
@@ -58,12 +58,17 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
             cancellable = true
     )
     private void armorTransparency(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, boolean usesSecondLayer, A model, boolean legs, float red, float green, float blue, String overlay, CallbackInfo ci) {
-        if (entity instanceof PlayerEntity player) {
-            var t = ModConfig.INSTANCE.getApplicableTransparency(player.getUuid(), slot);
+        var ctx = MixinHooks.getAndClearContext();
+
+        if (ctx != null && ctx.shouldModify()) {
+            var t = ctx.getApplicableTransparency();
 
             if (t < 1) {
                 if (t > 0) {
-                    VertexConsumer vertexConsumer = ItemRenderer.getDirectItemGlintConsumer(vertexConsumers, RenderLayer.getEntityTranslucent(getArmorTexture(item, legs, overlay)), false, usesSecondLayer);
+                    VertexConsumer vertexConsumer = ItemRenderer.getDirectItemGlintConsumer(
+                            vertexConsumers, RenderLayer.getEntityTranslucent(getArmorTexture(item, legs, overlay)),
+                            false, usesSecondLayer
+                    );
                     model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, red, green, blue, t);
                 }
 
