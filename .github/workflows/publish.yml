@@ -93,6 +93,7 @@ jobs:
             18
           dependencies: |
             fabric-api
+          modrinth-featured: false
 
           changelog-file: CHANGELOG.md
           files: '${{ steps.download.outputs.download-path }}/!(*-@(dev|sources)).jar'
