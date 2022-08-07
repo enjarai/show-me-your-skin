@@ -1,2 +1,1 @@
-- Added global toggle button and keybind.
-- Fix cape not showing when hiding elytra.
+- Added transparency compat for modded armor with custom models. Likely to fix #6.
