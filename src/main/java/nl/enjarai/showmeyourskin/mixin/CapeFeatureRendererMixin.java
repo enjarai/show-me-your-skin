@@ -21,7 +21,7 @@ public abstract class CapeFeatureRendererMixin {
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/network/AbstractClientPlayerEntity;FFFFFF)V",
             at = @At("HEAD")
     )
-    private void capturePlayer(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, AbstractClientPlayerEntity abstractClientPlayerEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+    private void showmeyourskin$capturePlayer(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, AbstractClientPlayerEntity abstractClientPlayerEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
         player = abstractClientPlayerEntity;
     }
 
@@ -29,7 +29,7 @@ public abstract class CapeFeatureRendererMixin {
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/network/AbstractClientPlayerEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z")
     )
-    private boolean isOf(ItemStack stack, Item item) {
+    private boolean showmeyourskin$isOf(ItemStack stack, Item item) {
         if (player != null) {
             var uuid = player.getUuid();
             player = null;

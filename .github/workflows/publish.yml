@@ -72,18 +72,19 @@ jobs:
         with:
           path: gradle.properties
           property: minecraft_version
-      - name: Read fancy release name
-        id: release_fancyname
-        uses: christian-draeger/read-properties@1.0.1
+      - name: Update GitHub Release
+        uses: tubone24/update_release@v1.3.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          path: gradle.properties
-          property: release_fancyname
+          body_path: CHANGELOG.md
+          is_append_body: true
       - name: publish mod
-        uses: Kir-Antipov/mc-publish@v2.1
+        uses: Kir-Antipov/mc-publish@v3.2
         with:
 
-          name: ${{ steps.release_fancyname.outputs.value }}
-          version: ${{ steps.mod_version.outputs.value }}
+          name: ${{ github.event.release.name }}
+          version: '${{ steps.mod_version.outputs.value }}+${{ steps.minecraft_version.outputs.value }}'
           version-type: release
 
           game-versions: |
@@ -91,8 +92,6 @@ jobs:
           java: |
             17
             18
-          dependencies: |
-            fabric-api
           modrinth-featured: false
 
           changelog-file: CHANGELOG.md
@@ -100,4 +99,5 @@ jobs:
 
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-          github-token: ${{ secrets.TOKEN_GITHUB }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+

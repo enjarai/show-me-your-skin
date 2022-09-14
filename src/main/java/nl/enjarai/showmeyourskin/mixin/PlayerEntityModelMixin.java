@@ -23,7 +23,7 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> {
             method = "setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V",
             at = @At(value = "TAIL")
     )
-    private void fixCapeAngle(T livingEntity, float f, float g, float h, float i, float j, CallbackInfo ci) {
+    private void showmeyourskin$fixCapeAngle(T livingEntity, float f, float g, float h, float i, float j, CallbackInfo ci) {
         var applicable = ModConfig.INSTANCE.getApplicable(livingEntity.getUuid());
         if (livingEntity instanceof PlayerEntity player &&
                 !applicable.shouldTransformCape(player) &&

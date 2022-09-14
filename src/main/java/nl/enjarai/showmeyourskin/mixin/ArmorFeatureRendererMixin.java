@@ -13,11 +13,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.util.ArmorContext;
-import nl.enjarai.showmeyourskin.util.CombatLogger;
-import nl.enjarai.showmeyourskin.util.MixinHooks;
+import nl.enjarai.showmeyourskin.util.MixinContext;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,8 +31,8 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
             method = "renderArmor",
             at = @At(value = "HEAD")
     )
-    private void captureContext(MatrixStack matrices, VertexConsumerProvider vertexConsumers, T entity, EquipmentSlot armorSlot, int light, A model, CallbackInfo ci) {
-        MixinHooks.setContext(new ArmorContext(armorSlot, entity));
+    private void showmeyourskin$captureContext(MatrixStack matrices, VertexConsumerProvider vertexConsumers, T entity, EquipmentSlot armorSlot, int light, A model, CallbackInfo ci) {
+        MixinContext.ARMOR.setContext(new ArmorContext(armorSlot, entity));
     }
 
     @ModifyVariable(
@@ -43,8 +40,8 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
             at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;hasGlint()Z"),
             index = 10
     )
-    private boolean toggleGlint(boolean original) {
-        var ctx = MixinHooks.getContext();
+    private boolean showmeyourskin$toggleGlint(boolean original) {
+        var ctx = MixinContext.ARMOR.getContext();
 
         if (ctx != null && ctx.getEntity() instanceof PlayerEntity) {
             return original && ctx.getApplicableGlint();
@@ -57,8 +54,8 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
             at = @At(value = "HEAD"),
             cancellable = true
     )
-    private void armorTransparency(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, boolean usesSecondLayer, A model, boolean legs, float red, float green, float blue, String overlay, CallbackInfo ci) {
-        var ctx = MixinHooks.getAndClearContext();
+    private void showmeyourskin$armorTransparency(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, boolean usesSecondLayer, A model, boolean legs, float red, float green, float blue, String overlay, CallbackInfo ci) {
+        var ctx = MixinContext.ARMOR.getAndClearContext();
 
         if (ctx != null && ctx.shouldModify()) {
             var t = ctx.getApplicableTransparency();

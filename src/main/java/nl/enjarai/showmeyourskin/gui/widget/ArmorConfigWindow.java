@@ -36,11 +36,11 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     public static final Identifier TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen.png");
     public static final Identifier OVERLAY_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_disabled.png");
     private static final int TEXT_COLOR = 0x303030;
-    private static final int OVERLAY_COLOR = 0x80808080;
     private static final Text GLINT_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.glintTooltip");
     private static final Text COMBAT_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.combatTooltip");
     private static final Text NAME_TAG_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.nameTagTooltip");
     private static final Text SHOW_ELYTRA_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.showElytraTooltip");
+    private static final Text SHIELD_GLINT_TOOLTIP = new TranslatableText("gui.showmeyourskin.armorScreen.shieldGlintTooltip");
 
     private final List<ClickableWidget> buttons = Lists.newArrayList();
     private final Screen parent;
@@ -79,6 +79,8 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
                 TEXTURE, armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP));
         buttons.add(new ToggleButtonWidget(parent, getWindowLeft() + 62, getWindowTop() + 107, 120, 38,
                 TEXTURE, armorConfig.showElytra, b -> armorConfig.showElytra = b, SHOW_ELYTRA_TOOLTIP));
+        buttons.add(new ToggleButtonWidget(parent, getWindowLeft() + 94, getWindowTop() + 107, 160, 38,
+                TEXTURE, armorConfig.showShieldGlint, b -> armorConfig.showShieldGlint = b, SHIELD_GLINT_TOOLTIP));
     }
 
     protected int getWindowLeft() {

@@ -25,7 +25,7 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
             at = @At("HEAD"),
             cancellable = true
     )
-    private void hideElytra(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+    private void showmeyourskin$hideElytra(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
         if (livingEntity instanceof PlayerEntity player) {
             if (!ModConfig.INSTANCE.getApplicable(player.getUuid()).showElytra) {
                 ci.cancel();
