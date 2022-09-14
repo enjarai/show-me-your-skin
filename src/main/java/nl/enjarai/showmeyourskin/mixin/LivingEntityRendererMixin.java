@@ -16,7 +16,7 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity> {
             at = @At("HEAD"),
             cancellable = true
     )
-    private void removeLabel(T livingEntity, CallbackInfoReturnable<Boolean> cir) {
+    private void showmeyourskin$removeLabel(T livingEntity, CallbackInfoReturnable<Boolean> cir) {
         if (
                 livingEntity instanceof DummyClientPlayerEntity ||
                 !ModConfig.INSTANCE.getApplicable(livingEntity.getUuid()).showNameTag

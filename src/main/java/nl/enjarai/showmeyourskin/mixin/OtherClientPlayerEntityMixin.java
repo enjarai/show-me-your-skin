@@ -14,7 +14,7 @@ public abstract class OtherClientPlayerEntityMixin {
             method = "damage(Lnet/minecraft/entity/damage/DamageSource;F)Z",
             at = @At(value = "HEAD")
     )
-    private void triggerCombat(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    private void showmeyourskin$triggerCombat(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         CombatLogger.INSTANCE.triggerCombat(((OtherClientPlayerEntity) (Object) this).getUuid());
     }
 }

@@ -10,7 +10,7 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
-import nl.enjarai.showmeyourskin.util.MixinHooks;
+import nl.enjarai.showmeyourskin.util.MixinContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,8 +23,8 @@ public interface ArmorRendererMixin {
             at = @At(value = "HEAD"),
             cancellable = true
     )
-    private static void armorTransparency(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ItemStack stack, Model model, Identifier texture, CallbackInfo ci) {
-        var ctx = MixinHooks.getAndClearContext();
+    private static void showmeyourskin$armorTransparency(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ItemStack stack, Model model, Identifier texture, CallbackInfo ci) {
+        var ctx = MixinContext.ARMOR.getAndClearContext();
 
         if (ctx != null && ctx.shouldModify()) {
             var t = ctx.getApplicableTransparency();

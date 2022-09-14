@@ -22,6 +22,7 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
     private static final ItemStack CHEST_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_CHESTPLATE);
     private static final ItemStack LEGS_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_LEGGINGS);
     private static final ItemStack FEET_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_BOOTS);
+    private static final ItemStack OFF_HAND = new AlwaysGlintingStack(Items.SHIELD);
 
     private static DummyClientPlayerEntity instance;
     private Identifier skinIdentifier = null;
@@ -105,6 +106,7 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
             case CHEST -> CHEST_ARMOR;
             case LEGS -> LEGS_ARMOR;
             case FEET -> FEET_ARMOR;
+            case OFFHAND -> OFF_HAND;
             default -> ItemStack.EMPTY;
         };
     }

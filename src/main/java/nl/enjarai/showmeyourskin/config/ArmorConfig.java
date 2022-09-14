@@ -14,6 +14,7 @@ public class ArmorConfig {
     public boolean showInCombat = true;
     public boolean showNameTag = true;
     public boolean showElytra = true;
+    public boolean showShieldGlint = true;
 
     public ArmorConfig() {
         pieces.put(EquipmentSlot.HEAD, new ArmorPieceConfig());

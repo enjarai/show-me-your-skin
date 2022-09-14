@@ -1,1 +1,1 @@
-- Added transparency compat for modded armor with custom models. Likely to fix #6.
+- Added an option to toggle the enchantment glint on shields.
