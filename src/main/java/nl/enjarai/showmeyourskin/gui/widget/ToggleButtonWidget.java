@@ -2,6 +2,7 @@ package nl.enjarai.showmeyourskin.gui.widget;
 
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -24,17 +25,16 @@ public class ToggleButtonWidget extends TexturedButtonWidget {
     }
 
     @Override
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        setTooltip(Tooltip.of(tooltip));
+        super.render(matrices, mouseX, mouseY, delta);
+    }
+
+    @Override
     public void onPress() {
         u += enabled ? 20 : -20;
         enabled = !enabled;
 
         toggleAction.accept(enabled);
-    }
-
-    @Override
-    public void renderTooltip(MatrixStack matrices, int mouseX, int mouseY) {
-        if (tooltip != null) {
-            parent.renderTooltip(matrices, tooltip, mouseX, mouseY);
-        }
     }
 }

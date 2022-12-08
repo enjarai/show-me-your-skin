@@ -1,1 +1,1 @@
-- Added an option to toggle the enchantment glint on shields.
+- Updated to 1.19.3

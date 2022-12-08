@@ -59,8 +59,8 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
         super.directRender(matrices, index, x, y, mouseX, mouseY, hovered, tickDelta);
 
         if (clearButton != null) {
-            clearButton.x = x;
-            clearButton.y = y;
+            clearButton.setX(x);
+            clearButton.setY(y);
 
             clearButton.render(matrices, mouseX, mouseY, tickDelta);
         }

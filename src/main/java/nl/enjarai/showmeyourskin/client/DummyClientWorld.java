@@ -1,12 +1,14 @@
 package nl.enjarai.showmeyourskin.client;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientDynamicRegistryType;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.dimension.DimensionTypes;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 
@@ -23,13 +25,14 @@ public class DummyClientWorld extends ClientWorld {
         super(
                 DummyClientPlayNetworkHandler.getInstance(),
                 new Properties(Difficulty.EASY, false, true),
-                RegistryKey.of(Registry.WORLD_KEY, ShowMeYourSkin.id("dummy")),
-                BuiltinRegistries.DIMENSION_TYPE.getEntry(DimensionTypes.OVERWORLD)
-                        .orElseThrow(() -> new IllegalStateException("Wait what? Who deleted the overworld?")),
+                RegistryKey.of(RegistryKeys.WORLD, ShowMeYourSkin.id("dummy")),
+                ClientDynamicRegistryType.createCombinedDynamicRegistries()
+                        .getCombinedRegistryManager().get(RegistryKeys.DIMENSION_TYPE)
+                        .entryOf(DimensionTypes.OVERWORLD),
                 0,
                 0,
-                () -> null,
-                null,
+                () -> MinecraftClient.getInstance().getProfiler(),
+                MinecraftClient.getInstance().worldRenderer,
                 false,
                 0L
         );
