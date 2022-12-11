@@ -1,6 +1,6 @@
 package nl.enjarai.showmeyourskin.compat.elytratrinket;
 
-import nl.enjarai.showmeyourskin.compat.CompatMixinPlugin;
+import nl.enjarai.cicada.api.compat.CompatMixinPlugin;
 
 import java.util.Set;
 
