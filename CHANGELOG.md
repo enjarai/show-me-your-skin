@@ -1,1 +1,2 @@
 - Updated to 1.19.3
+- Added CICADA integration for inter-mod log conversations

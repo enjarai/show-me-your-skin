@@ -1,0 +1,73 @@
+{
+  "conversations": {
+    "cicada:greetings": {
+      "lines": [
+        {
+          "order": 15,
+          "text": "Present!"
+        },
+        {
+          "condition": {
+            "type": "cicada:mod_loaded",
+            "mod_id": "do_a_barrel_roll"
+          },
+          "order": 21,
+          "text": "What is rumbling even supposed to mean? You're a Minecraft mod, not a volcano."
+        }
+      ]
+    },
+    "cicada:good_old_days": {
+      "lines": [
+        {
+          "order": 20,
+          "text": "Hmm, I don't know. It always seemed a little cringey to me."
+        }
+      ]
+    },
+
+    "showmeyourskin:plagiarism": {
+      "priority": {
+        "priority": 100
+      },
+      "lines": [
+        {
+          "order": 0,
+          "text": "Getting ready to take over the world!"
+        },
+        {
+          "condition": {
+            "type": "cicada:mod_loaded",
+            "mod_id": "do_a_barrel_roll"
+          },
+          "order": 20,
+          "text": "Are you saying you do *not* want to take over the world?"
+        },
+        {
+          "condition": {
+            "type": "cicada:mod_loaded",
+            "mod_id": "do_a_barrel_roll"
+          },
+          "order": 40,
+          "text": "Shut up then and start preparing the army!"
+        }
+      ]
+    },
+
+    "cicada:christmas": {
+      "lines": [
+        {
+          "order": 30,
+          "text": "Christmas is for children."
+        }
+      ]
+    },
+    "cicada:new_year": {
+      "lines": [
+        {
+          "order": 10,
+          "text": "\uD83C\uDF86\uD83C\uDF86 Fireworks I can get behind! \uD83C\uDF86\uD83C\uDF86"
+        }
+      ]
+    }
+  }
+}

@@ -25,6 +25,9 @@
     ],
     "modmenu": [
       "nl.enjarai.showmeyourskin.compat.modmenu.ModMenuIntegration"
+    ],
+    "cicada": [
+      "nl.enjarai.showmeyourskin.ShowMeYourSkin"
     ]
   },
   "mixins": [
