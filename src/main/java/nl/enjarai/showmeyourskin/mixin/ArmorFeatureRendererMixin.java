@@ -55,7 +55,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
             cancellable = true
     )
     private void showmeyourskin$armorTransparency(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, boolean usesSecondLayer, A model, boolean legs, float red, float green, float blue, String overlay, CallbackInfo ci) {
-        var ctx = MixinContext.ARMOR.getAndClearContext();
+        var ctx = MixinContext.ARMOR.getContext();
 
         if (ctx != null && ctx.shouldModify()) {
             var t = ctx.getApplicableTransparency();
