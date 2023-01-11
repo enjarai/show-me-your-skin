@@ -1,1 +1,1 @@
-- Fixed an issue with leather armor not being properly hidden.
+- Fixed an issue elytra enchant glint not being properly hidden.
