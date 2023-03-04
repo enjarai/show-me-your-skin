@@ -5,12 +5,15 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class ArmorConfig {
     public static final ArmorConfig VANILLA_VALUES = new ArmorConfig();
 
     public final HashMap<EquipmentSlot, ArmorPieceConfig> pieces = new HashMap<>();
+    public final HashMap<EquipmentSlot, ArmorPieceConfig> trims = new HashMap<>();
+    public final HashMap<EquipmentSlot, ArmorPieceConfig> glints = new HashMap<>();
     public boolean showInCombat = true;
     public boolean showNameTag = true;
     public boolean showElytra = true;
@@ -21,34 +24,57 @@ public class ArmorConfig {
         pieces.put(EquipmentSlot.CHEST, new ArmorPieceConfig());
         pieces.put(EquipmentSlot.LEGS, new ArmorPieceConfig());
         pieces.put(EquipmentSlot.FEET, new ArmorPieceConfig());
+
+        trims.put(EquipmentSlot.HEAD, new ArmorPieceConfig());
+        trims.put(EquipmentSlot.CHEST, new ArmorPieceConfig());
+        trims.put(EquipmentSlot.LEGS, new ArmorPieceConfig());
+        trims.put(EquipmentSlot.FEET, new ArmorPieceConfig());
+
+        glints.put(EquipmentSlot.HEAD, new ArmorPieceConfig());
+        glints.put(EquipmentSlot.CHEST, new ArmorPieceConfig());
+        glints.put(EquipmentSlot.LEGS, new ArmorPieceConfig());
+        glints.put(EquipmentSlot.FEET, new ArmorPieceConfig());
     }
 
     /**
      * Use only for modifying values, when applying the transparency,
-     * use {@link ModConfig#getApplicableTransparency(UUID, EquipmentSlot)}
+     * use {@link ModConfig#getApplicablePieceTransparency(UUID, EquipmentSlot)}
      */
-    public byte getTransparency(EquipmentSlot slot) {
-        return pieces.get(slot).transparency;
+    public Map<EquipmentSlot, ArmorPieceConfig> getPieces() {
+        return pieces;
     }
 
-    public void setTransparency(EquipmentSlot slot, byte transparency) {
-        pieces.get(slot).transparency = transparency;
+    /**
+     * Use only for modifying values, when applying the transparency,
+     * use {@link ModConfig#getApplicableTrimTransparency(UUID, EquipmentSlot)}
+     */
+    public Map<EquipmentSlot, ArmorPieceConfig> getTrims() {
+        return trims;
     }
 
-    public boolean getGlint(EquipmentSlot slot) {
-        return pieces.get(slot).enchantGlint;
-    }
-
-    public void setGlint(EquipmentSlot slot, boolean glint) {
-        pieces.get(slot).enchantGlint = glint;
+    /**
+     * Use only for modifying values, when applying the transparency,
+     * use {@link ModConfig#getApplicableGlintTransparency(UUID, EquipmentSlot)}
+     */
+    public Map<EquipmentSlot, ArmorPieceConfig> getGlints() {
+        return glints;
     }
 
     public boolean shouldTransformCape(PlayerEntity player) {
-        return getTransparency(EquipmentSlot.CHEST) > 0 && !(player.getEquippedStack(EquipmentSlot.CHEST).isOf(Items.ELYTRA) && !showElytra);
+        return (getPieces().get(EquipmentSlot.CHEST).getTransparency() > 0 ||
+                getTrims().get(EquipmentSlot.CHEST).getTransparency() > 0) &&
+                !(player.getEquippedStack(EquipmentSlot.CHEST).isOf(Items.ELYTRA) && !showElytra);
     }
 
     public static class ArmorPieceConfig {
         public byte transparency = 100;
-        public boolean enchantGlint = true;
+
+        public byte getTransparency() {
+            return transparency;
+        }
+
+        public void setTransparency(byte transparency) {
+            this.transparency = transparency;
+        }
     }
 }

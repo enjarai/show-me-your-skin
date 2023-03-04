@@ -13,7 +13,6 @@ import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.client.ModKeyBindings;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ShowMeYourSkin implements ModInitializer, CicadaEntrypoint {
 	public static final String MODID = "showmeyourskin";
@@ -26,7 +25,7 @@ public class ShowMeYourSkin implements ModInitializer, CicadaEntrypoint {
 		ModKeyBindings.register();
 		ClientTickEvents.END_CLIENT_TICK.register(this::tick);
 
-		// Pre-load the dummy player for the config screen to avoid lag spikes later.
+		// Preload the dummy player for the config screen to avoid lag spikes later.
 		ClientLifecycleEvents.CLIENT_STARTED.register((client) -> DummyClientPlayerEntity.getInstance());
 	}
 

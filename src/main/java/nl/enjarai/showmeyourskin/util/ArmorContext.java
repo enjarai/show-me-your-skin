@@ -26,11 +26,15 @@ public class ArmorContext {
         return getEntity() instanceof PlayerEntity;
     }
 
-    public float getApplicableTransparency() {
-        return ModConfig.INSTANCE.getApplicableTransparency(getEntity().getUuid(), getSlot());
+    public float getApplicablePieceTransparency() {
+        return ModConfig.INSTANCE.getApplicablePieceTransparency(getEntity().getUuid(), getSlot());
     }
 
-    public boolean getApplicableGlint() {
-        return ModConfig.INSTANCE.getApplicable(getEntity().getUuid()).getGlint(getSlot());
+    public float getApplicableTrimTransparency() {
+        return ModConfig.INSTANCE.getApplicableTrimTransparency(getEntity().getUuid(), getSlot());
+    }
+
+    public float getApplicableGlintTransparency() {
+        return ModConfig.INSTANCE.getApplicableGlintTransparency(getEntity().getUuid(), getSlot());
     }
 }

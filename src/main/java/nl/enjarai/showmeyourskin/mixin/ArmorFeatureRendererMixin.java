@@ -44,7 +44,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
         var ctx = MixinContext.ARMOR.getContext();
 
         if (ctx != null && ctx.getEntity() instanceof PlayerEntity) {
-            return original && ctx.getApplicableGlint();
+            return original && ctx.getApplicableGlintTransparency() > 0;
         }
         return original;
     }
@@ -58,7 +58,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
         var ctx = MixinContext.ARMOR.getContext();
 
         if (ctx != null && ctx.shouldModify()) {
-            var t = ctx.getApplicableTransparency();
+            var t = ctx.getApplicablePieceTransparency();
 
             if (t < 1) {
                 if (t > 0) {
