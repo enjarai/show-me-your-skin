@@ -30,10 +30,10 @@ public class ArmorConfig {
         trims.put(EquipmentSlot.LEGS, new ArmorPieceConfig());
         trims.put(EquipmentSlot.FEET, new ArmorPieceConfig());
 
-        glints.put(EquipmentSlot.HEAD, new ArmorPieceConfig());
-        glints.put(EquipmentSlot.CHEST, new ArmorPieceConfig());
-        glints.put(EquipmentSlot.LEGS, new ArmorPieceConfig());
-        glints.put(EquipmentSlot.FEET, new ArmorPieceConfig());
+        glints.put(EquipmentSlot.HEAD, new ArmorPieceConfig((byte) 75));
+        glints.put(EquipmentSlot.CHEST, new ArmorPieceConfig((byte) 75));
+        glints.put(EquipmentSlot.LEGS, new ArmorPieceConfig((byte) 75));
+        glints.put(EquipmentSlot.FEET, new ArmorPieceConfig((byte) 75));
     }
 
     /**
@@ -68,6 +68,13 @@ public class ArmorConfig {
 
     public static class ArmorPieceConfig {
         public byte transparency = 100;
+
+        public ArmorPieceConfig() {
+        }
+
+        public ArmorPieceConfig(byte transparency) {
+            this.transparency = transparency;
+        }
 
         public byte getTransparency() {
             return transparency;

@@ -1,4 +1,4 @@
-package nl.enjarai.showmeyourskin.client;
+package nl.enjarai.showmeyourskin.client.cursed;
 
 import com.mojang.datafixers.util.Either;
 import net.minecraft.registry.Registry;

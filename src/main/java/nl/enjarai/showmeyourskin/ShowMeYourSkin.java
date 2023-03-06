@@ -9,7 +9,7 @@ import nl.enjarai.cicada.api.conversation.ConversationManager;
 import nl.enjarai.cicada.api.util.CicadaEntrypoint;
 import nl.enjarai.cicada.api.util.JsonSource;
 import nl.enjarai.cicada.api.util.ProperLogger;
-import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
+import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.client.ModKeyBindings;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import org.slf4j.Logger;

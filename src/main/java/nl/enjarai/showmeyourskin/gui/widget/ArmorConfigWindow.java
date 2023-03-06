@@ -53,13 +53,13 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         this.player = player;
         this.armorConfig = armorConfig;
 
-        sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 12, 0, 0,
+        sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 12, 0, 240,
                 new SliderSet(this, getWindowLeft(), getWindowTop(),
                         "gui.showmeyourskin.armorScreen.piece", armorConfig.getPieces())));
-        sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 42, 0, 0,
+        sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 42, 16, 240,
                 new SliderSet(this, getWindowLeft(), getWindowTop(),
                         "gui.showmeyourskin.armorScreen.trim", armorConfig.getTrims())));
-        sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 72, 0, 0,
+        sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 72, 32, 240,
                 new SliderSet(this, getWindowLeft(), getWindowTop(),
                         "gui.showmeyourskin.armorScreen.glint", armorConfig.getGlints())));
 

@@ -11,7 +11,7 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
+import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 
 import javax.annotation.Nullable;
 import java.util.List;

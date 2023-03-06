@@ -28,7 +28,9 @@ public class SliderSetTab extends DrawableHelper {
         RenderSystem.setShaderTexture(0, TABS_TEXTURE);
         DrawableHelper.drawTexture(matrices, x, y, 32, v, 32, 28);
         RenderSystem.setShaderTexture(0, ICON_TEXTURE);
+        RenderSystem.enableBlend();
         DrawableHelper.drawTexture(matrices, x + (selected ? 6 : 10), y + 5, iconX, iconY, 16, 16);
+        RenderSystem.disableBlend();
     }
 
     public boolean isMouseOver(double mouseX, double mouseY) {

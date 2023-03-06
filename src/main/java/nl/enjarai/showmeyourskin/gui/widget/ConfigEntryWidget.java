@@ -16,7 +16,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
-import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
+import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 

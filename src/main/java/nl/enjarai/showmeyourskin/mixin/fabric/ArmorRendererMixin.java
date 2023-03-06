@@ -26,7 +26,7 @@ public interface ArmorRendererMixin {
     private static void showmeyourskin$armorTransparency(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ItemStack stack, Model model, Identifier texture, CallbackInfo ci) {
         var ctx = MixinContext.ARMOR.getAndClearContext();
 
-        if (ctx != null && ctx.shouldModify()) {
+        if (ctx != null && ctx.shouldModify()) { // TODO
             var t = ctx.getApplicablePieceTransparency();
 
             if (t < 1) {

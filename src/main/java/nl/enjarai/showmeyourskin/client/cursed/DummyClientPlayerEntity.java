@@ -1,4 +1,4 @@
-package nl.enjarai.showmeyourskin.client;
+package nl.enjarai.showmeyourskin.client.cursed;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.MinecraftClient;
@@ -8,9 +8,14 @@ import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.trim.ArmorTrim;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -114,6 +119,15 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
     private static class AlwaysGlintingStack extends ItemStack {
         public AlwaysGlintingStack(ItemConvertible item) {
             super(item);
+            ArmorTrim.apply(DummyClientPlayNetworkHandler.getInstance().getRegistryManager(), this, new ArmorTrim(
+                    new CursedRegistryEntry<>(DummyClientPlayNetworkHandler.DUMMY_TRIM_MATERIAL, RegistryKeys.TRIM_MATERIAL),
+                    new CursedRegistryEntry<>(DummyClientPlayNetworkHandler.DUMMY_TRIM_PATTERN, RegistryKeys.TRIM_PATTERN)
+            ));
+        }
+
+        @Override
+        public boolean isIn(TagKey<Item> tag) {
+            return tag == ItemTags.TRIMMABLE_ARMOR;
         }
 
         @Override

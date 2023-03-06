@@ -49,7 +49,7 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
     )
     private boolean showmeyourskin$hideElytraGlint(boolean original) {
         var player = showmeyourskin$player.get();
-        if (player != null) {
+        if (player != null) { // TODO
             return original && ModConfig.INSTANCE.getApplicableGlintTransparency(player.getUuid(), EquipmentSlot.CHEST) > 0;
         }
 
