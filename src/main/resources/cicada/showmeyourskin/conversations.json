@@ -25,6 +25,28 @@
       ]
     },
 
+    "showmeyourskin:cursed_code": {
+      "priority": {
+        "priority": 20
+      },
+      "lines": [
+        {
+          "order": 0,
+          "text": "This mod contains multiple classes with \"Cursed\" in the name, this should tell you everything you need to know."
+        }
+      ]
+    },
+    "showmeyourskin:assembly": {
+      "priority": {
+        "priority": 50
+      },
+      "lines": [
+        {
+          "order": 0,
+          "text": "Comes with assembly instructions!"
+        }
+      ]
+    },
     "showmeyourskin:plagiarism": {
       "priority": {
         "priority": 100
@@ -49,6 +71,14 @@
           },
           "order": 40,
           "text": "Shut up then and start preparing the army!"
+        }
+      ]
+    },
+    "do_a_barrel_roll:modrinth": {
+      "lines": [
+        {
+          "order": 20,
+          "text": "Yea Curseforge doesn't even try anymore."
         }
       ]
     },
