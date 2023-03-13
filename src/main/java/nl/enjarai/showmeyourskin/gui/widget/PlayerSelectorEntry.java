@@ -6,14 +6,17 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
+import nl.enjarai.showmeyourskin.client.cursed.DummyClientWorld;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.gui.ConfigScreen;
 
@@ -77,11 +80,14 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
 
     @Override
     public PlayerEntity getDummyPlayer() {
-        PlayerEntity player = null;
-        if (client.world != null) {
-            player = client.world.getPlayerByUuid(uuid);
+        if (client.world != null && client.getNetworkHandler() != null) {
+            return new DummyClientPlayerEntity(
+                    client.world.getPlayerByUuid(uuid), uuid, texture.get(),
+                    client.world, client.getNetworkHandler()
+            );
+        } else {
+            return new DummyClientPlayerEntity(null, uuid, texture.get());
         }
-        return new DummyClientPlayerEntity(player, uuid, texture.get());
     }
 
     @Override

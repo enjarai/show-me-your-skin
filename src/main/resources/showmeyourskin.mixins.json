@@ -4,8 +4,6 @@
   "package": "nl.enjarai.showmeyourskin.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "cursed.ReferenceAccessor",
-    "cursed.WorldAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

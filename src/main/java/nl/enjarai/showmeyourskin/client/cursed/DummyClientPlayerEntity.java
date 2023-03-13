@@ -2,10 +2,12 @@ package nl.enjarai.showmeyourskin.client.cursed;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.util.DefaultSkinHelper;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -59,7 +61,11 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
     }
 
     public DummyClientPlayerEntity(@Nullable PlayerEntity player, UUID uuid, Identifier skinIdentifier) {
-        super(MinecraftClient.getInstance(), DummyClientWorld.getInstance(), DummyClientPlayNetworkHandler.getInstance(), null, null,false, false);
+        this(player, uuid, skinIdentifier, DummyClientWorld.getInstance(), DummyClientPlayNetworkHandler.getInstance());
+    }
+
+    public DummyClientPlayerEntity(@Nullable PlayerEntity player, UUID uuid, Identifier skinIdentifier, ClientWorld world, ClientPlayNetworkHandler networkHandler) {
+        super(MinecraftClient.getInstance(), world, networkHandler, null, null,false, false);
         this.player = player;
         setUuid(uuid);
         this.skinIdentifier = skinIdentifier;
@@ -119,10 +125,6 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
     private static class AlwaysGlintingStack extends ItemStack {
         public AlwaysGlintingStack(ItemConvertible item) {
             super(item);
-            ArmorTrim.apply(DummyClientPlayNetworkHandler.getInstance().getRegistryManager(), this, new ArmorTrim(
-                    new CursedRegistryEntry<>(DummyClientPlayNetworkHandler.DUMMY_TRIM_MATERIAL, RegistryKeys.TRIM_MATERIAL),
-                    new CursedRegistryEntry<>(DummyClientPlayNetworkHandler.DUMMY_TRIM_PATTERN, RegistryKeys.TRIM_PATTERN)
-            ));
         }
 
         @Override

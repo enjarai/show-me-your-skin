@@ -65,20 +65,14 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
 
         if (ctx != null && ctx.shouldModify()) {
             var t = ctx.getApplicablePieceTransparency();
-            var gt = ctx.getApplicableGlintTransparency();
 
             if (t < 1) {
                 if (t > 0) {
-                    var defaultGt = RenderSystem.getShaderGlintAlpha();
-                    RenderSystem.setShaderGlintAlpha(gt);
-
                     VertexConsumer vertexConsumer = ItemRenderer.getDirectItemGlintConsumer(
                             vertexConsumers, RenderLayer.getEntityTranslucent(getArmorTexture(item, legs, overlay)),
                             false, usesSecondLayer
                     );
                     model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, red, green, blue, t);
-
-                    RenderSystem.setShaderGlintAlpha(defaultGt);
                 }
 
                 ci.cancel();
@@ -103,7 +97,9 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
                             leggings ? trim.getLeggingsModelId(material) : trim.getGenericModelId(material));
                     VertexConsumer vertexConsumer = sprite.getTextureSpecificVertexConsumer(
                             ItemRenderer.getDirectItemGlintConsumer(
-                                    vertexConsumers, TexturedRenderLayers.getArmorTrims(), true, glint
+                                    vertexConsumers,
+                                    RenderLayer.getEntityTranslucent(TexturedRenderLayers.ARMOR_TRIMS_ATLAS_TEXTURE),
+                                    true, glint
                             )
                     );
                     model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, red, green, blue, t);

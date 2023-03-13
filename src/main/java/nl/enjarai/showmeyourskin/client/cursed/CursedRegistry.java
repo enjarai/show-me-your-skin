@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Stream;
 
-public record FakeRegistry<T>(RegistryKey<? extends Registry<T>> registryKey, Identifier defaultId, T defaultValue) implements Registry<T>, RegistryEntryOwner<T> {
+public record CursedRegistry<T>(RegistryKey<? extends Registry<T>> registryKey, Identifier defaultId, T defaultValue) implements Registry<T>, RegistryEntryOwner<T> {
 
     @Override
     public RegistryKey<? extends Registry<T>> getKey() {
@@ -173,7 +173,7 @@ public record FakeRegistry<T>(RegistryKey<? extends Registry<T>> registryKey, Id
         return new RegistryWrapper.Impl<T>() {
             @Override
             public RegistryKey<? extends Registry<? extends T>> getRegistryKey() {
-                return FakeRegistry.this.registryKey;
+                return CursedRegistry.this.registryKey;
             }
 
             @Override
