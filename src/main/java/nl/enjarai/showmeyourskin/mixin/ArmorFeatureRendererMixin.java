@@ -49,7 +49,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
     private boolean showmeyourskin$toggleGlint(boolean original) {
         var ctx = MixinContext.ARMOR.getContext();
 
-        if (ctx != null && ctx.getEntity() instanceof PlayerEntity) {
+        if (ctx != null && ctx.shouldModify()) {
             return original && ctx.getApplicableGlintTransparency() > 0;
         }
         return original;
