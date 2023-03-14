@@ -1,2 +1,2 @@
 - Updated to 1.19.4
-- Overhauled armor config ui to support trims and custom glint transparency
+- Tweaked armor config ui slightly
