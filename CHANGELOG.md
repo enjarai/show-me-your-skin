@@ -1,2 +1,1 @@
-- Updated to 1.19.4
-- Tweaked armor config ui slightly
+- Fixed the config ui sometimes using the wrong skin model.

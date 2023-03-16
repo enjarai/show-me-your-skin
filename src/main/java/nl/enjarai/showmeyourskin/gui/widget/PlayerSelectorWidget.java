@@ -64,7 +64,8 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
             var profile = dummyPlayer.getGameProfile();
             entries.add(new PlayerSelectorEntry(
                     client, this, profile.getId(),
-                    Text.literal(profile.getName()), dummyPlayer::getSkinTexture
+                    Text.translatable("gui.showmeyourskin.armorScreen.playerName", profile.getName()), dummyPlayer::getSkinTexture,
+                    dummyPlayer::getModel
             ));
         } else {
             for (UUID uuid : client.player.networkHandler.getPlayerUuids()) {
@@ -74,7 +75,8 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
                     String playerName = playerListEntry.getProfile().getName();
                     entries.add(new PlayerSelectorEntry(
                             client, this, playerUuid,
-                            Text.literal(playerName), playerListEntry::getSkinTexture
+                            Text.translatable("gui.showmeyourskin.armorScreen.playerName", playerName), playerListEntry::getSkinTexture,
+                            playerListEntry::getModel
                     ));
                 }
             }

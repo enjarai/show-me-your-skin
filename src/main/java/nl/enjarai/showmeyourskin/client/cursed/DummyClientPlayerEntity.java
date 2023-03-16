@@ -60,15 +60,16 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
         }, true);
     }
 
-    public DummyClientPlayerEntity(@Nullable PlayerEntity player, UUID uuid, Identifier skinIdentifier) {
-        this(player, uuid, skinIdentifier, DummyClientWorld.getInstance(), DummyClientPlayNetworkHandler.getInstance());
+    public DummyClientPlayerEntity(@Nullable PlayerEntity player, UUID uuid, Identifier skinIdentifier, @Nullable String model) {
+        this(player, uuid, skinIdentifier, model, DummyClientWorld.getInstance(), DummyClientPlayNetworkHandler.getInstance());
     }
 
-    public DummyClientPlayerEntity(@Nullable PlayerEntity player, UUID uuid, Identifier skinIdentifier, ClientWorld world, ClientPlayNetworkHandler networkHandler) {
+    public DummyClientPlayerEntity(@Nullable PlayerEntity player, UUID uuid, Identifier skinIdentifier, @Nullable String model, ClientWorld world, ClientPlayNetworkHandler networkHandler) {
         super(MinecraftClient.getInstance(), world, networkHandler, null, null,false, false);
         this.player = player;
         setUuid(uuid);
         this.skinIdentifier = skinIdentifier;
+        this.model = model;
     }
 
     @Override

@@ -34,16 +34,18 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
     public final PlayerSelectorWidget parent;
     private final Text name;
     public final Supplier<Identifier> texture;
+    public final Supplier<String> model;
     protected ArmorConfig armorConfig;
     public boolean selected = false;
 
-    public ConfigEntryWidget(MinecraftClient client, PlayerSelectorWidget parent, int x, int y, Text name, Supplier<Identifier> texture) {
+    public ConfigEntryWidget(MinecraftClient client, PlayerSelectorWidget parent, int x, int y, Text name, Supplier<Identifier> texture, Supplier<String> model) {
         this.client = client;
         this.parent = parent;
         this.x = x;
         this.y = y;
         this.name = name;
         this.texture = texture;
+        this.model = model;
         this.armorConfig = ModConfig.INSTANCE.global;
     }
 

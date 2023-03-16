@@ -28,8 +28,8 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
     public final UUID uuid;
     public final ButtonWidget clearButton;
 
-    public PlayerSelectorEntry(MinecraftClient client, PlayerSelectorWidget parent, UUID uuid, Text name, Supplier<Identifier> skinTexture) {
-        super(client, parent, -1, -1, name, skinTexture);
+    public PlayerSelectorEntry(MinecraftClient client, PlayerSelectorWidget parent, UUID uuid, Text name, Supplier<Identifier> skinTexture, Supplier<String> model) {
+        super(client, parent, -1, -1, name, skinTexture, model);
         this.armorConfig = ModConfig.INSTANCE.getOverride(uuid);
         this.uuid = uuid;
         this.clearButton = new TexturedButtonWidget(0, 0, 11, 11, 0, 128,
@@ -82,11 +82,11 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
     public PlayerEntity getDummyPlayer() {
         if (client.world != null && client.getNetworkHandler() != null) {
             return new DummyClientPlayerEntity(
-                    client.world.getPlayerByUuid(uuid), uuid, texture.get(),
+                    client.world.getPlayerByUuid(uuid), uuid, texture.get(), model.get(),
                     client.world, client.getNetworkHandler()
             );
         } else {
-            return new DummyClientPlayerEntity(null, uuid, texture.get());
+            return new DummyClientPlayerEntity(null, uuid, texture.get(), model.get());
         }
     }
 

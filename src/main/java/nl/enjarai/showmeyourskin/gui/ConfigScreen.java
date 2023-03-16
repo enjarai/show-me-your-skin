@@ -51,7 +51,8 @@ public class ConfigScreen extends Screen {
         );
         globalConfig = new ConfigEntryWidget(
                 client, playerSelector, getSelectorLeft() + 11, getSelectorTop() + 63,
-                Text.translatable("gui.showmeyourskin.armorScreen.global"), () -> GLOBAL_ICON
+                Text.translatable("gui.showmeyourskin.armorScreen.global"),
+                () -> GLOBAL_ICON, () -> null
         );
         playerSelector.linkDefault(globalConfig);
 
