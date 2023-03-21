@@ -46,6 +46,14 @@
         {
           "order": 0,
           "text": "Comes with assembly instructions!"
+        },
+        {
+          "condition": {
+            "type": "cicada:mod_loaded",
+            "mod_id": "clientpaintings"
+          },
+          "order": 20,
+          "text": "Yes, like IKEA."
         }
       ]
     },
