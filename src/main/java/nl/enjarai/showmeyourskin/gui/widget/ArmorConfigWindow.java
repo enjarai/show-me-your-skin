@@ -17,12 +17,13 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.client.cursed.AlwaysGlintingStack;
 import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
@@ -54,6 +55,8 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     private final List<Element> children = Lists.newArrayList();
     private final List<SliderSetTab> sliderSetTabs = Lists.newArrayList();
     private SliderSetTab selectedSliderSetTab;
+    private float lastPlayerRotation;
+    private long lastTabSwitchTime;
     private final Screen parent;
     public int x;
     public int y;
@@ -85,7 +88,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
                     sliders.add(getGlintButton(HideableEquipment.CHEST, 94, 35));
                     sliders.add(getGlintButton(HideableEquipment.LEGS, 94, 59));
                     sliders.add(getGlintButton(HideableEquipment.FEET, 94, 83));
-                }, ArmorConfigWindow::getDummyArmor))
+                }, ArmorConfigWindow::getDummyArmor, 0))
         );
         sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 42, 16, 240,
                 new SliderSet(this, getWindowLeft(), getWindowTop(), sliders -> {
@@ -96,7 +99,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
 
                     sliders.add(getGlintButton(HideableEquipment.ELYTRA, 94, 11));
                     sliders.add(getGlintButton(HideableEquipment.SHIELD, 94, 35));
-                }, ArmorConfigWindow::getDummyEquipment))
+                }, ArmorConfigWindow::getDummyEquipment, -180))
         );
 
         selectTab(sliderSetTabs.get(0));
@@ -153,6 +156,8 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
 
         var playerX = getWindowRight() - 59;
         var playerY = getWindowTop() + 155;
+        var playerRotation = getCurrentPlayerRotation();
+        var playerXLookSign = Math.sin((playerRotation / 180.0 + 0.5) * Math.PI);
 
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         textRenderer.draw(
@@ -160,11 +165,26 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
                 getWindowRight() - 110, getWindowTop() + 10, TEXT_COLOR
         );
 
-        InventoryScreen.drawEntity(matrices, playerX, playerY, 70, -mouseX + playerX, -mouseY + playerY - 110, player);
+        matrices.push();
+        matrices.translate(playerX, playerY, -950);
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(playerRotation));
+        matrices.translate(0, 0, 950.0);
+        InventoryScreen.drawEntity(matrices, 0, 0, 70,
+                (float) ((-mouseX + playerX) * playerXLookSign), -mouseY + playerY - 110, player);
+        matrices.pop();
 
         if (!isEditable()) {
             renderBackground(matrices, OVERLAY_TEXTURE, 999);
         }
+    }
+
+    private float getPlayerRotationDelta() {
+        var delta = MathHelper.clamp((System.currentTimeMillis() - lastTabSwitchTime) / 5000.0, 0, 1);
+        return (float) Math.sin(delta * Math.PI / 2);
+    }
+
+    private float getCurrentPlayerRotation() {
+        return MathHelper.lerp(getPlayerRotationDelta(), lastPlayerRotation, selectedSliderSetTab.sliderSet.rotatedBy);
     }
 
     public void renderBackground(MatrixStack matrices, Identifier backgroundTexture, int zIndex) {
@@ -224,6 +244,8 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     }
 
     public void selectTab(SliderSetTab sliderSetTab) {
+        if (selectedSliderSetTab != null) lastPlayerRotation = getCurrentPlayerRotation();
+        lastTabSwitchTime = System.currentTimeMillis();
         selectedSliderSetTab = sliderSetTab;
         player.equippedStackSupplier = sliderSetTab.sliderSet.dummyEquipmentGetter;
     }
