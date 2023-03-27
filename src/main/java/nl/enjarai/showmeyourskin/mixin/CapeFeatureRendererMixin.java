@@ -34,8 +34,8 @@ public abstract class CapeFeatureRendererMixin {
         if (player != null) {
             var uuid = player.getUuid();
             player = null;
-            return stack.isOf(item) && ModConfig.INSTANCE
-                    .getApplicable(uuid).getPieces().get(HideableEquipment.ELYTRA).getTransparency() > 0;
+            return stack.isOf(item) &&
+                    ModConfig.INSTANCE.getApplicablePieceTransparency(uuid, HideableEquipment.ELYTRA) > 0;
         }
         return stack.isOf(item);
     }

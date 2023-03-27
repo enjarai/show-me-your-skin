@@ -12,6 +12,8 @@
   "gui.showmeyourskin.armorScreen.piece.chest": "Chestplate: %d%%",
   "gui.showmeyourskin.armorScreen.piece.legs": "Leggings: %d%%",
   "gui.showmeyourskin.armorScreen.piece.feet": "Boots: %d%%",
+  "gui.showmeyourskin.armorScreen.piece.elytra": "Elytra: %d%%",
+  "gui.showmeyourskin.armorScreen.piece.shield": "Shield: %d%%",
   "gui.showmeyourskin.armorScreen.glintTooltip": "Enable enchantment glint",
   "gui.showmeyourskin.armorScreen.combatTooltip": "Automatically disable transparency in combat",
   "gui.showmeyourskin.armorScreen.nameTagTooltip": "Show player name tag",
