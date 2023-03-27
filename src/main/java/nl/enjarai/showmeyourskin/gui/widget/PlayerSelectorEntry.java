@@ -6,17 +6,16 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
-import nl.enjarai.showmeyourskin.client.cursed.DummyClientWorld;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.gui.ConfigScreen;
 
@@ -79,7 +78,7 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
     }
 
     @Override
-    public PlayerEntity getDummyPlayer() {
+    public DummyClientPlayerEntity getDummyPlayer() {
         if (client.world != null && client.getNetworkHandler() != null) {
             return new DummyClientPlayerEntity(
                     client.world.getPlayerByUuid(uuid), uuid, texture.get(), model.get(),

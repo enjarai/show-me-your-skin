@@ -1,9 +1,7 @@
 package nl.enjarai.showmeyourskin.mixin;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
-import net.minecraft.client.render.entity.model.AnimalModel;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.Sprite;
@@ -11,11 +9,11 @@ import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.trim.ArmorTrim;
 import net.minecraft.util.Identifier;
+import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.util.ArmorContext;
 import nl.enjarai.showmeyourskin.util.MixinContext;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +36,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
             at = @At(value = "HEAD")
     )
     private void showmeyourskin$captureContext(MatrixStack matrices, VertexConsumerProvider vertexConsumers, T entity, EquipmentSlot armorSlot, int light, A model, CallbackInfo ci) {
-        MixinContext.ARMOR.setContext(new ArmorContext(armorSlot, entity));
+        MixinContext.ARMOR.setContext(new ArmorContext(HideableEquipment.fromSlot(armorSlot), entity));
     }
 
     @ModifyVariable(

@@ -23,18 +23,14 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import java.util.function.Function;
 
 public class DummyClientPlayerEntity extends ClientPlayerEntity {
-    private static final ItemStack HEAD_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_HELMET);
-    private static final ItemStack CHEST_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_CHESTPLATE);
-    private static final ItemStack LEGS_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_LEGGINGS);
-    private static final ItemStack FEET_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_BOOTS);
-    private static final ItemStack OFF_HAND = new AlwaysGlintingStack(Items.SHIELD);
-
     private static DummyClientPlayerEntity instance;
     private Identifier skinIdentifier = null;
     private String model = null;
     private PlayerEntity player = null;
+    public Function<EquipmentSlot, ItemStack> equippedStackSupplier = slot -> ItemStack.EMPTY;
 
     public static DummyClientPlayerEntity getInstance() {
         if (instance == null) instance = new DummyClientPlayerEntity() {
@@ -113,29 +109,6 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
         if (player != null) {
             return player.getEquippedStack(slot);
         }
-        return switch (slot) {
-            case HEAD -> HEAD_ARMOR;
-            case CHEST -> CHEST_ARMOR;
-            case LEGS -> LEGS_ARMOR;
-            case FEET -> FEET_ARMOR;
-            case OFFHAND -> OFF_HAND;
-            default -> ItemStack.EMPTY;
-        };
-    }
-
-    private static class AlwaysGlintingStack extends ItemStack {
-        public AlwaysGlintingStack(ItemConvertible item) {
-            super(item);
-        }
-
-        @Override
-        public boolean isIn(TagKey<Item> tag) {
-            return tag == ItemTags.TRIMMABLE_ARMOR;
-        }
-
-        @Override
-        public boolean hasGlint() {
-            return true;
-        }
+        return equippedStackSupplier.apply(slot);
     }
 }

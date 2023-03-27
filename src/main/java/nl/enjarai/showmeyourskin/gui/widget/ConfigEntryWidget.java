@@ -116,7 +116,7 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
         return armorConfig;
     }
 
-    public PlayerEntity getDummyPlayer() {
+    public DummyClientPlayerEntity getDummyPlayer() {
         return DummyClientPlayerEntity.getInstance();
     }
 

@@ -40,16 +40,18 @@ public class ModConfig {
         return !globalEnabled || applicable.showInCombat && CombatLogger.INSTANCE.isInCombat(uuid) ? ArmorConfig.VANILLA_VALUES : applicable;
     }
 
-    public float getApplicablePieceTransparency(UUID uuid, EquipmentSlot slot) {
-        return getApplicableTransparency(uuid, applicable -> applicable.getPieces().get(slot));
+    public float getApplicablePieceTransparency(UUID uuid, HideableEquipment slot) {
+        return getApplicableTransparency(uuid, applicable -> applicable.getPieces()
+                .getOrDefault(slot, ArmorConfig.ArmorPieceConfig.VANILLA_VALUES));
     }
 
     public float getApplicableTrimTransparency(UUID uuid, EquipmentSlot slot) {
         return getApplicableTransparency(uuid, applicable -> applicable.getTrims().get(slot));
     }
 
-    public float getApplicableGlintTransparency(UUID uuid, EquipmentSlot slot) {
-        return getApplicableTransparency(uuid, applicable -> applicable.getGlints().get(slot));
+    public float getApplicableGlintTransparency(UUID uuid, HideableEquipment slot) {
+        return getApplicableTransparency(uuid, applicable -> applicable.getGlints()
+                .getOrDefault(slot, ArmorConfig.ArmorPieceConfig.VANILLA_VALUES));
     }
 
     private float getApplicableTransparency(UUID uuid, Function<ArmorConfig, ArmorConfig.ArmorPieceConfig> configRetriever) {
@@ -85,6 +87,24 @@ public class ModConfig {
     public void deleteOverride(UUID uuid) {
         overrides.remove(uuid);
     }
+
+    public void ensureValid() {
+        if (combatCooldown < 0) {
+            combatCooldown = 0;
+        }
+        if (fadeOutTime < 0) {
+            fadeOutTime = 0;
+        }
+        if (fadeOutTime > combatCooldown) {
+            fadeOutTime = combatCooldown;
+        }
+
+        global.ensureValid();
+        overrides.values().forEach(ArmorConfig::ensureValid);
+
+        save();
+    }
+
 
 
     public static void load() {

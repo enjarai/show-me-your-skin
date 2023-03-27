@@ -11,36 +11,38 @@ import java.util.UUID;
 public class ArmorConfig {
     public static final ArmorConfig VANILLA_VALUES = new ArmorConfig();
 
-    public final HashMap<EquipmentSlot, ArmorPieceConfig> pieces = new HashMap<>();
+    public final HashMap<HideableEquipment, ArmorPieceConfig> pieces = new HashMap<>();
     public final HashMap<EquipmentSlot, ArmorPieceConfig> trims = new HashMap<>();
-    public final HashMap<EquipmentSlot, ArmorPieceConfig> glints = new HashMap<>();
+    public final HashMap<HideableEquipment, ArmorPieceConfig> glints = new HashMap<>();
     public boolean showInCombat = true;
     public boolean showNameTag = true;
-    public boolean showElytra = true;
-    public boolean showShieldGlint = true;
 
     public ArmorConfig() {
-        pieces.put(EquipmentSlot.HEAD, new ArmorPieceConfig());
-        pieces.put(EquipmentSlot.CHEST, new ArmorPieceConfig());
-        pieces.put(EquipmentSlot.LEGS, new ArmorPieceConfig());
-        pieces.put(EquipmentSlot.FEET, new ArmorPieceConfig());
+        pieces.put(HideableEquipment.HEAD, new ArmorPieceConfig());
+        pieces.put(HideableEquipment.CHEST, new ArmorPieceConfig());
+        pieces.put(HideableEquipment.LEGS, new ArmorPieceConfig());
+        pieces.put(HideableEquipment.FEET, new ArmorPieceConfig());
+        pieces.put(HideableEquipment.ELYTRA, new ArmorPieceConfig());
+        pieces.put(HideableEquipment.SHIELD, new ArmorPieceConfig());
 
         trims.put(EquipmentSlot.HEAD, new ArmorPieceConfig());
         trims.put(EquipmentSlot.CHEST, new ArmorPieceConfig());
         trims.put(EquipmentSlot.LEGS, new ArmorPieceConfig());
         trims.put(EquipmentSlot.FEET, new ArmorPieceConfig());
 
-        glints.put(EquipmentSlot.HEAD, new ArmorPieceConfig((byte) 75));
-        glints.put(EquipmentSlot.CHEST, new ArmorPieceConfig((byte) 75));
-        glints.put(EquipmentSlot.LEGS, new ArmorPieceConfig((byte) 75));
-        glints.put(EquipmentSlot.FEET, new ArmorPieceConfig((byte) 75));
+        glints.put(HideableEquipment.HEAD, new ArmorPieceConfig());
+        glints.put(HideableEquipment.CHEST, new ArmorPieceConfig());
+        glints.put(HideableEquipment.LEGS, new ArmorPieceConfig());
+        glints.put(HideableEquipment.FEET, new ArmorPieceConfig());
+        glints.put(HideableEquipment.ELYTRA, new ArmorPieceConfig());
+        glints.put(HideableEquipment.SHIELD, new ArmorPieceConfig());
     }
 
     /**
      * Use only for modifying values, when applying the transparency,
-     * use {@link ModConfig#getApplicablePieceTransparency(UUID, EquipmentSlot)}
+     * use {@link ModConfig#getApplicablePieceTransparency(UUID, HideableEquipment)}
      */
-    public Map<EquipmentSlot, ArmorPieceConfig> getPieces() {
+    public Map<HideableEquipment, ArmorPieceConfig> getPieces() {
         return pieces;
     }
 
@@ -54,19 +56,42 @@ public class ArmorConfig {
 
     /**
      * Use only for modifying values, when applying the transparency,
-     * use {@link ModConfig#getApplicableGlintTransparency(UUID, EquipmentSlot)}
+     * use {@link ModConfig#getApplicableGlintTransparency(UUID, HideableEquipment)}
      */
-    public Map<EquipmentSlot, ArmorPieceConfig> getGlints() {
+    public Map<HideableEquipment, ArmorPieceConfig> getGlints() {
         return glints;
     }
 
     public boolean shouldTransformCape(PlayerEntity player) {
-        return (getPieces().get(EquipmentSlot.CHEST).getTransparency() > 0 ||
+        return (getPieces().get(HideableEquipment.CHEST).getTransparency() > 0 ||
                 getTrims().get(EquipmentSlot.CHEST).getTransparency() > 0) &&
-                !(player.getEquippedStack(EquipmentSlot.CHEST).isOf(Items.ELYTRA) && !showElytra);
+                !(player.getEquippedStack(EquipmentSlot.CHEST).isOf(Items.ELYTRA)
+                        && getPieces().get(HideableEquipment.ELYTRA).getTransparency() <= 0);
+    }
+
+    public void ensureValid() {
+        for (HideableEquipment slot : HideableEquipment.values()) {
+            if (!pieces.containsKey(slot)) {
+                pieces.put(slot, new ArmorPieceConfig());
+            }
+        }
+
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            if (!trims.containsKey(slot)) {
+                trims.put(slot, new ArmorPieceConfig());
+            }
+        }
+
+        for (HideableEquipment slot : HideableEquipment.values()) {
+            if (!glints.containsKey(slot)) {
+                glints.put(slot, new ArmorPieceConfig());
+            }
+        }
     }
 
     public static class ArmorPieceConfig {
+        public static final ArmorPieceConfig VANILLA_VALUES = new ArmorPieceConfig();
+
         public byte transparency = 100;
 
         public ArmorPieceConfig() {

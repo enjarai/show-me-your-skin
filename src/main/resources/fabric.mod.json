@@ -22,6 +22,9 @@
     "main": [
       "nl.enjarai.showmeyourskin.ShowMeYourSkin"
     ],
+    "preLaunch": [
+      "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
+    ],
     "modmenu": [
       "nl.enjarai.showmeyourskin.compat.modmenu.ModMenuIntegration"
     ],

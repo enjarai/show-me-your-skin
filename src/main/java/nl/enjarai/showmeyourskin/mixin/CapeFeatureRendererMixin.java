@@ -6,6 +6,7 @@ import net.minecraft.client.render.entity.feature.CapeFeatureRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,7 +34,8 @@ public abstract class CapeFeatureRendererMixin {
         if (player != null) {
             var uuid = player.getUuid();
             player = null;
-            return stack.isOf(item) && ModConfig.INSTANCE.getApplicable(uuid).showElytra;
+            return stack.isOf(item) && ModConfig.INSTANCE
+                    .getApplicable(uuid).getPieces().get(HideableEquipment.ELYTRA).getTransparency() > 0;
         }
         return stack.isOf(item);
     }

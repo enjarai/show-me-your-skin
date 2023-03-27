@@ -18,11 +18,16 @@ import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
+import nl.enjarai.showmeyourskin.client.cursed.AlwaysGlintingStack;
+import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
+import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 
 import java.util.List;
@@ -38,16 +43,25 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     private static final Text SHOW_ELYTRA_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.showElytraTooltip");
     private static final Text SHIELD_GLINT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.shieldGlintTooltip");
 
+    private static final ItemStack HEAD_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_HELMET);
+    private static final ItemStack CHEST_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_CHESTPLATE);
+    private static final ItemStack LEGS_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_LEGGINGS);
+    private static final ItemStack FEET_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_BOOTS);
+    private static final ItemStack SHIELD = new AlwaysGlintingStack(Items.SHIELD);
+    private static final ItemStack ELYTRA = new AlwaysGlintingStack(Items.ELYTRA);
+
     private final List<ClickableWidget> buttons = Lists.newArrayList();
     private final List<Element> children = Lists.newArrayList();
+    private final List<SliderSetTab> sliderSetTabs = Lists.newArrayList();
+    private SliderSetTab selectedSliderSetTab;
     private final Screen parent;
     public int x;
     public int y;
     private final Text name;
-    private final PlayerEntity player;
+    private final DummyClientPlayerEntity player;
     private final ArmorConfig armorConfig;
 
-    public ArmorConfigWindow(Screen parent, int x, int y, Text name, PlayerEntity player, ArmorConfig armorConfig) {
+    public ArmorConfigWindow(Screen parent, int x, int y, Text name, DummyClientPlayerEntity player, ArmorConfig armorConfig) {
         super();
         this.parent = parent;
         this.x = x;
@@ -56,28 +70,41 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         this.player = player;
         this.armorConfig = armorConfig;
 
-        buttons.add(getSlider(EquipmentSlot.HEAD,
-                14, 11, "gui.showmeyourskin.armorScreen.piece.head"));
-        buttons.add(getSlider(EquipmentSlot.CHEST,
-                14, 35, "gui.showmeyourskin.armorScreen.piece.chest"));
-        buttons.add(getSlider(EquipmentSlot.LEGS,
-                14, 59, "gui.showmeyourskin.armorScreen.piece.legs"));
-        buttons.add(getSlider(EquipmentSlot.FEET,
-                14, 83, "gui.showmeyourskin.armorScreen.piece.feet"));
+        sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 12, 0, 240,
+                new SliderSet(this, getWindowLeft(), getWindowTop(), sliders -> {
+                    sliders.add(getSlider(HideableEquipment.HEAD,
+                            14, 11, "gui.showmeyourskin.armorScreen.piece.head"));
+                    sliders.add(getSlider(HideableEquipment.CHEST,
+                            14, 35, "gui.showmeyourskin.armorScreen.piece.chest"));
+                    sliders.add(getSlider(HideableEquipment.LEGS,
+                            14, 59, "gui.showmeyourskin.armorScreen.piece.legs"));
+                    sliders.add(getSlider(HideableEquipment.FEET,
+                            14, 83, "gui.showmeyourskin.armorScreen.piece.feet"));
 
-        buttons.add(getGlintButton(EquipmentSlot.HEAD, 94, 11));
-        buttons.add(getGlintButton(EquipmentSlot.CHEST, 94, 35));
-        buttons.add(getGlintButton(EquipmentSlot.LEGS, 94, 59));
-        buttons.add(getGlintButton(EquipmentSlot.FEET, 94, 83));
+                    sliders.add(getGlintButton(HideableEquipment.HEAD, 94, 11));
+                    sliders.add(getGlintButton(HideableEquipment.CHEST, 94, 35));
+                    sliders.add(getGlintButton(HideableEquipment.LEGS, 94, 59));
+                    sliders.add(getGlintButton(HideableEquipment.FEET, 94, 83));
+                }, ArmorConfigWindow::getDummyArmor))
+        );
+        sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 42, 16, 240,
+                new SliderSet(this, getWindowLeft(), getWindowTop(), sliders -> {
+                    sliders.add(getSlider(HideableEquipment.ELYTRA,
+                            14, 11, "gui.showmeyourskin.armorScreen.piece.elytra"));
+                    sliders.add(getSlider(HideableEquipment.SHIELD,
+                            14, 35, "gui.showmeyourskin.armorScreen.piece.shield"));
+
+                    sliders.add(getGlintButton(HideableEquipment.ELYTRA, 94, 11));
+                    sliders.add(getGlintButton(HideableEquipment.SHIELD, 94, 35));
+                }, ArmorConfigWindow::getDummyEquipment))
+        );
+
+        selectTab(sliderSetTabs.get(0));
 
         buttons.add(new ToggleButtonWidget(parent, getWindowLeft() + 14, getWindowTop() + 115, 40, 38,
                 TEXTURE, armorConfig.showInCombat, b -> armorConfig.showInCombat = b, COMBAT_TOOLTIP));
         buttons.add(new ToggleButtonWidget(parent, getWindowLeft() + 40, getWindowTop() + 115, 80, 38,
                 TEXTURE, armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP));
-        buttons.add(new ToggleButtonWidget(parent, getWindowLeft() + 66, getWindowTop() + 115, 120, 38,
-                TEXTURE, armorConfig.showElytra, b -> armorConfig.showElytra = b, SHOW_ELYTRA_TOOLTIP));
-        buttons.add(new ToggleButtonWidget(parent, getWindowLeft() + 92, getWindowTop() + 115, 160, 38,
-                TEXTURE, armorConfig.showShieldGlint, b -> armorConfig.showShieldGlint = b, SHIELD_GLINT_TOOLTIP));
 
         children.addAll(buttons);
     }
@@ -104,6 +131,10 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        for (var sliderSetTabs : sliderSetTabs) {
+            sliderSetTabs.render(matrices, mouseX, mouseY, sliderSetTabs == selectedSliderSetTab);
+        }
+
         renderBackground(matrices, BACKGROUND_TEXTURE, -999);
         for (var drawable : buttons) {
             drawable.render(
@@ -113,6 +144,12 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
                     delta
             );
         }
+        selectedSliderSetTab.sliderSet.render(
+                matrices,
+                isEditable() ? mouseX : -1,
+                isEditable() ? mouseY : -1,
+                delta
+        );
 
         var playerX = getWindowRight() - 59;
         var playerY = getWindowTop() + 155;
@@ -145,9 +182,9 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         RenderSystem.disableBlend();
     }
 
-    protected SliderWidget getSlider(EquipmentSlot slot, int x, int y, String translationKey) {
+    protected SliderWidget getSlider(HideableEquipment slot, int x, int y, String translationKey) {
         var pieceConfig = armorConfig.getPieces().get(slot);
-        var trimConfig = armorConfig.getTrims().get(slot);
+        var trimConfig = armorConfig.getTrims().get(slot.toSlot());
         var initialValue = pieceConfig.getTransparency();
 
         return new SliderWidget(getWindowLeft() + x, getWindowTop() + y,
@@ -160,7 +197,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
             @Override
             protected void applyValue() {
                 pieceConfig.setTransparency((byte) (this.value * 100));
-                trimConfig.setTransparency((byte) (this.value * 100));
+                if (trimConfig != null) trimConfig.setTransparency((byte) (this.value * 100));
             }
 
             @Override
@@ -174,7 +211,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         };
     }
 
-    protected TexturedButtonWidget getGlintButton(EquipmentSlot slot, int x, int y) {
+    protected TexturedButtonWidget getGlintButton(HideableEquipment slot, int x, int y) {
         return new ToggleButtonWidget(
                 parent, getWindowLeft() + x, getWindowTop() + y, 0, 38,
                 TEXTURE, armorConfig.getGlints().get(slot).getTransparency() > 0,
@@ -184,6 +221,11 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
 
     public boolean isEditable() {
         return ModConfig.INSTANCE.globalEnabled;
+    }
+
+    public void selectTab(SliderSetTab sliderSetTab) {
+        selectedSliderSetTab = sliderSetTab;
+        player.equippedStackSupplier = sliderSetTab.sliderSet.dummyEquipmentGetter;
     }
 
     @Override
@@ -201,6 +243,20 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
             return false;
         }
 
+        for (var sliderSetTab : sliderSetTabs) {
+            if (sliderSetTab.isMouseOver(mouseX, mouseY)) {
+                MinecraftClient.getInstance().getSoundManager()
+                        .play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+
+                selectTab(sliderSetTab);
+                return true;
+            }
+        }
+
+        if (selectedSliderSetTab.sliderSet.mouseClicked(mouseX, mouseY, button)) {
+            return true;
+        }
+
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
@@ -210,11 +266,33 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
             return false;
         }
 
+        if (selectedSliderSetTab.sliderSet.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
+            return true;
+        }
+
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
     @Override
     public SelectionType getType() {
         return SelectionType.NONE;
+    }
+
+    private static ItemStack getDummyArmor(EquipmentSlot slot) {
+        return switch (slot) {
+            case HEAD -> HEAD_ARMOR;
+            case CHEST -> CHEST_ARMOR;
+            case LEGS -> LEGS_ARMOR;
+            case FEET -> FEET_ARMOR;
+            default -> ItemStack.EMPTY;
+        };
+    }
+
+    private static ItemStack getDummyEquipment(EquipmentSlot slot) {
+        return switch (slot) {
+            case OFFHAND -> SHIELD;
+            case CHEST -> ELYTRA;
+            default -> ItemStack.EMPTY;
+        };
     }
 }

@@ -9,6 +9,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,11 +32,11 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
     )
     private void showmeyourskin$hideElytra(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
         if (livingEntity instanceof PlayerEntity player) {
-            if (!ModConfig.INSTANCE.getApplicable(player.getUuid()).showElytra) {
-                ci.cancel();
-            } else {
-                showmeyourskin$player.set(player);
-            }
+//            if (!ModConfig.INSTANCE.getApplicable(player.getUuid()).showElytra) {
+//                ci.cancel();
+//            } else {
+//                showmeyourskin$player.set(player);
+//            } TODO
         }
     }
 
@@ -49,8 +50,8 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
     )
     private boolean showmeyourskin$hideElytraGlint(boolean original) {
         var player = showmeyourskin$player.get();
-        if (player != null) {
-            return original && ModConfig.INSTANCE.getApplicableGlintTransparency(player.getUuid(), EquipmentSlot.CHEST) > 0;
+        if (player != null) { // TODO
+            return original && ModConfig.INSTANCE.getApplicableGlintTransparency(player.getUuid(), HideableEquipment.ELYTRA) > 0;
         }
 
         return original;

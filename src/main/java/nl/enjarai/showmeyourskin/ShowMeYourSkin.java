@@ -21,6 +21,7 @@ public class ShowMeYourSkin implements ModInitializer, CicadaEntrypoint {
 	@Override
 	public void onInitialize() {
 		ModConfig.load();
+		ModConfig.INSTANCE.ensureValid();
 
 		ModKeyBindings.register();
 		ClientTickEvents.END_CLIENT_TICK.register(this::tick);
