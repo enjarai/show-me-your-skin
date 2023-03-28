@@ -2,6 +2,10 @@ package nl.enjarai.showmeyourskin.gui.widget;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.block.entity.BannerBlockEntity;
+import net.minecraft.block.entity.BannerPattern;
+import net.minecraft.block.entity.BannerPatterns;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.AbstractParentElement;
 import net.minecraft.client.gui.Drawable;
@@ -13,14 +17,24 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
+import net.minecraft.client.render.DiffuseLighting;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.ShieldItem;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
@@ -30,6 +44,9 @@ import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.config.ModConfig;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 import java.util.List;
 
@@ -41,8 +58,6 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     private static final Text GLINT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.glintTooltip");
     private static final Text COMBAT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.combatTooltip");
     private static final Text NAME_TAG_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.nameTagTooltip");
-    private static final Text SHOW_ELYTRA_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.showElytraTooltip");
-    private static final Text SHIELD_GLINT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.shieldGlintTooltip");
 
     private static final ItemStack HEAD_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_HELMET);
     private static final ItemStack CHEST_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_CHESTPLATE);
@@ -50,6 +65,14 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     private static final ItemStack FEET_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_BOOTS);
     private static final ItemStack SHIELD = new AlwaysGlintingStack(Items.SHIELD);
     private static final ItemStack ELYTRA = new AlwaysGlintingStack(Items.ELYTRA);
+
+    static {
+        var shieldNbt = new NbtCompound();
+        NbtList nbtList = new BannerPattern.Patterns().add(BannerPatterns.RHOMBUS, DyeColor.CYAN).toNbt();
+        shieldNbt.put("Patterns", nbtList);
+        shieldNbt.putInt("Base", DyeColor.WHITE.getId());
+        BlockItem.setBlockEntityNbt(SHIELD, BlockEntityType.BANNER, shieldNbt);
+    }
 
     private final List<ClickableWidget> buttons = Lists.newArrayList();
     private final List<Element> children = Lists.newArrayList();
@@ -157,7 +180,6 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         var playerX = getWindowRight() - 59;
         var playerY = getWindowTop() + 155;
         var playerRotation = getCurrentPlayerRotation();
-        var playerXLookSign = Math.sin((playerRotation / 180.0 + 0.5) * Math.PI);
 
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         textRenderer.draw(
@@ -169,8 +191,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         matrices.translate(playerX, playerY, -950);
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(playerRotation));
         matrices.translate(0, 0, 950.0);
-        InventoryScreen.drawEntity(matrices, 0, 0, 70,
-                (float) ((-mouseX + playerX) * playerXLookSign), -mouseY + playerY - 110, player);
+        drawEntity(matrices, 0, 0, 70, -mouseX + playerX, -mouseY + playerY - 110, player);
         matrices.pop();
 
         if (!isEditable()) {
@@ -179,7 +200,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     }
 
     private float getPlayerRotationDelta() {
-        var delta = MathHelper.clamp((System.currentTimeMillis() - lastTabSwitchTime) / 5000.0, 0, 1);
+        var delta = MathHelper.clamp((System.currentTimeMillis() - lastTabSwitchTime) / 500.0, 0, 1);
         return (float) Math.sin(delta * Math.PI / 2);
     }
 
@@ -298,6 +319,59 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     @Override
     public SelectionType getType() {
         return SelectionType.NONE;
+    }
+
+    public void drawEntity(MatrixStack matrices, int x, int y, int size, double mouseX, double mouseY, LivingEntity entity) {
+        float f = (float) (Math.atan(mouseX / 40.0F) * Math.sin((getCurrentPlayerRotation() / 180.0 + 0.5) * Math.PI));
+        float g = (float)Math.atan(mouseY / 40.0F);
+        Quaternionf quaternionf = (new Quaternionf()).rotateZ(3.1415927F);
+        Quaternionf quaternionf2 = (new Quaternionf()).rotateX(g * 20.0F * 0.017453292F);
+        quaternionf.mul(quaternionf2);
+        float h = entity.bodyYaw;
+        float i = entity.getYaw();
+        float j = entity.getPitch();
+        float k = entity.prevHeadYaw;
+        float l = entity.headYaw;
+        entity.bodyYaw = 180.0F + f * 20.0F;
+        entity.setYaw(180.0F + f * 40.0F);
+        entity.setPitch(-g * 20.0F);
+        entity.headYaw = entity.getYaw();
+        entity.prevHeadYaw = entity.getYaw();
+        drawEntity(matrices, x, y, size, quaternionf, quaternionf2, entity);
+        entity.bodyYaw = h;
+        entity.setYaw(i);
+        entity.setPitch(j);
+        entity.prevHeadYaw = k;
+        entity.headYaw = l;
+    }
+
+    @SuppressWarnings("deprecation")
+    public static void drawEntity(MatrixStack matrices, int x, int y, int size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity) {
+        MatrixStack matrixStack = RenderSystem.getModelViewStack();
+        matrixStack.push();
+        matrixStack.translate(0.0, 0.0, 1000.0);
+        RenderSystem.applyModelViewMatrix();
+        matrices.push();
+        matrices.translate(x, y, -950.0);
+        matrices.multiplyPositionMatrix(new Matrix4f().scaling(size, size, -size));
+        matrices.translate(0, -1, 0);
+        matrices.multiply(quaternionf);
+        matrices.translate(0, -1, 0);
+        DiffuseLighting.method_34742();
+        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
+        if (quaternionf2 != null) {
+            quaternionf2.conjugate();
+            entityRenderDispatcher.setRotation(quaternionf2);
+        }
+        entityRenderDispatcher.setRenderShadows(false);
+        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, 1.0f, matrices, immediate, 0xF000F0));
+        immediate.draw();
+        entityRenderDispatcher.setRenderShadows(true);
+        matrices.pop();
+        DiffuseLighting.enableGuiDepthLighting();
+        matrixStack.pop();
+        RenderSystem.applyModelViewMatrix();
     }
 
     private static ItemStack getDummyArmor(EquipmentSlot slot) {
