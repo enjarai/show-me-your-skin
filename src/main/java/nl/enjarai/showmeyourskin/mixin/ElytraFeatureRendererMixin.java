@@ -38,11 +38,11 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
     )
     private void showmeyourskin$hideElytra(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
         if (livingEntity instanceof PlayerEntity player) {
-//            if (!ModConfig.INSTANCE.getApplicable(player.getUuid()).showElytra) {
-//                ci.cancel();
-//            } else {
-//                showmeyourskin$player.set(player);
-//            } TODO
+            if (ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.ELYTRA) <= 0) {
+                ci.cancel();
+            } else {
+                showmeyourskin$player.set(player);
+            }
         }
     }
 
@@ -63,25 +63,24 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
         return original;
     }
 
-//    @WrapOperation(
-//            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
-//            at = @At(
-//                    value = "INVOKE",
-//                    target = "Lnet/minecraft/client/render/item/ItemRenderer;getArmorGlintConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;ZZ)Lnet/minecraft/client/render/VertexConsumer;"
-//            )
-//    )
-//    private VertexConsumer showmeyourskin$enableElytraTransparency(ItemRenderer instance, VertexConsumerProvider vertexConsumerProvider, RenderLayer renderLayer, boolean solid, boolean hasGlint, Operation<VertexConsumer> original) {
-//        var player = showmeyourskin$player.get();
-//        if (player != null) {
-//            var transparency = ModConfig.INSTANCE.getApplicableGlintTransparency(player.getUuid(), HideableEquipment.ELYTRA);
-//            if (transparency > 0) {
-//                return ItemRenderer.getDirectItemGlintConsumer(vertexConsumerProvider,
-//                        RenderLayer.getEntityTranslucent(), false, hasGlint);
-//            }
-//        }
-//
-//        return original.apply();
-//    }
+    @WrapOperation(
+            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/render/item/ItemRenderer;getArmorGlintConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;ZZ)Lnet/minecraft/client/render/VertexConsumer;"
+            )
+    )
+    private VertexConsumer showmeyourskin$enableElytraTransparency1(VertexConsumerProvider vertexConsumerProvider, RenderLayer renderLayer, boolean solid, boolean hasGlint, Operation<VertexConsumer> original) {
+        var player = showmeyourskin$player.get();
+        if (player != null) {
+            var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.ELYTRA);
+            if (transparency < 1) {
+                return ItemRenderer.getDirectItemGlintConsumer(vertexConsumerProvider, renderLayer, solid, hasGlint);
+            }
+        }
+
+        return original.call(vertexConsumerProvider, renderLayer, solid, hasGlint);
+    }
 
     @WrapOperation(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
@@ -90,10 +89,10 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
                     target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"
             )
     )
-    private RenderLayer showmeyourskin$enableElytraTransparency(Identifier texture, Operation<RenderLayer> original) {
+    private RenderLayer showmeyourskin$enableElytraTransparency2(Identifier texture, Operation<RenderLayer> original) {
         var player = showmeyourskin$player.get();
         if (player != null) {
-            var transparency = ModConfig.INSTANCE.getApplicableGlintTransparency(player.getUuid(), HideableEquipment.ELYTRA);
+            var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.ELYTRA);
             if (transparency < 1) {
                 return RenderLayer.getEntityTranslucent(texture);
             }
@@ -113,7 +112,7 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
     private float showmeyourskin$applyElytraTransparency(float original) {
         var player = showmeyourskin$player.get();
         if (player != null) {
-            var transparency = ModConfig.INSTANCE.getApplicableGlintTransparency(player.getUuid(), HideableEquipment.ELYTRA);
+            var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.ELYTRA);
             if (transparency < 1) {
                 return transparency;
             }

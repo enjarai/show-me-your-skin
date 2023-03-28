@@ -81,9 +81,14 @@ public class ConfigScreen extends Screen {
     }
 
     private void loadArmorConfigWindow(ConfigEntryWidget entry) {
+        var tabIndex = 0;
+        if (armorConfigWindow != null) {
+            tabIndex = armorConfigWindow.getTabIndex();
+        }
+
         armorConfigWindow = new ArmorConfigWindow(
                 this, getSelectorLeft(), Math.max(getSelectorTop() + 100, (height - 160) / 2),
-                entry.getName(), entry.getDummyPlayer(), entry.getArmorConfig()
+                entry.getName(), entry.getDummyPlayer(), entry.getArmorConfig(), tabIndex
         );
 
         fixChildren();

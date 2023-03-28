@@ -10,6 +10,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundEvent;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -21,15 +22,17 @@ public class SliderSet extends AbstractParentElement implements Drawable, Elemen
     private final int y;
     public final Function<EquipmentSlot, ItemStack> dummyEquipmentGetter;
     public final float rotatedBy;
+    public final SoundEvent sound;
     private final List<ClickableWidget> sliders = Lists.newArrayList();
 
-    public SliderSet(ArmorConfigWindow parent, int x, int y, Consumer<List<ClickableWidget>> widgetAdder, Function<EquipmentSlot, ItemStack> dummyEquipmentGetter, float rotatedBy) {
+    public SliderSet(ArmorConfigWindow parent, int x, int y, Consumer<List<ClickableWidget>> widgetAdder, Function<EquipmentSlot, ItemStack> dummyEquipmentGetter, float rotatedBy, SoundEvent sound) {
         super();
         this.parent = parent;
         this.x = x;
         this.y = y;
         this.dummyEquipmentGetter = dummyEquipmentGetter;
         this.rotatedBy = rotatedBy;
+        this.sound = sound;
 
         widgetAdder.accept(sliders);
     }

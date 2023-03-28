@@ -2,7 +2,6 @@ package nl.enjarai.showmeyourskin.gui.widget;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.block.entity.BannerPatterns;
 import net.minecraft.block.entity.BlockEntityType;
@@ -12,7 +11,6 @@ import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
@@ -28,13 +26,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.ShieldItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
@@ -49,6 +45,7 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ArmorConfigWindow extends AbstractParentElement implements Drawable, Element, Selectable {
     public static final Identifier TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen.png");
@@ -87,7 +84,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     private final DummyClientPlayerEntity player;
     private final ArmorConfig armorConfig;
 
-    public ArmorConfigWindow(Screen parent, int x, int y, Text name, DummyClientPlayerEntity player, ArmorConfig armorConfig) {
+    public ArmorConfigWindow(Screen parent, int x, int y, Text name, DummyClientPlayerEntity player, ArmorConfig armorConfig, int tabIndex) {
         super();
         this.parent = parent;
         this.x = x;
@@ -98,39 +95,48 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
 
         sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 12, 0, 240,
                 new SliderSet(this, getWindowLeft(), getWindowTop(), sliders -> {
-                    sliders.add(getSlider(HideableEquipment.HEAD,
+                    sliders.add(getOpacitySlider(HideableEquipment.HEAD,
                             14, 11, "gui.showmeyourskin.armorScreen.piece.head"));
-                    sliders.add(getSlider(HideableEquipment.CHEST,
+                    sliders.add(getOpacitySlider(HideableEquipment.CHEST,
                             14, 35, "gui.showmeyourskin.armorScreen.piece.chest"));
-                    sliders.add(getSlider(HideableEquipment.LEGS,
+                    sliders.add(getOpacitySlider(HideableEquipment.LEGS,
                             14, 59, "gui.showmeyourskin.armorScreen.piece.legs"));
-                    sliders.add(getSlider(HideableEquipment.FEET,
+                    sliders.add(getOpacitySlider(HideableEquipment.FEET,
                             14, 83, "gui.showmeyourskin.armorScreen.piece.feet"));
 
                     sliders.add(getGlintButton(HideableEquipment.HEAD, 94, 11));
                     sliders.add(getGlintButton(HideableEquipment.CHEST, 94, 35));
                     sliders.add(getGlintButton(HideableEquipment.LEGS, 94, 59));
                     sliders.add(getGlintButton(HideableEquipment.FEET, 94, 83));
-                }, ArmorConfigWindow::getDummyArmor, 0))
+                }, ArmorConfigWindow::getDummyArmor, 0, SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE))
         );
         sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 42, 16, 240,
                 new SliderSet(this, getWindowLeft(), getWindowTop(), sliders -> {
-                    sliders.add(getSlider(HideableEquipment.ELYTRA,
+                    sliders.add(getOpacitySlider(HideableEquipment.ELYTRA,
                             14, 11, "gui.showmeyourskin.armorScreen.piece.elytra"));
-                    sliders.add(getSlider(HideableEquipment.SHIELD,
+                    sliders.add(getOpacitySlider(HideableEquipment.SHIELD,
                             14, 35, "gui.showmeyourskin.armorScreen.piece.shield"));
 
                     sliders.add(getGlintButton(HideableEquipment.ELYTRA, 94, 11));
                     sliders.add(getGlintButton(HideableEquipment.SHIELD, 94, 35));
-                }, ArmorConfigWindow::getDummyEquipment, -180))
+                }, ArmorConfigWindow::getDummyEquipment, -180, SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA))
         );
 
-        selectTab(sliderSetTabs.get(0));
+        selectTab(sliderSetTabs.get(tabIndex));
+        lastPlayerRotation = selectedSliderSetTab.sliderSet.rotatedBy;
 
-        buttons.add(new ToggleButtonWidget(parent, getWindowLeft() + 14, getWindowTop() + 115, 40, 38,
-                TEXTURE, armorConfig.showInCombat, b -> armorConfig.showInCombat = b, COMBAT_TOOLTIP));
-        buttons.add(new ToggleButtonWidget(parent, getWindowLeft() + 40, getWindowTop() + 115, 80, 38,
-                TEXTURE, armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP));
+        buttons.add(new ToggleButtonWidget(
+                parent, getWindowLeft() + 14, getWindowTop() + 115, 40, 38,
+                TEXTURE, armorConfig.showInCombat, b -> armorConfig.showInCombat = b, COMBAT_TOOLTIP
+        ));
+//        buttons.add(getSlider(
+//                getWindowLeft() + 40, getWindowTop() + 115, 77, 40, 38,
+//
+//        ));
+        buttons.add(new ToggleButtonWidget(
+                parent, getWindowLeft() + 14, getWindowTop() + 141, 80, 38,
+                TEXTURE, armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP
+        ));
 
         children.addAll(buttons);
     }
@@ -223,7 +229,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         RenderSystem.disableBlend();
     }
 
-    protected SliderWidget getSlider(HideableEquipment slot, int x, int y, String translationKey) {
+    protected SliderWidget getOpacitySlider(HideableEquipment slot, int x, int y, String translationKey) {
         var pieceConfig = armorConfig.getPieces().get(slot);
         var trimConfig = armorConfig.getTrims().get(slot.toSlot());
         var initialValue = pieceConfig.getTransparency();
@@ -252,6 +258,30 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         };
     }
 
+    protected SliderWidget getSlider(int x, int y, int width, int minValue, int maxValue, int initialValue, Consumer<Integer> onValueChange, String translationKey) {
+        return new SliderWidget(getWindowLeft() + x, getWindowTop() + y,
+                width, 20, Text.translatable(translationKey, initialValue), (initialValue - minValue) / (float) (maxValue - minValue)) {
+            @Override
+            protected void updateMessage() {
+                setMessage(Text.translatable(translationKey, (int) MathHelper.lerp(this.value, minValue, maxValue)));
+            }
+
+            @Override
+            protected void applyValue() {
+                onValueChange.accept((int) MathHelper.lerp(this.value, minValue, maxValue));
+            }
+
+            @Override
+            public void playDownSound(SoundManager soundManager) {
+                soundManager.play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            }
+
+            @Override
+            public void onRelease(double mouseX, double mouseY) {
+            }
+        };
+    }
+
     protected TexturedButtonWidget getGlintButton(HideableEquipment slot, int x, int y) {
         return new ToggleButtonWidget(
                 parent, getWindowLeft() + x, getWindowTop() + y, 0, 38,
@@ -265,10 +295,20 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     }
 
     public void selectTab(SliderSetTab sliderSetTab) {
-        if (selectedSliderSetTab != null) lastPlayerRotation = getCurrentPlayerRotation();
+        if (selectedSliderSetTab != null) {
+            lastPlayerRotation = getCurrentPlayerRotation();
+            MinecraftClient.getInstance().getSoundManager()
+                    .play(PositionedSoundInstance.master(sliderSetTab.sliderSet.sound, 1.0F));
+        }
         lastTabSwitchTime = System.currentTimeMillis();
+
         selectedSliderSetTab = sliderSetTab;
+
         player.equippedStackSupplier = sliderSetTab.sliderSet.dummyEquipmentGetter;
+    }
+
+    public int getTabIndex() {
+        return sliderSetTabs.indexOf(selectedSliderSetTab);
     }
 
     @Override
