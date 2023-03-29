@@ -6,10 +6,7 @@ import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.block.entity.BannerPatterns;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.AbstractParentElement;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -197,7 +194,12 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         matrices.translate(playerX, playerY, -950);
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(playerRotation));
         matrices.translate(0, 0, 950.0);
+        DrawableHelper.enableScissor(
+                getWindowRight() - 112, getWindowTop() + 10,
+                getWindowRight() - 10, getWindowTop() + 160
+        );
         drawEntity(matrices, 0, 0, 70, -mouseX + playerX, -mouseY + playerY - 110, player);
+        DrawableHelper.disableScissor();
         matrices.pop();
 
         if (!isEditable()) {
