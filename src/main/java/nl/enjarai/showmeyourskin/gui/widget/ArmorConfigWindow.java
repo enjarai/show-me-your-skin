@@ -126,10 +126,6 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
                 parent, getWindowLeft() + 14, getWindowTop() + 115, 40, 38,
                 TEXTURE, armorConfig.showInCombat, b -> armorConfig.showInCombat = b, COMBAT_TOOLTIP
         ));
-//        buttons.add(getSlider(
-//                getWindowLeft() + 40, getWindowTop() + 115, 77, 40, 38,
-//
-//        ));
         buttons.add(new ToggleButtonWidget(
                 parent, getWindowLeft() + 14, getWindowTop() + 141, 80, 38,
                 TEXTURE, armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP
@@ -195,8 +191,8 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(playerRotation));
         matrices.translate(0, 0, 950.0);
         DrawableHelper.enableScissor(
-                getWindowRight() - 112, getWindowTop() + 10,
-                getWindowRight() - 10, getWindowTop() + 160
+                getWindowRight() - 112, getWindowTop() + 8,
+                getWindowRight() - 5, getWindowTop() + 168
         );
         drawEntity(matrices, 0, 0, 70, -mouseX + playerX, -mouseY + playerY - 110, player);
         DrawableHelper.disableScissor();

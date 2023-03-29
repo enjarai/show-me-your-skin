@@ -60,44 +60,13 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: Artifacts
-      - name: Read mod version
-        id: mod_version
-        uses: christian-draeger/read-properties@1.0.1
-        with:
-          path: gradle.properties
-          property: mod_version
-      - name: Read minecraft version
-        id: minecraft_version
-        uses: christian-draeger/read-properties@1.0.1
-        with:
-          path: gradle.properties
-          property: minecraft_version
-      - name: Update GitHub Release
-        uses: tubone24/update_release@v1.3.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          body_path: CHANGELOG.md
-          is_append_body: true
       - name: publish mod
         uses: Kir-Antipov/mc-publish@v3.2
         with:
-
-          name: ${{ github.event.release.name }}
-          version: '${{ steps.mod_version.outputs.value }}+${{ steps.minecraft_version.outputs.value }}'
-          version-type: release
-
-          game-versions: |
-            ${{ steps.minecraft_version.outputs.value }}
-          java: |
-            17
-            18
           modrinth-featured: false
 
-          changelog-file: CHANGELOG.md
           files: '${{ steps.download.outputs.download-path }}/!(*-@(dev|sources)).jar'
 
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-

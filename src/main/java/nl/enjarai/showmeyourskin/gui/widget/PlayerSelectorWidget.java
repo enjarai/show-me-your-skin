@@ -143,7 +143,6 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
                     delta
             );
         }
-        DrawableHelper.fill(matrices, 0, 0, 9999990, 9999999, 0xFFFFFFFF);
         DrawableHelper.disableScissor();
     }
 
