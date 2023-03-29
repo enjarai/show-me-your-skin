@@ -36,6 +36,7 @@ dependencies {
 	include modImplementation("nl.enjarai:cicada-lib:${project.cicada_version}") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
+	annotationProcessor("com.github.LlamaLad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}")
 
 	// Mod Menu integration.
 	modImplementation "com.terraformersmc:modmenu:${modmenu_version}"
