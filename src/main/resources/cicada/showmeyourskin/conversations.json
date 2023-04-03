@@ -81,6 +81,14 @@
           },
           "order": 40,
           "text": "Shut up then and start preparing the army!"
+        },
+        {
+          "condition": {
+            "type": "cicada:mod_participates",
+            "mod_id": "recursiveresources"
+          },
+          "order": 60,
+          "text": "Yea of course we do, don't worry about it."
         }
       ]
     },
@@ -89,6 +97,14 @@
         {
           "order": 20,
           "text": "Yea Curseforge doesn't even try anymore."
+        }
+      ]
+    },
+    "recursiveresources:fork": {
+      "lines": [
+        {
+          "order": 10,
+          "text": "Very subtle way to credit the original author, you sure that's enough?"
         }
       ]
     },
