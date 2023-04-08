@@ -37,14 +37,12 @@ public class ArmorConfigComponent implements ComponentV3, AutoSyncedComponent {
         this.config = config;
 
         ensureValid();
-        sync();
     }
 
     public void setFromNbt(NbtCompound tag) {
         readFromNbt(tag);
 
         ensureValid();
-        sync();
     }
 
     public void ensureValid() {
@@ -52,12 +50,8 @@ public class ArmorConfigComponent implements ComponentV3, AutoSyncedComponent {
         if (!SyncedModConfigServer.INSTANCE.allowNotShowNameTag()) getConfig().showNameTag = true;
     }
 
-    public void sync() {
-        Components.ARMOR_CONFIG.sync(this);
-    }
-
     @Override
     public boolean shouldSyncWith(ServerPlayerEntity player) {
-        return ShowMeYourSkin.HANDSHAKE_SERVER.getHandshakeState(player) == HandshakeServer.HandshakeState.ACCEPTED;
+        return ShowMeYourSkin.HANDSHAKE_SERVER.getHandshakeState(player) != HandshakeServer.HandshakeState.FAILED;
     }
 }

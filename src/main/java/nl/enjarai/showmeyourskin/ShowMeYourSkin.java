@@ -34,6 +34,10 @@ public class ShowMeYourSkin implements ModInitializer {
             ServerPlayNetworking.registerReceiver(handler, CONFIG_SYNC_CHANNEL, (server1, player, handler1, buf, responseSender) -> {
                 if (HANDSHAKE_SERVER.clientReplied(player, buf) == HandshakeServer.HandshakeState.ACCEPTED) {
                     startListeningForUpdates(handler1);
+
+                    for (var playerEntity : server1.getPlayerManager().getPlayerList()) {
+                        Components.ARMOR_CONFIG.sync(playerEntity);
+                    }
                 }
             });
 
@@ -56,6 +60,7 @@ public class ShowMeYourSkin implements ModInitializer {
             if (nbt != null) {
                 var component = player.getComponent(Components.ARMOR_CONFIG);
                 component.setFromNbt(nbt);
+                Components.ARMOR_CONFIG.sync(player);
             }
         });
     }

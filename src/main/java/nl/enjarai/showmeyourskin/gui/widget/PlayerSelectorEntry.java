@@ -9,15 +9,12 @@ import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ModConfig;
-import nl.enjarai.showmeyourskin.gui.ConfigScreen;
+import nl.enjarai.showmeyourskin.gui.ClientOnlyConfigScreen;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +29,7 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
         this.armorConfig = ModConfig.INSTANCE.getOverride(uuid);
         this.uuid = uuid;
         this.clearButton = new TexturedButtonWidget(0, 0, 11, 11, 0, 128,
-                ConfigScreen.SELECTOR_TEXTURE, button -> clearConfig());
+                ClientOnlyConfigScreen.SELECTOR_TEXTURE, button -> clearConfig());
         this.clearButton.visible = armorConfig != null;
     }
 

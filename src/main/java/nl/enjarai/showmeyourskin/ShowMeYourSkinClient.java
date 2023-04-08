@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.nbt.NbtCompound;
 import nl.enjarai.cicada.api.conversation.ConversationManager;
 import nl.enjarai.cicada.api.util.CicadaEntrypoint;
@@ -16,8 +17,12 @@ import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.config.SyncedModConfig;
+import nl.enjarai.showmeyourskin.gui.ClientOnlyConfigScreen;
+import nl.enjarai.showmeyourskin.gui.ConfigScreen;
+import nl.enjarai.showmeyourskin.gui.ServerIntegratedConfigScreen;
 import nl.enjarai.showmeyourskin.net.HandshakeClient;
 import nl.enjarai.showmeyourskin.util.ArmorConfigComponent;
+import org.jetbrains.annotations.Nullable;
 
 public class ShowMeYourSkinClient implements ClientModInitializer, CicadaEntrypoint {
 	public static final HandshakeClient<SyncedModConfig> HANDSHAKE_CLIENT =
@@ -56,6 +61,14 @@ public class ShowMeYourSkinClient implements ClientModInitializer, CicadaEntrypo
 		new ArmorConfigComponent(config).writeToNbt(nbt);
 		buf.writeNbt(nbt);
 		ClientPlayNetworking.send(ShowMeYourSkin.UPDATE_C2S_CHANNEL, buf);
+	}
+
+	public static ConfigScreen createConfigScreen(@Nullable Screen parent) {
+		if (HANDSHAKE_CLIENT.getConfig().isPresent()) {
+			return new ServerIntegratedConfigScreen(parent);
+		} else {
+			return new ClientOnlyConfigScreen(parent);
+		}
 	}
 
 	public void tick(MinecraftClient client) {
