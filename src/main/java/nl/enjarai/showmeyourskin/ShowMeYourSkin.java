@@ -1,49 +1,71 @@
 package nl.enjarai.showmeyourskin;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.Identifier;
-import nl.enjarai.cicada.api.conversation.ConversationManager;
-import nl.enjarai.cicada.api.util.CicadaEntrypoint;
-import nl.enjarai.cicada.api.util.JsonSource;
 import nl.enjarai.cicada.api.util.ProperLogger;
-import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
-import nl.enjarai.showmeyourskin.client.ModKeyBindings;
-import nl.enjarai.showmeyourskin.config.ModConfig;
+import nl.enjarai.showmeyourskin.config.SyncedModConfig;
+import nl.enjarai.showmeyourskin.config.SyncedModConfigServer;
+import nl.enjarai.showmeyourskin.net.HandshakeServer;
+import nl.enjarai.showmeyourskin.util.ArmorConfigComponent;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ShowMeYourSkin implements ModInitializer, CicadaEntrypoint {
-	public static final String MODID = "showmeyourskin";
-	public static final Logger LOGGER = ProperLogger.getLogger(MODID);
+public class ShowMeYourSkin implements ModInitializer {
+    public static final String MODID = "showmeyourskin";
+    public static final Logger LOGGER = ProperLogger.getLogger(MODID);
 
-	@Override
-	public void onInitialize() {
-		ModConfig.load();
+    public static final Identifier UPDATE_C2S_CHANNEL = id("update");
+    public static final Identifier CONFIG_SYNC_CHANNEL = id("config_sync");
+    public static final HandshakeServer<SyncedModConfig> HANDSHAKE_SERVER =
+            new HandshakeServer<>(SyncedModConfig.CODEC, () -> SyncedModConfigServer.INSTANCE);
 
-		ModKeyBindings.register();
-		ClientTickEvents.END_CLIENT_TICK.register(this::tick);
+    @Override
+    public void onInitialize() {
+        SyncedModConfigServer.load();
 
-		// Pre-load the dummy player for the config screen to avoid lag spikes later.
-		ClientLifecycleEvents.CLIENT_STARTED.register((client) -> DummyClientPlayerEntity.getInstance());
-	}
+        initHandshake();
+    }
 
-	public void tick(MinecraftClient client) {
-		ModKeyBindings.tick(client);
-	}
+    private static void initHandshake() {
+        ServerPlayConnectionEvents.INIT.register((handler, server) -> {
+            ServerPlayNetworking.registerReceiver(handler, CONFIG_SYNC_CHANNEL, (server1, player, handler1, buf, responseSender) -> {
+                if (HANDSHAKE_SERVER.clientReplied(player, buf) == HandshakeServer.HandshakeState.ACCEPTED) {
+                    startListeningForUpdates(handler1);
 
-	public static Identifier id(String path) {
-		return new Identifier(MODID, path);
-	}
+                    for (var playerEntity : server1.getPlayerManager().getPlayerList()) {
+                        Components.ARMOR_CONFIG.sync(playerEntity);
+                    }
+                }
+            });
 
-	@Override
-	public void registerConversations(ConversationManager conversationManager) {
-		conversationManager.registerSource(
-				JsonSource.fromUrl("https://raw.githubusercontent.com/enjarai/show-me-your-skin/master/src/main/resources/cicada/showmeyourskin/conversations.json")
-						.or(JsonSource.fromResource("cicada/showmeyourskin/conversations.json")),
-				LOGGER::info
-		);
-	}
+            ServerPlayNetworking.send(handler.getPlayer(), CONFIG_SYNC_CHANNEL,
+                    HANDSHAKE_SERVER.getConfigSyncBuf(handler.getPlayer()));
+
+            HANDSHAKE_SERVER.configSentToClient(handler.getPlayer());
+
+            handler.getPlayer().getComponent(Components.ARMOR_CONFIG).ensureValid();
+        });
+
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            HANDSHAKE_SERVER.playerDisconnected(handler.getPlayer());
+        });
+    }
+
+    private static void startListeningForUpdates(ServerPlayNetworkHandler handler) {
+        ServerPlayNetworking.registerReceiver(handler, UPDATE_C2S_CHANNEL, (server, player, handler1, buf, responseSender) -> {
+            var nbt = buf.readNbt();
+            if (nbt != null) {
+                var component = player.getComponent(Components.ARMOR_CONFIG);
+                component.setFromNbt(nbt);
+                Components.ARMOR_CONFIG.sync(player);
+            }
+        });
+    }
+
+    public static Identifier id(String path) {
+        return new Identifier(MODID, path);
+    }
 }

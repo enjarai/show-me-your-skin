@@ -9,13 +9,12 @@ import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
+import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ModConfig;
-import nl.enjarai.showmeyourskin.gui.ConfigScreen;
+import nl.enjarai.showmeyourskin.gui.ClientOnlyConfigScreen;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,12 +24,12 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
     public final UUID uuid;
     public final ButtonWidget clearButton;
 
-    public PlayerSelectorEntry(MinecraftClient client, PlayerSelectorWidget parent, UUID uuid, Text name, Supplier<Identifier> skinTexture) {
-        super(client, parent, -1, -1, name, skinTexture);
+    public PlayerSelectorEntry(MinecraftClient client, PlayerSelectorWidget parent, UUID uuid, Text name, Supplier<Identifier> skinTexture, Supplier<String> model) {
+        super(client, parent, -1, -1, name, skinTexture, model);
         this.armorConfig = ModConfig.INSTANCE.getOverride(uuid);
         this.uuid = uuid;
         this.clearButton = new TexturedButtonWidget(0, 0, 11, 11, 0, 128,
-                ConfigScreen.SELECTOR_TEXTURE, button -> clearConfig());
+                ClientOnlyConfigScreen.SELECTOR_TEXTURE, button -> clearConfig());
         this.clearButton.visible = armorConfig != null;
     }
 
@@ -76,12 +75,15 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
     }
 
     @Override
-    public PlayerEntity getDummyPlayer() {
-        PlayerEntity player = null;
-        if (client.world != null) {
-            player = client.world.getPlayerByUuid(uuid);
+    public DummyClientPlayerEntity getDummyPlayer() {
+        if (client.world != null && client.getNetworkHandler() != null) {
+            return new DummyClientPlayerEntity(
+                    client.world.getPlayerByUuid(uuid), uuid, texture.get(), model.get(),
+                    client.world, client.getNetworkHandler()
+            );
+        } else {
+            return new DummyClientPlayerEntity(null, uuid, texture.get(), model.get());
         }
-        return new DummyClientPlayerEntity(player, uuid, texture.get());
     }
 
     @Override

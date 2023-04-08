@@ -1,20 +1,20 @@
 package nl.enjarai.showmeyourskin.util;
 
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 
 public class ArmorContext {
-    private final EquipmentSlot slot;
+    private final HideableEquipment slot;
     private final LivingEntity entity;
 
-    public ArmorContext(EquipmentSlot slot, LivingEntity entity) {
+    public ArmorContext(HideableEquipment slot, LivingEntity entity) {
         this.slot = slot;
         this.entity = entity;
     }
 
-    public EquipmentSlot getSlot() {
+    public HideableEquipment getSlot() {
         return slot;
     }
 
@@ -26,11 +26,15 @@ public class ArmorContext {
         return getEntity() instanceof PlayerEntity;
     }
 
-    public float getApplicableTransparency() {
-        return ModConfig.INSTANCE.getApplicableTransparency(getEntity().getUuid(), getSlot());
+    public float getApplicablePieceTransparency() {
+        return ModConfig.INSTANCE.getApplicablePieceTransparency(getEntity().getUuid(), getSlot());
     }
 
-    public boolean getApplicableGlint() {
-        return ModConfig.INSTANCE.getApplicable(getEntity().getUuid()).getGlint(getSlot());
+    public float getApplicableTrimTransparency() {
+        return ModConfig.INSTANCE.getApplicableTrimTransparency(getEntity().getUuid(), getSlot().toSlot());
+    }
+
+    public float getApplicableGlintTransparency() {
+        return ModConfig.INSTANCE.getApplicableGlintTransparency(getEntity().getUuid(), getSlot());
     }
 }

@@ -1,1 +1,0 @@
-- Fixed an issue elytra enchant glint not being properly hidden.

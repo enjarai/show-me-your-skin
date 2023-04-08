@@ -1,4 +1,4 @@
-package nl.enjarai.showmeyourskin.client;
+package nl.enjarai.showmeyourskin.client.cursed;
 
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Identifier;

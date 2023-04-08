@@ -1,4 +1,6 @@
 {
+  "mod_id": "showmeyourskin",
+
   "conversations": {
     "cicada:greetings": {
       "lines": [
@@ -25,6 +27,36 @@
       ]
     },
 
+    "showmeyourskin:cursed_code": {
+      "priority": {
+        "priority": 20
+      },
+      "lines": [
+        {
+          "order": 0,
+          "text": "This mod contains multiple classes with \"Cursed\" in the name, this should tell you everything you need to know."
+        }
+      ]
+    },
+    "showmeyourskin:assembly": {
+      "priority": {
+        "priority": 50
+      },
+      "lines": [
+        {
+          "order": 0,
+          "text": "Comes with assembly instructions!"
+        },
+        {
+          "condition": {
+            "type": "cicada:mod_loaded",
+            "mod_id": "clientpaintings"
+          },
+          "order": 20,
+          "text": "Yes, like IKEA."
+        }
+      ]
+    },
     "showmeyourskin:plagiarism": {
       "priority": {
         "priority": 100
@@ -49,6 +81,30 @@
           },
           "order": 40,
           "text": "Shut up then and start preparing the army!"
+        },
+        {
+          "condition": {
+            "type": "cicada:mod_participates",
+            "mod_id": "recursiveresources"
+          },
+          "order": 60,
+          "text": "Yea of course we do, don't worry about it."
+        }
+      ]
+    },
+    "do_a_barrel_roll:modrinth": {
+      "lines": [
+        {
+          "order": 20,
+          "text": "Yea Curseforge doesn't even try anymore."
+        }
+      ]
+    },
+    "recursiveresources:fork": {
+      "lines": [
+        {
+          "order": 10,
+          "text": "Very subtle way to credit the original author, you sure that's enough?"
         }
       ]
     },

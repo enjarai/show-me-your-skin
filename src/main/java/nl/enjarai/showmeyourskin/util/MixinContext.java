@@ -8,24 +8,24 @@ public class MixinContext<T> {
     public static final MixinContext<ArmorContext> ARMOR = new MixinContext<>();
     public static final MixinContext<LivingEntity> HELD_ITEM = new MixinContext<>();
 
-    private T currentContext;
+    private final ThreadLocal<T> currentContext = new ThreadLocal<>();
 
     public void setContext(T context) {
-        currentContext = context;
+        currentContext.set(context);
     }
 
     @Nullable
     public T getContext() {
-        return currentContext;
+        return currentContext.get();
     }
 
     public void clearContext() {
-        currentContext = null;
+        currentContext.set(null);
     }
 
     @Nullable
     public T getAndClearContext() {
-        T context = currentContext;
+        T context = currentContext.get();
         clearContext();
         return context;
     }

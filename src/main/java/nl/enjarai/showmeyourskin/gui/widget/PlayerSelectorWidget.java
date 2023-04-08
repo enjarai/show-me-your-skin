@@ -3,15 +3,12 @@ package nl.enjarai.showmeyourskin.gui.widget;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.AbstractParentElement;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
+import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -64,7 +61,8 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
             var profile = dummyPlayer.getGameProfile();
             entries.add(new PlayerSelectorEntry(
                     client, this, profile.getId(),
-                    Text.literal(profile.getName()), dummyPlayer::getSkinTexture
+                    Text.translatable("gui.showmeyourskin.armorScreen.playerName", profile.getName()), dummyPlayer::getSkinTexture,
+                    dummyPlayer::getModel
             ));
         } else {
             for (UUID uuid : client.player.networkHandler.getPlayerUuids()) {
@@ -74,7 +72,8 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
                     String playerName = playerListEntry.getProfile().getName();
                     entries.add(new PlayerSelectorEntry(
                             client, this, playerUuid,
-                            Text.literal(playerName), playerListEntry::getSkinTexture
+                            Text.translatable("gui.showmeyourskin.armorScreen.playerName", playerName), playerListEntry::getSkinTexture,
+                            playerListEntry::getModel
                     ));
                 }
             }
@@ -132,13 +131,7 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        double scaleFactor = client.getWindow().getScaleFactor();
-        RenderSystem.enableScissor(
-                (int) ((double) x * scaleFactor),
-                0,
-                (int) ((double) width * scaleFactor),
-                Integer.MAX_VALUE
-        );
+        DrawableHelper.enableScissor(x, 0, x + width, screenHeight);
         var players = getEntries();
         for (int i = 0; i < players.size(); i++) {
             var entry = players.get(i);
@@ -150,7 +143,7 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
                     delta
             );
         }
-        RenderSystem.disableScissor();
+        DrawableHelper.disableScissor();
     }
 
     public List<ConfigEntryWidget> getEntries() {

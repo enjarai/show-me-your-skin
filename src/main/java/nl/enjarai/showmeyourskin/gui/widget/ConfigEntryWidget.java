@@ -11,12 +11,11 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
-import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
+import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 
@@ -34,16 +33,18 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
     public final PlayerSelectorWidget parent;
     private final Text name;
     public final Supplier<Identifier> texture;
+    public final Supplier<String> model;
     protected ArmorConfig armorConfig;
     public boolean selected = false;
 
-    public ConfigEntryWidget(MinecraftClient client, PlayerSelectorWidget parent, int x, int y, Text name, Supplier<Identifier> texture) {
+    public ConfigEntryWidget(MinecraftClient client, PlayerSelectorWidget parent, int x, int y, Text name, Supplier<Identifier> texture, Supplier<String> model) {
         this.client = client;
         this.parent = parent;
         this.x = x;
         this.y = y;
         this.name = name;
         this.texture = texture;
+        this.model = model;
         this.armorConfig = ModConfig.INSTANCE.global;
     }
 
@@ -114,7 +115,7 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
         return armorConfig;
     }
 
-    public PlayerEntity getDummyPlayer() {
+    public DummyClientPlayerEntity getDummyPlayer() {
         return DummyClientPlayerEntity.getInstance();
     }
 

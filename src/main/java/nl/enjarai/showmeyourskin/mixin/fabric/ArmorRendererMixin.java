@@ -27,13 +27,13 @@ public interface ArmorRendererMixin {
         var ctx = MixinContext.ARMOR.getAndClearContext();
 
         if (ctx != null && ctx.shouldModify()) {
-            var t = ctx.getApplicableTransparency();
+            var t = ctx.getApplicablePieceTransparency();
 
             if (t < 1) {
                 if (t > 0) {
                     VertexConsumer vertexConsumer = ItemRenderer.getDirectItemGlintConsumer(
                             vertexConsumers, RenderLayer.getEntityTranslucent(texture),
-                            false, stack.hasGlint() && ctx.getApplicableGlint()
+                            false, stack.hasGlint() && ctx.getApplicableGlintTransparency() > 0
                     );
                     model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, t);
                 }

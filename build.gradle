@@ -22,6 +22,12 @@ repositories {
 
 	// Mod Menu repository
 	maven { url "https://maven.terraformersmc.com" }
+
+	// Cardinal Components API
+	maven {
+		name = "Ladysnake Mods"
+		url = 'https://ladysnake.jfrog.io/artifactory/mods'
+	}
 }
 
 dependencies {
@@ -36,9 +42,14 @@ dependencies {
 	include modImplementation("nl.enjarai:cicada-lib:${project.cicada_version}") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
+	annotationProcessor("com.github.LlamaLad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}")
 
 	// Mod Menu integration.
 	modImplementation "com.terraformersmc:modmenu:${modmenu_version}"
+
+	// Cardinal Components for shrimple™ server syncing.
+	include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cardinal_components_version}")
+	include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cardinal_components_version}")
 
 	// Make it easier to test skin compat.
 //	modImplementation 'com.ptsmods:devlogin:2.1'

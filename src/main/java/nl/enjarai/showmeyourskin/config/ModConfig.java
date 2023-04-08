@@ -3,19 +3,19 @@ package nl.enjarai.showmeyourskin.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
+import nl.enjarai.showmeyourskin.Components;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
-import nl.enjarai.showmeyourskin.client.DummyClientPlayerEntity;
-import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
+import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.util.CombatLogger;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class ModConfig {
     public static final File CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDir() + "/" + ShowMeYourSkin.MODID + ".json");
@@ -35,6 +35,14 @@ public class ModConfig {
 
 
     public ArmorConfig getOverrideOrGlobal(UUID uuid) {
+        var client = MinecraftClient.getInstance();
+
+        if (ShowMeYourSkinClient.HANDSHAKE_CLIENT.getConfig().isPresent() && client.world != null) {
+            var player = client.world.getPlayerByUuid(uuid);
+
+            return player != null ? player.getComponent(Components.ARMOR_CONFIG).getConfig() : ArmorConfig.VANILLA_VALUES;
+        }
+
         return overrides.getOrDefault(uuid, global);
     }
 
@@ -43,13 +51,27 @@ public class ModConfig {
         return !globalEnabled || applicable.showInCombat && CombatLogger.INSTANCE.isInCombat(uuid) ? ArmorConfig.VANILLA_VALUES : applicable;
     }
 
-    public float getApplicableTransparency(UUID uuid, EquipmentSlot slot) {
+    public float getApplicablePieceTransparency(UUID uuid, HideableEquipment slot) {
+        return getApplicableTransparency(uuid, applicable -> applicable.getPieces()
+                .getOrDefault(slot, ArmorConfig.ArmorPieceConfig.VANILLA_VALUES));
+    }
+
+    public float getApplicableTrimTransparency(UUID uuid, EquipmentSlot slot) {
+        return getApplicableTransparency(uuid, applicable -> applicable.getTrims().get(slot));
+    }
+
+    public float getApplicableGlintTransparency(UUID uuid, HideableEquipment slot) {
+        return getApplicableTransparency(uuid, applicable -> applicable.getGlints()
+                .getOrDefault(slot, ArmorConfig.ArmorPieceConfig.VANILLA_VALUES));
+    }
+
+    private float getApplicableTransparency(UUID uuid, Function<ArmorConfig, ArmorConfig.ArmorPieceConfig> configRetriever) {
         if (!globalEnabled) {
-            return ArmorConfig.VANILLA_VALUES.getTransparency(slot) / 100f;
+            return configRetriever.apply(ArmorConfig.VANILLA_VALUES).getTransparency() / 100f;
         }
 
         var applicable = getOverrideOrGlobal(uuid);
-        var normal = applicable.getTransparency(slot) / 100f;
+        var normal = configRetriever.apply(applicable).getTransparency() / 100f;
 
         // Only apply modifications if enabled and player is in combat.
         if (applicable.showInCombat && CombatLogger.INSTANCE.isInCombat(uuid)) {
@@ -76,6 +98,24 @@ public class ModConfig {
     public void deleteOverride(UUID uuid) {
         overrides.remove(uuid);
     }
+
+    public void ensureValid() {
+        if (combatCooldown < 0) {
+            combatCooldown = 0;
+        }
+        if (fadeOutTime < 0) {
+            fadeOutTime = 0;
+        }
+        if (fadeOutTime > combatCooldown) {
+            fadeOutTime = combatCooldown;
+        }
+
+        global.ensureValid();
+        overrides.values().forEach(ArmorConfig::ensureValid);
+
+        save();
+    }
+
 
 
     public static void load() {

@@ -1,33 +1,36 @@
-package nl.enjarai.showmeyourskin.client;
+package nl.enjarai.showmeyourskin.client.cursed;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.util.DefaultSkinHelper;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.trim.ArmorTrim;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import java.util.function.Function;
 
 public class DummyClientPlayerEntity extends ClientPlayerEntity {
-    private static final ItemStack HEAD_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_HELMET);
-    private static final ItemStack CHEST_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_CHESTPLATE);
-    private static final ItemStack LEGS_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_LEGGINGS);
-    private static final ItemStack FEET_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_BOOTS);
-    private static final ItemStack OFF_HAND = new AlwaysGlintingStack(Items.SHIELD);
-
     private static DummyClientPlayerEntity instance;
     private Identifier skinIdentifier = null;
     private String model = null;
     private PlayerEntity player = null;
+    public Function<EquipmentSlot, ItemStack> equippedStackSupplier = slot -> ItemStack.EMPTY;
 
     public static DummyClientPlayerEntity getInstance() {
         if (instance == null) instance = new DummyClientPlayerEntity() {
@@ -53,11 +56,16 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
         }, true);
     }
 
-    public DummyClientPlayerEntity(@Nullable PlayerEntity player, UUID uuid, Identifier skinIdentifier) {
-        super(MinecraftClient.getInstance(), DummyClientWorld.getInstance(), DummyClientPlayNetworkHandler.getInstance(), null, null,false, false);
+    public DummyClientPlayerEntity(@Nullable PlayerEntity player, UUID uuid, Identifier skinIdentifier, @Nullable String model) {
+        this(player, uuid, skinIdentifier, model, DummyClientWorld.getInstance(), DummyClientPlayNetworkHandler.getInstance());
+    }
+
+    public DummyClientPlayerEntity(@Nullable PlayerEntity player, UUID uuid, Identifier skinIdentifier, @Nullable String model, ClientWorld world, ClientPlayNetworkHandler networkHandler) {
+        super(MinecraftClient.getInstance(), world, networkHandler, null, null,false, false);
         this.player = player;
         setUuid(uuid);
         this.skinIdentifier = skinIdentifier;
+        this.model = model;
     }
 
     @Override
@@ -101,24 +109,6 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
         if (player != null) {
             return player.getEquippedStack(slot);
         }
-        return switch (slot) {
-            case HEAD -> HEAD_ARMOR;
-            case CHEST -> CHEST_ARMOR;
-            case LEGS -> LEGS_ARMOR;
-            case FEET -> FEET_ARMOR;
-            case OFFHAND -> OFF_HAND;
-            default -> ItemStack.EMPTY;
-        };
-    }
-
-    private static class AlwaysGlintingStack extends ItemStack {
-        public AlwaysGlintingStack(ItemConvertible item) {
-            super(item);
-        }
-
-        @Override
-        public boolean hasGlint() {
-            return true;
-        }
+        return equippedStackSupplier.apply(slot);
     }
 }
