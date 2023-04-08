@@ -1,5 +1,6 @@
 package nl.enjarai.showmeyourskin.config;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.entity.EquipmentSlot;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,5 +52,13 @@ public enum HideableEquipment {
             case FEET -> EquipmentSlot.FEET;
             default -> null;
         };
+    }
+
+    public static Codec<HideableEquipment> getCodec() {
+        return Codec.STRING.xmap(HideableEquipment::fromId, HideableEquipment::getId);
+    }
+
+    public static Codec<EquipmentSlot> getSlotCodec() {
+        return Codec.STRING.xmap(EquipmentSlot::byName, EquipmentSlot::getName);
     }
 }

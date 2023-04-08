@@ -22,14 +22,17 @@
     "main": [
       "nl.enjarai.showmeyourskin.ShowMeYourSkin"
     ],
-    "preLaunch": [
-      "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
+    "client": [
+      "nl.enjarai.showmeyourskin.ShowMeYourSkinClient"
     ],
     "modmenu": [
       "nl.enjarai.showmeyourskin.compat.modmenu.ModMenuIntegration"
     ],
     "cicada": [
-      "nl.enjarai.showmeyourskin.ShowMeYourSkin"
+      "nl.enjarai.showmeyourskin.ShowMeYourSkinClient"
+    ],
+    "cardinal-components": [
+      "nl.enjarai.showmeyourskin.Components"
     ]
   },
   "mixins": [
@@ -47,6 +50,9 @@
     "projects": {
       "modrinth": "bD7YqcA3",
       "curseforge": 622010
-    }
+    },
+    "cardinal-components": [
+      "showmeyourskin:armor_config"
+    ]
   }
 }

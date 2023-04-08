@@ -9,8 +9,12 @@ import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import nl.enjarai.showmeyourskin.Components;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
+import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.client.ModKeyBindings;
+import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
+import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
 import nl.enjarai.showmeyourskin.gui.widget.ConfigEntryWidget;
@@ -29,6 +33,7 @@ public class ConfigScreen extends Screen {
     private ButtonWidget backButton;
     private ButtonWidget globalToggle;
     private boolean initialized = false;
+    private boolean serverAvailable = false;
 
     public ConfigScreen(Screen parent) {
         super(Text.translatable("gui.showmeyourskin.armorScreen.title"));
@@ -45,16 +50,38 @@ public class ConfigScreen extends Screen {
 
     @Override
     protected void init() {
-        playerSelector = new PlayerSelectorWidget(
-                client, width, height, getSelectorLeft() + 44, getSelectorTop() + 63,
-                187, this::loadArmorConfigWindow
-        );
-        globalConfig = new ConfigEntryWidget(
-                client, playerSelector, getSelectorLeft() + 11, getSelectorTop() + 63,
-                Text.translatable("gui.showmeyourskin.armorScreen.global"),
-                () -> GLOBAL_ICON, () -> null
-        );
-        playerSelector.linkDefault(globalConfig);
+        serverAvailable = ShowMeYourSkinClient.HANDSHAKE_CLIENT.getConfig().isPresent() &&
+                client != null && client.player != null && client.getNetworkHandler() != null;
+
+        if (!serverAvailable) {
+            // When the server either doesn't exist or doesn't have the mod,
+            // load client-mode, making all players configurable
+            playerSelector = new PlayerSelectorWidget(
+                    client, width, height, getSelectorLeft() + 44, getSelectorTop() + 63,
+                    187, this::loadConfigEntry
+            );
+            globalConfig = new ConfigEntryWidget(
+                    client, playerSelector, getSelectorLeft() + 11, getSelectorTop() + 63,
+                    Text.translatable("gui.showmeyourskin.armorScreen.global"),
+                    () -> GLOBAL_ICON, () -> null
+            );
+            playerSelector.linkDefault(globalConfig);
+        } else {
+            // When the server *is* available, we don't show options for any other players
+            var player = client.player;
+            var config = player.getComponent(Components.ARMOR_CONFIG).getConfig();
+
+            var dummyPlayer = new DummyClientPlayerEntity(
+                    player, player.getUuid(), player.getSkinTexture(), player.getModel(),
+                    client.world, client.getNetworkHandler()
+            );
+
+            loadArmorConfigWindow(new ArmorConfigWindow(
+                    this, getSelectorLeft(), Math.max(getSelectorTop() + 100, (height - 160) / 2),
+                    Text.translatable("gui.showmeyourskin.armorScreen.global"),
+                    dummyPlayer, config.copy(), 0
+            ));
+        }
 
         backButton = new TexturedButtonWidget(
                 getSelectorLeft() - 20, getSelectorTop() + 52, 20, 20,
@@ -71,6 +98,19 @@ public class ConfigScreen extends Screen {
         playerSelector.updateEntries();
     }
 
+    @Override
+    public void tick() {
+        if (serverAvailable && client != null && client.player != null) {
+            // Sync config to server when it changes and server is available
+            var player = client.player;
+            var remoteConfig = player.getComponent(Components.ARMOR_CONFIG).getConfig();
+            var config = armorConfigWindow.getArmorConfig();
+            if (!remoteConfig.equals(config)) {
+                ShowMeYourSkinClient.syncToServer(config);
+            }
+        }
+    }
+
     private void fixChildren() {
         clearChildren();
         addDrawableChild(globalConfig);
@@ -80,16 +120,20 @@ public class ConfigScreen extends Screen {
         addDrawableChild(armorConfigWindow);
     }
 
-    private void loadArmorConfigWindow(ConfigEntryWidget entry) {
+    private void loadConfigEntry(ConfigEntryWidget entry) {
         var tabIndex = 0;
         if (armorConfigWindow != null) {
             tabIndex = armorConfigWindow.getTabIndex();
         }
 
-        armorConfigWindow = new ArmorConfigWindow(
+        loadArmorConfigWindow(new ArmorConfigWindow(
                 this, getSelectorLeft(), Math.max(getSelectorTop() + 100, (height - 160) / 2),
                 entry.getName(), entry.getDummyPlayer(), entry.getArmorConfig(), tabIndex
-        );
+        ));
+    }
+
+    private void loadArmorConfigWindow(ArmorConfigWindow window) {
+        armorConfigWindow = window;
 
         fixChildren();
     }
@@ -127,7 +171,13 @@ public class ConfigScreen extends Screen {
     @Override
     public void close() {
         assert this.client != null;
-        ModConfig.INSTANCE.save();
+
+        if (!serverAvailable) {
+            ModConfig.INSTANCE.save();
+        } else {
+            ShowMeYourSkinClient.syncToServer(armorConfigWindow.getArmorConfig());
+        }
+
         this.client.setScreen(this.parent);
     }
 }

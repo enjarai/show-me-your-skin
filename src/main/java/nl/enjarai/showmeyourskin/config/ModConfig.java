@@ -3,9 +3,12 @@ package nl.enjarai.showmeyourskin.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.math.MathHelper;
+import nl.enjarai.showmeyourskin.Components;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
+import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.util.CombatLogger;
 
 import java.io.*;
@@ -32,6 +35,14 @@ public class ModConfig {
 
 
     public ArmorConfig getOverrideOrGlobal(UUID uuid) {
+        var client = MinecraftClient.getInstance();
+
+        if (ShowMeYourSkinClient.HANDSHAKE_CLIENT.getConfig().isPresent() && client.world != null) {
+            var player = client.world.getPlayerByUuid(uuid);
+
+            return player != null ? player.getComponent(Components.ARMOR_CONFIG).getConfig() : ArmorConfig.VANILLA_VALUES;
+        }
+
         return overrides.getOrDefault(uuid, global);
     }
 

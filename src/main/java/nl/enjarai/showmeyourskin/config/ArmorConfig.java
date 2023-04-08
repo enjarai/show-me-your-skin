@@ -1,5 +1,7 @@
 package nl.enjarai.showmeyourskin.config;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
@@ -7,8 +9,16 @@ import net.minecraft.item.Items;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ArmorConfig {
+    public static final Codec<ArmorConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.BOOL.fieldOf("showInCombat").forGetter(config -> config.showInCombat),
+            Codec.BOOL.fieldOf("showNameTag").forGetter(config -> config.showNameTag),
+            Codec.unboundedMap(HideableEquipment.getCodec(), ArmorPieceConfig.CODEC).fieldOf("pieces").forGetter(config -> config.pieces),
+            Codec.unboundedMap(HideableEquipment.getSlotCodec(), ArmorPieceConfig.CODEC).fieldOf("trims").forGetter(config -> config.trims),
+            Codec.unboundedMap(HideableEquipment.getCodec(), ArmorPieceConfig.CODEC).fieldOf("glints").forGetter(config -> config.glints)
+    ).apply(instance, ArmorConfig::new));
     public static final ArmorConfig VANILLA_VALUES = new ArmorConfig();
 
     public final HashMap<HideableEquipment, ArmorPieceConfig> pieces = new HashMap<>();
@@ -36,6 +46,14 @@ public class ArmorConfig {
         glints.put(HideableEquipment.FEET, new ArmorPieceConfig());
         glints.put(HideableEquipment.ELYTRA, new ArmorPieceConfig());
         glints.put(HideableEquipment.SHIELD, new ArmorPieceConfig());
+    }
+
+    public ArmorConfig(boolean showInCombat, boolean showNameTag, Map<HideableEquipment, ArmorPieceConfig> pieces, Map<EquipmentSlot, ArmorPieceConfig> trims, Map<HideableEquipment, ArmorPieceConfig> glints) {
+        this.showInCombat = showInCombat;
+        this.showNameTag = showNameTag;
+        this.pieces.putAll(pieces);
+        this.trims.putAll(trims);
+        this.glints.putAll(glints);
     }
 
     /**
@@ -89,7 +107,43 @@ public class ArmorConfig {
         }
     }
 
+    public ArmorConfig copy() {
+        return new ArmorConfig(
+                showInCombat,
+                showNameTag,
+                pieces.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().copy())),
+                trims.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().copy())),
+                glints.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().copy()))
+        );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ArmorConfig that = (ArmorConfig) o;
+
+        if (showInCombat != that.showInCombat) return false;
+        if (showNameTag != that.showNameTag) return false;
+        if (!pieces.equals(that.pieces)) return false;
+        if (!trims.equals(that.trims)) return false;
+        return glints.equals(that.glints);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = pieces.hashCode();
+        result = 31 * result + trims.hashCode();
+        result = 31 * result + glints.hashCode();
+        result = 31 * result + (showInCombat ? 1 : 0);
+        result = 31 * result + (showNameTag ? 1 : 0);
+        return result;
+    }
+
     public static class ArmorPieceConfig {
+        public static final Codec<ArmorPieceConfig> CODEC = Codec.BYTE.fieldOf("transparency")
+                .codec().xmap(ArmorPieceConfig::new, ArmorPieceConfig::getTransparency);
         public static final ArmorPieceConfig VANILLA_VALUES = new ArmorPieceConfig();
 
         public byte transparency = 100;
@@ -107,6 +161,10 @@ public class ArmorConfig {
 
         public void setTransparency(byte transparency) {
             this.transparency = transparency;
+        }
+
+        public ArmorPieceConfig copy() {
+            return new ArmorPieceConfig(transparency);
         }
     }
 }

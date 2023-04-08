@@ -32,16 +32,19 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
+import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.client.cursed.AlwaysGlintingStack;
 import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.config.ModConfig;
+import nl.enjarai.showmeyourskin.config.SyncedModConfig;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class ArmorConfigWindow extends AbstractParentElement implements Drawable, Element, Selectable {
@@ -90,6 +93,9 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         this.player = player;
         this.armorConfig = armorConfig;
 
+        var serverConfig = ShowMeYourSkinClient.HANDSHAKE_CLIENT.getConfig();
+        var serverAvailable = serverConfig.isPresent();
+
         sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 12, 0, 240,
                 new SliderSet(this, getWindowLeft(), getWindowTop(), sliders -> {
                     sliders.add(getOpacitySlider(HideableEquipment.HEAD,
@@ -122,14 +128,19 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         selectTab(sliderSetTabs.get(tabIndex));
         lastPlayerRotation = selectedSliderSetTab.sliderSet.rotatedBy;
 
-        buttons.add(new ToggleButtonWidget(
-                parent, getWindowLeft() + 14, getWindowTop() + 115, 40, 38,
-                TEXTURE, armorConfig.showInCombat, b -> armorConfig.showInCombat = b, COMBAT_TOOLTIP
-        ));
-        buttons.add(new ToggleButtonWidget(
-                parent, getWindowLeft() + 14, getWindowTop() + 141, 80, 38,
-                TEXTURE, armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP
-        ));
+        if (!serverAvailable || serverConfig.get().allowNotShowInCombat()) {
+            buttons.add(new ToggleButtonWidget(
+                    parent, getWindowLeft() + 14, getWindowTop() + 115, 40, 38,
+                    TEXTURE, armorConfig.showInCombat, b -> armorConfig.showInCombat = b, COMBAT_TOOLTIP
+            ));
+        }
+
+        if (!serverAvailable || serverConfig.get().allowNotShowNameTag()) {
+            buttons.add(new ToggleButtonWidget(
+                    parent, getWindowLeft() + 14, getWindowTop() + 141, 80, 38,
+                    TEXTURE, armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP
+            ));
+        }
 
         children.addAll(buttons);
     }
@@ -152,6 +163,10 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
 
     protected int getHeightIterations() {
         return 10;
+    }
+
+    public ArmorConfig getArmorConfig() {
+        return armorConfig;
     }
 
     @Override
