@@ -1,8 +1,6 @@
 package nl.enjarai.showmeyourskin.mixin;
 
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.client.model.ModelPart;
@@ -13,9 +11,9 @@ import net.minecraft.client.render.block.entity.BannerBlockEntityRenderer;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.RegistryEntry;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.util.MixinContext;

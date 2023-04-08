@@ -6,7 +6,10 @@ import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.block.entity.BannerPatterns;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.AbstractParentElement;
+import net.minecraft.client.gui.Drawable;
+import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -30,7 +33,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.math.Vec3f;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.client.cursed.AlwaysGlintingStack;
@@ -38,13 +42,8 @@ import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.config.ModConfig;
-import nl.enjarai.showmeyourskin.config.SyncedModConfig;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public class ArmorConfigWindow extends AbstractParentElement implements Drawable, Element, Selectable {
@@ -202,15 +201,17 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         );
 
         matrices.push();
-        matrices.translate(playerX, playerY, -950);
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(playerRotation));
-        matrices.translate(0, 0, 950.0);
-        DrawableHelper.enableScissor(
-                getWindowRight() - 112, getWindowTop() + 8,
-                getWindowRight() - 5, getWindowTop() + 168
+        matrices.translate(playerX, playerY, 950);
+        matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(-playerRotation));
+        double scaleFactor = MinecraftClient.getInstance().getWindow().getScaleFactor();
+        RenderSystem.enableScissor(
+                (int) ((getWindowRight() - 112) * scaleFactor),
+                (int) ((getWindowTop() + 8) * scaleFactor),
+                (int) ((getWindowRight() - 5 - getWindowRight() - 112) * scaleFactor),
+                (int) ((getWindowTop() + 168 - getWindowTop() + 8) * scaleFactor)
         );
         drawEntity(matrices, 0, 0, 70, -mouseX + playerX, -mouseY + playerY - 110, player);
-        DrawableHelper.disableScissor();
+        RenderSystem.disableScissor();
         matrices.pop();
 
         if (!isEditable()) {
@@ -374,12 +375,22 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         return SelectionType.NONE;
     }
 
-    public void drawEntity(MatrixStack matrices, int x, int y, int size, double mouseX, double mouseY, LivingEntity entity) {
+    @SuppressWarnings("deprecation")
+    public void drawEntity(MatrixStack matrixStack2, int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
         float f = (float) (Math.atan(mouseX / 40.0F) * Math.sin((getCurrentPlayerRotation() / 180.0 + 0.5) * Math.PI));
         float g = (float)Math.atan(mouseY / 40.0F);
-        Quaternionf quaternionf = (new Quaternionf()).rotateZ(3.1415927F);
-        Quaternionf quaternionf2 = (new Quaternionf()).rotateX(g * 20.0F * 0.017453292F);
-        quaternionf.mul(quaternionf2);
+        MatrixStack matrixStack = RenderSystem.getModelViewStack();
+        matrixStack.push();
+        matrixStack.translate(x, y, 1050.0);
+        matrixStack.scale(1.0F, 1.0F, -1.0F);
+        RenderSystem.applyModelViewMatrix();
+        matrixStack2.scale((float)size, (float)size, (float)size);
+        Quaternion quaternion = Vec3f.POSITIVE_Z.getDegreesQuaternion(180.0F);
+        Quaternion quaternion2 = Vec3f.POSITIVE_X.getDegreesQuaternion(g * 20.0F);
+        quaternion.hamiltonProduct(quaternion2);
+        matrixStack2.translate(0, -1, 0);
+        matrixStack2.multiply(quaternion);
+        matrixStack2.translate(0, -1, 0);
         float h = entity.bodyYaw;
         float i = entity.getYaw();
         float j = entity.getPitch();
@@ -390,41 +401,25 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         entity.setPitch(-g * 20.0F);
         entity.headYaw = entity.getYaw();
         entity.prevHeadYaw = entity.getYaw();
-        drawEntity(matrices, x, y, size, quaternionf, quaternionf2, entity);
+        DiffuseLighting.method_34742();
+        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
+        quaternion2.conjugate();
+        entityRenderDispatcher.setRotation(quaternion2);
+        entityRenderDispatcher.setRenderShadows(false);
+        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        RenderSystem.runAsFancy(() -> {
+            entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate, 15728880);
+        });
+        immediate.draw();
+        entityRenderDispatcher.setRenderShadows(true);
         entity.bodyYaw = h;
         entity.setYaw(i);
         entity.setPitch(j);
         entity.prevHeadYaw = k;
         entity.headYaw = l;
-    }
-
-    @SuppressWarnings("deprecation")
-    public static void drawEntity(MatrixStack matrices, int x, int y, int size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity) {
-        MatrixStack matrixStack = RenderSystem.getModelViewStack();
-        matrixStack.push();
-        matrixStack.translate(0.0, 0.0, 1000.0);
-        RenderSystem.applyModelViewMatrix();
-        matrices.push();
-        matrices.translate(x, y, -950.0);
-        matrices.multiplyPositionMatrix(new Matrix4f().scaling(size, size, -size));
-        matrices.translate(0, -1, 0);
-        matrices.multiply(quaternionf);
-        matrices.translate(0, -1, 0);
-        DiffuseLighting.method_34742();
-        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
-        if (quaternionf2 != null) {
-            quaternionf2.conjugate();
-            entityRenderDispatcher.setRotation(quaternionf2);
-        }
-        entityRenderDispatcher.setRenderShadows(false);
-        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, 1.0f, matrices, immediate, 0xF000F0));
-        immediate.draw();
-        entityRenderDispatcher.setRenderShadows(true);
-        matrices.pop();
-        DiffuseLighting.enableGuiDepthLighting();
         matrixStack.pop();
         RenderSystem.applyModelViewMatrix();
+        DiffuseLighting.enableGuiDepthLighting();
     }
 
     private static ItemStack getDummyArmor(EquipmentSlot slot) {
