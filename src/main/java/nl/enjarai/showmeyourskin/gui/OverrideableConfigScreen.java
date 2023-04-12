@@ -11,14 +11,14 @@ import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.gui.widget.ConfigEntryWidget;
 import nl.enjarai.showmeyourskin.gui.widget.PlayerSelectorWidget;
 
-public class ClientOnlyConfigScreen extends ConfigScreen {
+public class OverrideableConfigScreen extends ConfigScreen {
     public static final Identifier SELECTOR_TEXTURE = ShowMeYourSkin.id("textures/gui/config_screen.png");
     public static final Identifier GLOBAL_ICON = ShowMeYourSkin.id("textures/gui/global_icon.png");
 
     private ConfigEntryWidget globalConfig;
     private PlayerSelectorWidget playerSelector;
 
-    public ClientOnlyConfigScreen(Screen parent) {
+    public OverrideableConfigScreen(Screen parent) {
         super(parent);
     }
 
@@ -34,7 +34,7 @@ public class ClientOnlyConfigScreen extends ConfigScreen {
         globalConfig = new ConfigEntryWidget(
                 client, playerSelector, getWindowLeft() + 11, getSelectorTop() + 63,
                 Text.translatable("gui.showmeyourskin.armorScreen.global"),
-                () -> ClientOnlyConfigScreen.GLOBAL_ICON, () -> null
+                () -> OverrideableConfigScreen.GLOBAL_ICON, () -> null
         );
         playerSelector.linkDefault(globalConfig);
         playerSelector.updateEntries();
@@ -45,7 +45,7 @@ public class ClientOnlyConfigScreen extends ConfigScreen {
         int leftSide = getWindowLeft() + 3;
         int topSide = getSelectorTop();
 
-        RenderSystem.setShaderTexture(0, ClientOnlyConfigScreen.SELECTOR_TEXTURE);
+        RenderSystem.setShaderTexture(0, OverrideableConfigScreen.SELECTOR_TEXTURE);
 
         drawTexture(matrices, leftSide, topSide, 1, 1, 236, 127);
     }

@@ -17,7 +17,7 @@ import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.config.SyncedModConfig;
-import nl.enjarai.showmeyourskin.gui.ClientOnlyConfigScreen;
+import nl.enjarai.showmeyourskin.gui.OverrideableConfigScreen;
 import nl.enjarai.showmeyourskin.gui.ConfigScreen;
 import nl.enjarai.showmeyourskin.gui.ServerIntegratedConfigScreen;
 import nl.enjarai.showmeyourskin.net.HandshakeClient;
@@ -67,7 +67,7 @@ public class ShowMeYourSkinClient implements ClientModInitializer, CicadaEntrypo
 		if (HANDSHAKE_CLIENT.getConfig().isPresent()) {
 			return new ServerIntegratedConfigScreen(parent);
 		} else {
-			return new ClientOnlyConfigScreen(parent);
+			return new OverrideableConfigScreen(parent);
 		}
 	}
 

@@ -7,7 +7,6 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.config.ModConfig;
-import nl.enjarai.showmeyourskin.gui.ClientOnlyConfigScreen;
 import org.lwjgl.glfw.GLFW;
 
 public class ModKeyBindings {

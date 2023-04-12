@@ -14,7 +14,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ModConfig;
-import nl.enjarai.showmeyourskin.gui.ClientOnlyConfigScreen;
+import nl.enjarai.showmeyourskin.gui.OverrideableConfigScreen;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,7 +29,7 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
         this.armorConfig = ModConfig.INSTANCE.getOverride(uuid);
         this.uuid = uuid;
         this.clearButton = new TexturedButtonWidget(0, 0, 11, 11, 0, 128,
-                ClientOnlyConfigScreen.SELECTOR_TEXTURE, button -> clearConfig());
+                OverrideableConfigScreen.SELECTOR_TEXTURE, button -> clearConfig());
         this.clearButton.visible = armorConfig != null;
     }
 

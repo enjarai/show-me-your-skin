@@ -32,7 +32,7 @@ public abstract class ConfigScreen extends Screen {
         );
         globalToggle = new ToggleButtonWidget(
                 this, getGlobalToggleX(), getGlobalToggleY(),
-                0, 160, ClientOnlyConfigScreen.SELECTOR_TEXTURE, ModConfig.INSTANCE.globalEnabled,
+                0, 160, OverrideableConfigScreen.SELECTOR_TEXTURE, ModConfig.INSTANCE.globalEnabled,
                 (enabled) -> ModConfig.INSTANCE.globalEnabled = enabled,
                 Text.translatable("gui.showmeyourskin.armorScreen.globalToggleTooltip",
                         KeyBindingHelper.getBoundKeyOf(ModKeyBindings.GLOBAL_TOGGLE).getLocalizedText())

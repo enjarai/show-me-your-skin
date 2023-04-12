@@ -28,6 +28,7 @@ public class ModConfig {
             .create();
 
     public boolean globalEnabled = true;
+    public boolean overridesEnabledInServerMode = false;
     public float combatCooldown = 16;
     public float fadeOutTime = 2;
     public final ArmorConfig global = new ArmorConfig();

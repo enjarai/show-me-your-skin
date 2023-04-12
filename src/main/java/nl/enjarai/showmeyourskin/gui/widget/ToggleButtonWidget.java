@@ -13,8 +13,8 @@ public class ToggleButtonWidget extends TexturedButtonWidget {
     private final Screen parent;
     @Nullable
     private final Text tooltip;
-    private boolean enabled;
-    private final BooleanConsumer toggleAction;
+    protected boolean enabled;
+    protected final BooleanConsumer toggleAction;
 
     public ToggleButtonWidget(Screen parent, int x, int y, int u, int v, Identifier texture, boolean initial, BooleanConsumer toggleAction, @Nullable Text tooltip) {
         super(x, y, 20, 20, u + (initial ? 0 : 20), v, texture, null);
@@ -32,9 +32,19 @@ public class ToggleButtonWidget extends TexturedButtonWidget {
 
     @Override
     public void onPress() {
+        toggle();
+    }
+
+    public void toggle() {
         u += enabled ? 20 : -20;
         enabled = !enabled;
 
         toggleAction.accept(enabled);
+    }
+
+    public void setEnabled(boolean enabled) {
+        if (this.enabled != enabled) {
+            toggle();
+        }
     }
 }
