@@ -19,8 +19,8 @@ public abstract class ConfigScreen extends Screen {
     private ButtonWidget backButton;
     private ButtonWidget globalToggle;
 
-    public ConfigScreen(Screen parent) {
-        super(Text.translatable("gui.showmeyourskin.armorScreen.title"));
+    public ConfigScreen(Screen parent, Text title) {
+        super(title);
         this.parent = parent;
     }
 
@@ -68,7 +68,7 @@ public abstract class ConfigScreen extends Screen {
 
         loadArmorConfigWindow(new ArmorConfigWindow(
                 this, getWindowLeft(), getWindowTop(),
-                entry.getName(), entry.getDummyPlayer(), entry.getArmorConfig(), tabIndex
+                entry.getName(), entry.getDummyPlayer(), entry.getArmorConfig(), tabIndex, true
         ));
     }
 

@@ -38,13 +38,34 @@ public class ModConfig {
     public ArmorConfig getOverrideOrGlobal(UUID uuid) {
         var client = MinecraftClient.getInstance();
 
-        if (ShowMeYourSkinClient.HANDSHAKE_CLIENT.getConfig().isPresent() && client.world != null) {
-            var player = client.world.getPlayerByUuid(uuid);
+        boolean serverAvailable = ShowMeYourSkinClient.HANDSHAKE_CLIENT.getConfig().isPresent() && client.world != null;
+        boolean useClientValues = overridesEnabledInServerMode || !serverAvailable;
 
-            return player != null ? player.getComponent(Components.ARMOR_CONFIG).getConfig() : ArmorConfig.VANILLA_VALUES;
+        if (useClientValues) {
+            var config = overrides.get(uuid);
+
+            if (config != null) {
+                return config;
+            }
         }
 
-        return overrides.getOrDefault(uuid, global);
+        if (serverAvailable) {
+            var player = client.world.getPlayerByUuid(uuid);
+
+            if (player != null) {
+                var config = player.getComponent(Components.ARMOR_CONFIG).getConfig();
+
+                if (!config.equals(ArmorConfig.VANILLA_VALUES)) {
+                    return config;
+                }
+            }
+        }
+
+        if (useClientValues) {
+            return global;
+        }
+
+        return ArmorConfig.VANILLA_VALUES;
     }
 
     public ArmorConfig getApplicable(UUID uuid) {

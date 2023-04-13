@@ -11,15 +11,15 @@ import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.gui.widget.ConfigEntryWidget;
 import nl.enjarai.showmeyourskin.gui.widget.PlayerSelectorWidget;
 
-public class OverrideableConfigScreen extends ConfigScreen {
+public abstract class OverrideableConfigScreen extends ConfigScreen {
     public static final Identifier SELECTOR_TEXTURE = ShowMeYourSkin.id("textures/gui/config_screen.png");
     public static final Identifier GLOBAL_ICON = ShowMeYourSkin.id("textures/gui/global_icon.png");
 
     private ConfigEntryWidget globalConfig;
     private PlayerSelectorWidget playerSelector;
 
-    public OverrideableConfigScreen(Screen parent) {
-        super(parent);
+    public OverrideableConfigScreen(Screen parent, Text title) {
+        super(parent, title);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class OverrideableConfigScreen extends ConfigScreen {
         var hovered = playerSelector.getHovered(mouseX, mouseY);
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         textRenderer.draw(
-                matrices, hovered == null ? Text.translatable("gui.showmeyourskin.armorScreen.playerSelector") : hovered.getName(),
+                matrices, hovered == null ? title : hovered.getName(),
                 getWindowLeft() + 11, getSelectorTop() + 52, TEXT_COLOR
         );
 

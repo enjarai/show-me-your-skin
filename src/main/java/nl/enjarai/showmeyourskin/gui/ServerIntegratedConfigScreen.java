@@ -16,7 +16,7 @@ public class ServerIntegratedConfigScreen extends ConfigScreen {
     private ButtonWidget overridesConfigureButton;
 
     public ServerIntegratedConfigScreen(Screen parent) {
-        super(parent);
+        super(parent, Text.translatable("gui.showmeyourskin.armorScreen.title.serverIntegrated"));
     }
 
     @Override
@@ -51,15 +51,15 @@ public class ServerIntegratedConfigScreen extends ConfigScreen {
             @Override
             public void onPress() {
                 if (client != null) {
-                    client.setScreen(new OverrideableConfigScreen(ServerIntegratedConfigScreen.this));
+                    client.setScreen(new ServerOverridesConfigScreen(ServerIntegratedConfigScreen.this));
                 }
             }
         };
 
         loadArmorConfigWindow(new ArmorConfigWindow(
                 this, getWindowLeft(), getWindowTop(),
-                Text.translatable("gui.showmeyourskin.armorScreen.global"),
-                dummyPlayer, config.copy(), 0
+                Text.translatable("gui.showmeyourskin.armorScreen.synced"),
+                dummyPlayer, config.copy(), 0, false
         ));
     }
 
