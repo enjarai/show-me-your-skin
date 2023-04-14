@@ -29,6 +29,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -50,7 +51,8 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     public static final Identifier TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen.png");
     public static final Identifier BACKGROUND_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_background.png");
     public static final Identifier OVERLAY_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_disabled.png");
-    private static final int TEXT_COLOR = 0x303030;
+    private static final int TEXT_COLOR = 0x505050;
+    private static final int TEXT_COLOR_RED = 0x880000;
     private static final Text GLINT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.glintTooltip");
     private static final Text COMBAT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.combatTooltip");
     private static final Text NAME_TAG_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.nameTagTooltip");
@@ -83,7 +85,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     private final DummyClientPlayerEntity player;
     private final ArmorConfig armorConfig;
 
-    public ArmorConfigWindow(Screen parent, int x, int y, Text name, DummyClientPlayerEntity player, ArmorConfig armorConfig, int tabIndex) {
+    public ArmorConfigWindow(Screen parent, int x, int y, Text name, DummyClientPlayerEntity player, ArmorConfig armorConfig, int tabIndex, boolean allowAllOptions) {
         super();
         this.parent = parent;
         this.x = x;
@@ -93,7 +95,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         this.armorConfig = armorConfig;
 
         var serverConfig = ShowMeYourSkinClient.HANDSHAKE_CLIENT.getConfig();
-        var serverAvailable = serverConfig.isPresent();
+        var hideOptions = serverConfig.isPresent() && !allowAllOptions;
 
         sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 12, 0, 240,
                 new SliderSet(this, getWindowLeft(), getWindowTop(), sliders -> {
@@ -127,14 +129,14 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         selectTab(sliderSetTabs.get(tabIndex));
         lastPlayerRotation = selectedSliderSetTab.sliderSet.rotatedBy;
 
-        if (!serverAvailable || serverConfig.get().allowNotShowInCombat()) {
+        if (!hideOptions || serverConfig.get().allowNotShowInCombat()) {
             buttons.add(new ToggleButtonWidget(
                     parent, getWindowLeft() + 14, getWindowTop() + 115, 40, 38,
                     TEXTURE, armorConfig.showInCombat, b -> armorConfig.showInCombat = b, COMBAT_TOOLTIP
             ));
         }
 
-        if (!serverAvailable || serverConfig.get().allowNotShowNameTag()) {
+        if (!hideOptions || serverConfig.get().allowNotShowNameTag()) {
             buttons.add(new ToggleButtonWidget(
                     parent, getWindowLeft() + 14, getWindowTop() + 141, 80, 38,
                     TEXTURE, armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP
@@ -199,6 +201,13 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
                 matrices, name,
                 getWindowRight() - 110, getWindowTop() + 10, TEXT_COLOR
         );
+        if (isOverridden()) {
+            var text = Text.translatable("gui.showmeyourskin.armorScreen.overridden");
+            textRenderer.draw(
+                    matrices, text,
+                    getWindowRight() - 7 - textRenderer.getWidth(text), getWindowTop() + 10, TEXT_COLOR_RED
+            );
+        }
 
         matrices.push();
         matrices.translate(playerX, playerY, 950);
@@ -306,6 +315,10 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
 
     public boolean isEditable() {
         return ModConfig.INSTANCE.globalEnabled;
+    }
+    
+    public boolean isOverridden() {
+        return false; // !armorConfig.equals(ModConfig.INSTANCE.getApplicable(player.getUuid()));
     }
 
     public void selectTab(SliderSetTab sliderSetTab) {

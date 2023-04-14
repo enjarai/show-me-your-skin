@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import nl.enjarai.cicada.api.conversation.ConversationManager;
 import nl.enjarai.cicada.api.util.CicadaEntrypoint;
@@ -17,7 +18,8 @@ import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.config.SyncedModConfig;
-import nl.enjarai.showmeyourskin.gui.ClientOnlyConfigScreen;
+import nl.enjarai.showmeyourskin.gui.ClientConfigScreen;
+import nl.enjarai.showmeyourskin.gui.OverrideableConfigScreen;
 import nl.enjarai.showmeyourskin.gui.ConfigScreen;
 import nl.enjarai.showmeyourskin.gui.ServerIntegratedConfigScreen;
 import nl.enjarai.showmeyourskin.net.HandshakeClient;
@@ -56,18 +58,24 @@ public class ShowMeYourSkinClient implements ClientModInitializer, CicadaEntrypo
 	}
 
 	public static void syncToServer(ArmorConfig config) {
-		var buf = PacketByteBufs.create();
-		var nbt = new NbtCompound();
-		new ArmorConfigComponent(config).writeToNbt(nbt);
-		buf.writeNbt(nbt);
-		ClientPlayNetworking.send(ShowMeYourSkin.UPDATE_C2S_CHANNEL, buf);
+		var player = MinecraftClient.getInstance().player;
+		if (player != null) {
+			var component = player.getComponent(Components.ARMOR_CONFIG);
+			component.setConfig(config);
+
+			var buf = PacketByteBufs.create();
+			var nbt = new NbtCompound();
+			component.writeToNbt(nbt);
+			buf.writeNbt(nbt);
+			ClientPlayNetworking.send(ShowMeYourSkin.UPDATE_C2S_CHANNEL, buf);
+		}
 	}
 
 	public static ConfigScreen createConfigScreen(@Nullable Screen parent) {
 		if (HANDSHAKE_CLIENT.getConfig().isPresent()) {
 			return new ServerIntegratedConfigScreen(parent);
 		} else {
-			return new ClientOnlyConfigScreen(parent);
+			return new ClientConfigScreen(parent);
 		}
 	}
 

@@ -1,39 +1,31 @@
 # Show Me Your Skin!
 
-Show Me Your Skin! (the exclamation mark is important) is a client-side mod
-that enables extensive customization of armor rendering. Every feature is toggleable
-and designed to be as flexible as possible.
+Show Me Your Skin! (the exclamation mark is important) is a client-side mod with
+optional server-side support that enables extensive customization of armor 
+rendering. Every feature is toggleable and designed to be as flexible as possible.
 
 ## Sliders galore
 
 All the armor hiding options you could ever need, in one intuitive GUI. 
 Including:
 
-- Individual armor piece transparency/invisibility
-- Elytra hiding
-- Enchantment glint removal
+- Individual configuration of each armor piece and elytra/shield:
+  - Arbitrary transparency
+  - Invisibility
+  - Enchant glint hiding
+- Server-based syncing of settings
 - Player name tag display toggle
 - Context-sensitive armor hiding
 - Per-player settings overrides
 
 ![](img/sliders.gif)
 
-## So many possibilities!
+## Truly flexible
 
-<table>
-<tr>
-    <th>Remove enchant glint</th>
-    <th>Hide specific <br>armor pieces</th>
-    <th>Add transparency</th>
-    <th>Create an aura-like <br>effect by keeping the <br>enchant glint with low <br>armor transparency</th>
-</tr>
-<tr>
-    <td><img src="img/no-enchants.gif" height="320"/></td>
-    <td><img src="img/pieces.gif" height="320"/></td>
-    <td><img src="img/transparency.gif" height="320"/></td>
-    <td><img src="img/aura.gif" height="320"/></td>
-</tr>
-</table>
+Below are a few examples of the flexibility this mod offers. You can
+fully cater the settings to your preference, and change them on the fly if needed.
+
+![](img/merged-framed.gif)
 
 ## Context-sensitive hiding
 
@@ -43,8 +35,17 @@ configurable amount of seconds after a player is damaged.
 
 ![](img/combat.gif)
 
-## Per-player overrides
+## Multiplayer support
 
-Override values per player in multiplayer using a fancy custom ui.
+When the mod is installed on a server, it'll enter "server mode" and any settings 
+you configure for yourself will be visible in real-time to other players. 
+Though admins can enforce certain restrictions on what settings are available 
+if they feel the need for it.
+
+![](img/multiplayer.gif)
+
+When the mod is only installed on your client however, you'll be able to
+configure personal settings for every player on the server. Though these are
+only visible to you.
 
 ![](img/overrides.gif)

@@ -19,8 +19,8 @@ public abstract class ConfigScreen extends Screen {
     private ButtonWidget backButton;
     private ButtonWidget globalToggle;
 
-    public ConfigScreen(Screen parent) {
-        super(Text.translatable("gui.showmeyourskin.armorScreen.title"));
+    public ConfigScreen(Screen parent, Text title) {
+        super(title);
         this.parent = parent;
     }
 
@@ -32,7 +32,7 @@ public abstract class ConfigScreen extends Screen {
         );
         globalToggle = new ToggleButtonWidget(
                 this, getGlobalToggleX(), getGlobalToggleY(),
-                0, 160, ClientOnlyConfigScreen.SELECTOR_TEXTURE, ModConfig.INSTANCE.globalEnabled,
+                0, 160, OverrideableConfigScreen.SELECTOR_TEXTURE, ModConfig.INSTANCE.globalEnabled,
                 (enabled) -> ModConfig.INSTANCE.globalEnabled = enabled,
                 Text.translatable("gui.showmeyourskin.armorScreen.globalToggleTooltip",
                         KeyBindingHelper.getBoundKeyOf(ModKeyBindings.GLOBAL_TOGGLE).getLocalizedText())
@@ -68,7 +68,7 @@ public abstract class ConfigScreen extends Screen {
 
         loadArmorConfigWindow(new ArmorConfigWindow(
                 this, getWindowLeft(), getWindowTop(),
-                entry.getName(), entry.getDummyPlayer(), entry.getArmorConfig(), tabIndex
+                entry.getName(), entry.getDummyPlayer(), entry.getArmorConfig(), tabIndex, true
         ));
     }
 
