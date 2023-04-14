@@ -45,7 +45,7 @@ public class ServerIntegratedConfigScreen extends ConfigScreen {
         );
         overridesConfigureButton = new ToggleButtonWidget(
                 this, getWindowLeft() + 78, getWindowTop() - 22,
-                160, 38, ArmorConfigWindow.TEXTURE, true,
+                20, 78, ArmorConfigWindow.TEXTURE, true,
                 button -> {}, Text.translatable("gui.showmeyourskin.armorScreen.overridesConfigure")
         ) {
             @Override
