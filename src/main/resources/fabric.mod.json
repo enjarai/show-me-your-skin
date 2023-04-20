@@ -43,7 +43,10 @@
 
   "depends": {
     "fabric": "*",
-    "minecraft": ">=1.19 <1.19.3-"
+    "minecraft": ">=1.19 <1.19.3-",
+    "cicada": "*",
+    "cardinal-components-base": "*",
+    "cardinal-components-entity": "*"
   },
 
   "custom": {
