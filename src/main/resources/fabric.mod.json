@@ -17,7 +17,7 @@
   "license": "MIT",
   "icon": "assets/showmeyourskin/icon.png",
 
-  "environment": "client",
+  "environment": "*",
   "entrypoints": {
     "main": [
       "nl.enjarai.showmeyourskin.ShowMeYourSkin"
