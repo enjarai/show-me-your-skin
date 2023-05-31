@@ -130,20 +130,20 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        DrawableHelper.enableScissor(x, 0, x + width, screenHeight);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        context.enableScissor(x, 0, x + width, screenHeight);
         var players = getEntries();
         for (int i = 0; i < players.size(); i++) {
             var entry = players.get(i);
             var x = getEntryX(entry);
             var y = getEntryY(entry);
             entry.directRender(
-                    matrices, i, x, y, mouseX, mouseY,
+                    context, i, x, y, mouseX, mouseY,
                     mouseX >= x && mouseX < x + entry.getWidth() && mouseY >= y && mouseY < y + entry.getHeight(),
                     delta
             );
         }
-        DrawableHelper.disableScissor();
+        context.disableScissor();
     }
 
     public List<ConfigEntryWidget> getEntries() {

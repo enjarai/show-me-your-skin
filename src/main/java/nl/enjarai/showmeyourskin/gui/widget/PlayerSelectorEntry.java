@@ -3,6 +3,7 @@ package nl.enjarai.showmeyourskin.gui.widget;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
@@ -54,23 +55,22 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
     }
 
     @Override
-    public void directRender(MatrixStack matrices, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        super.directRender(matrices, index, x, y, mouseX, mouseY, hovered, tickDelta);
+    public void directRender(DrawContext context, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        super.directRender(context, index, x, y, mouseX, mouseY, hovered, tickDelta);
 
         if (clearButton != null) {
             clearButton.setX(x);
             clearButton.setY(y);
 
-            clearButton.render(matrices, mouseX, mouseY, tickDelta);
+            clearButton.render(context, mouseX, mouseY, tickDelta);
         }
     }
 
     @Override
-    protected void renderIcon(MatrixStack matrices, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        RenderSystem.setShaderTexture(0, texture.get());
-        drawTexture(matrices, x + 3, y + 3, 24, 24, 8.0F, 8.0F, 8, 8, 64, 64);
+    protected void renderIcon(DrawContext context, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        context.drawTexture(texture.get(), x + 3, y + 3, 24, 24, 8.0F, 8.0F, 8, 8, 64, 64);
         RenderSystem.enableBlend();
-        drawTexture(matrices, x + 3, y + 3, 24, 24, 40.0F, 8.0F, 8, 8, 64, 64);
+        context.drawTexture(texture.get(), x + 3, y + 3, 24, 24, 40.0F, 8.0F, 8, 8, 64, 64);
         RenderSystem.disableBlend();
     }
 

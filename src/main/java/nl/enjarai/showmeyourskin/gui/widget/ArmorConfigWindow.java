@@ -172,22 +172,22 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         for (var sliderSetTabs : sliderSetTabs) {
-            sliderSetTabs.render(matrices, mouseX, mouseY, sliderSetTabs == selectedSliderSetTab);
+            sliderSetTabs.render(context, mouseX, mouseY, sliderSetTabs == selectedSliderSetTab);
         }
 
-        renderBackground(matrices, BACKGROUND_TEXTURE, -999);
+        renderBackground(context, BACKGROUND_TEXTURE, -999);
         for (var drawable : buttons) {
             drawable.render(
-                    matrices,
+                    context,
                     isEditable() ? mouseX : -1,
                     isEditable() ? mouseY : -1,
                     delta
             );
         }
         selectedSliderSetTab.sliderSet.render(
-                matrices,
+                context,
                 isEditable() ? mouseX : -1,
                 isEditable() ? mouseY : -1,
                 delta
@@ -198,32 +198,34 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         var playerRotation = getCurrentPlayerRotation();
 
         var textRenderer = MinecraftClient.getInstance().textRenderer;
-        textRenderer.draw(
-                matrices, name,
-                getWindowRight() - 110, getWindowTop() + 10, TEXT_COLOR
+        context.drawText(
+                textRenderer, name,
+                getWindowRight() - 110, getWindowTop() + 10, TEXT_COLOR, false
         );
         if (isOverridden()) {
             var text = Text.translatable("gui.showmeyourskin.armorScreen.overridden");
-            textRenderer.draw(
-                    matrices, text,
-                    getWindowRight() - 7 - textRenderer.getWidth(text), getWindowTop() + 10, TEXT_COLOR_RED
+            context.drawText(
+                    textRenderer, text,
+                    getWindowRight() - 7 - textRenderer.getWidth(text), getWindowTop() + 10, TEXT_COLOR_RED, false
             );
         }
+
+        var matrices = context.getMatrices();
 
         matrices.push();
         matrices.translate(playerX, playerY, -950);
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(playerRotation));
         matrices.translate(0, 0, 950.0);
-        DrawableHelper.enableScissor(
+        context.enableScissor(
                 getWindowRight() - 112, getWindowTop() + 8,
                 getWindowRight() - 5, getWindowTop() + 168
         );
         drawEntity(matrices, 0, 0, 70, -mouseX + playerX, -mouseY + playerY - 110, player);
-        DrawableHelper.disableScissor();
+        context.disableScissor();
         matrices.pop();
 
         if (!isEditable()) {
-            renderBackground(matrices, OVERLAY_TEXTURE, 999);
+            renderBackground(context, OVERLAY_TEXTURE, 999);
         }
     }
 
@@ -236,16 +238,16 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         return MathHelper.lerp(getPlayerRotationDelta(), lastPlayerRotation, selectedSliderSetTab.sliderSet.rotatedBy);
     }
 
-    public void renderBackground(MatrixStack matrices, Identifier backgroundTexture, int zIndex) {
+    public void renderBackground(DrawContext context, Identifier backgroundTexture, int zIndex) {
         int leftSide = getWindowLeft() + 3;
         int topSide = getWindowTop();
+        var matrices = context.getMatrices();
 
-        RenderSystem.setShaderTexture(0, backgroundTexture);
         RenderSystem.enableBlend();
 
         matrices.push();
         matrices.translate(0, 0, zIndex);
-        drawTexture(matrices, leftSide, topSide, 1, 1, 236, 254);
+        context.drawTexture(backgroundTexture, leftSide, topSide, 1, 1, 236, 254);
         matrices.pop();
 
         RenderSystem.disableBlend();

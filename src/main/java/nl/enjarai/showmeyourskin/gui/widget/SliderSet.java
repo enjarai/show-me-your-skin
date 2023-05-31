@@ -1,10 +1,7 @@
 package nl.enjarai.showmeyourskin.gui.widget;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.gui.AbstractParentElement;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
@@ -38,10 +35,10 @@ public class SliderSet extends AbstractParentElement implements Drawable, Elemen
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         for (var drawable : sliders) {
             drawable.render(
-                    matrices,
+                    context,
                     parent.isEditable() ? mouseX : -1,
                     parent.isEditable() ? mouseY : -1,
                     delta

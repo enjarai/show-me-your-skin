@@ -3,10 +3,7 @@ package nl.enjarai.showmeyourskin.gui.widget;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.AbstractParentElement;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
@@ -78,28 +75,26 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        directRender(matrices, -1, x, y, mouseX, mouseY, isMouseOver(mouseX, mouseY), delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        directRender(context, -1, x, y, mouseX, mouseY, isMouseOver(mouseX, mouseY), delta);
     }
 
-    public void directRender(MatrixStack matrices, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+    public void directRender(DrawContext context, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
         RenderSystem.enableBlend();
 
-        RenderSystem.setShaderTexture(0, SELECTION_TEXTURE);
         if (selected) {
-            drawTexture(matrices, x - 1, y - 1, 0, 0, 32, 32, 128, 128);
+            context.drawTexture(SELECTION_TEXTURE, x - 1, y - 1, 0, 0, 32, 32, 128, 128);
         } else if (hovered && children().stream().noneMatch(element -> element.isMouseOver(mouseX, mouseY))) {
-            drawTexture(matrices, x - 1, y - 1, 32, 0, 32, 32, 128, 128);
+            context.drawTexture(SELECTION_TEXTURE, x - 1, y - 1, 32, 0, 32, 32, 128, 128);
         }
 
-        renderIcon(matrices, index, x, y, mouseX, mouseY, hovered, tickDelta);
+        renderIcon(context, index, x, y, mouseX, mouseY, hovered, tickDelta);
 
         RenderSystem.disableBlend();
     }
 
-    protected void renderIcon(MatrixStack matrices, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        RenderSystem.setShaderTexture(0, texture.get());
-        drawTexture(matrices, x + 3, y + 3, 24, 24, 0, 0, 24, 24, 24, 24);
+    protected void renderIcon(DrawContext context, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        context.drawTexture(texture.get(), x + 3, y + 3, 24, 24, 0, 0, 24, 24, 24, 24);
     }
 
     public void playDownSound(SoundManager soundManager) {

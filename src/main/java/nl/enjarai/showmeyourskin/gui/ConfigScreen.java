@@ -1,10 +1,10 @@
 package nl.enjarai.showmeyourskin.gui;
 
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import nl.enjarai.showmeyourskin.client.ModKeyBindings;
 import nl.enjarai.showmeyourskin.config.ModConfig;
@@ -40,17 +40,19 @@ public abstract class ConfigScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(MatrixStack matrices) {
+    public void renderBackground(DrawContext context) {
+        var matrices = context.getMatrices();
+
         matrices.push();
         matrices.translate(0, 0, -999);
 
-        super.renderBackground(matrices);
-        renderBackgroundTextures(matrices);
+        super.renderBackground(context);
+        renderBackgroundTextures(context);
 
         matrices.pop();
     }
 
-    protected void renderBackgroundTextures(MatrixStack matrices) {
+    protected void renderBackgroundTextures(DrawContext context) {
     }
 
     protected void fixChildren() {

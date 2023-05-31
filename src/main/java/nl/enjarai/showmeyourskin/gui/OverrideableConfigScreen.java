@@ -2,8 +2,8 @@ package nl.enjarai.showmeyourskin.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
@@ -41,27 +41,25 @@ public abstract class OverrideableConfigScreen extends ConfigScreen {
     }
 
     @Override
-    protected void renderBackgroundTextures(MatrixStack matrices) {
+    protected void renderBackgroundTextures(DrawContext context) {
         int leftSide = getWindowLeft() + 3;
         int topSide = getSelectorTop();
 
-        RenderSystem.setShaderTexture(0, OverrideableConfigScreen.SELECTOR_TEXTURE);
-
-        drawTexture(matrices, leftSide, topSide, 1, 1, 236, 127);
+        context.drawTexture(OverrideableConfigScreen.SELECTOR_TEXTURE, leftSide, topSide, 1, 1, 236, 127);
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        renderBackground(matrices);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderBackground(context);
 
         var hovered = playerSelector.getHovered(mouseX, mouseY);
         var textRenderer = MinecraftClient.getInstance().textRenderer;
-        textRenderer.draw(
-                matrices, hovered == null ? title : hovered.getName(),
-                getWindowLeft() + 11, getSelectorTop() + 52, TEXT_COLOR
+        context.drawText(
+                textRenderer, hovered == null ? title : hovered.getName(),
+                getWindowLeft() + 11, getSelectorTop() + 52, TEXT_COLOR, true
         );
 
-        super.render(matrices, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
     }
 
     @Override

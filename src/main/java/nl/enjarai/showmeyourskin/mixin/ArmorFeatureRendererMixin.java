@@ -58,7 +58,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
             at = @At(value = "HEAD"),
             cancellable = true
     )
-    private void showmeyourskin$armorTransparency(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, boolean usesSecondLayer, A model, boolean legs, float red, float green, float blue, String overlay, CallbackInfo ci) {
+    private void showmeyourskin$armorTransparency(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, A model, boolean secondTextureLayer, float red, float green, float blue, @Nullable String overlay, CallbackInfo ci) {
         var ctx = MixinContext.ARMOR.getContext();
 
         if (ctx != null && ctx.shouldModify()) {
@@ -67,8 +67,8 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
             if (t < 1) {
                 if (t > 0) {
                     VertexConsumer vertexConsumer = ItemRenderer.getDirectItemGlintConsumer(
-                            vertexConsumers, RenderLayer.getEntityTranslucent(getArmorTexture(item, legs, overlay)),
-                            false, usesSecondLayer
+                            vertexConsumers, RenderLayer.getEntityTranslucent(getArmorTexture(item, secondTextureLayer, overlay)),
+                            false, fuck
                     );
                     model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, red, green, blue, t);
                 }
