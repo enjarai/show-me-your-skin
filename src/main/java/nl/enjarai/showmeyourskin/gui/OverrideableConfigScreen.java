@@ -56,7 +56,7 @@ public abstract class OverrideableConfigScreen extends ConfigScreen {
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         context.drawText(
                 textRenderer, hovered == null ? title : hovered.getName(),
-                getWindowLeft() + 11, getSelectorTop() + 52, TEXT_COLOR, true
+                getWindowLeft() + 11, getSelectorTop() + 52, TEXT_COLOR, false
         );
 
         super.render(context, mouseX, mouseY, delta);

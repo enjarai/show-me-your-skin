@@ -10,6 +10,7 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import nl.enjarai.showmeyourskin.client.ModRenderLayers;
 import nl.enjarai.showmeyourskin.util.MixinContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,8 +32,8 @@ public interface ArmorRendererMixin {
 
             if (t < 1) {
                 if (t > 0) {
-                    VertexConsumer vertexConsumer = ItemRenderer.getDirectItemGlintConsumer(
-                            vertexConsumers, RenderLayer.getEntityTranslucent(texture),
+                    VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(
+                            vertexConsumers, ModRenderLayers.ARMOR_TRANSLUCENT_NO_CULL.apply(texture),
                             false, stack.hasGlint() && ctx.getApplicableGlintTransparency() > 0
                     );
                     model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, t);

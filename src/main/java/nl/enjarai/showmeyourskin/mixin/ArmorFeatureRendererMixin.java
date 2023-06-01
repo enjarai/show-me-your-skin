@@ -1,9 +1,9 @@
 package nl.enjarai.showmeyourskin.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
@@ -13,6 +13,7 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.trim.ArmorTrim;
 import net.minecraft.util.Identifier;
+import nl.enjarai.showmeyourskin.client.ModRenderLayers;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.util.ArmorContext;
 import nl.enjarai.showmeyourskin.util.MixinContext;
@@ -22,7 +23,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = ArmorFeatureRenderer.class, priority = 999)
@@ -39,10 +39,9 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
         MixinContext.ARMOR.setContext(new ArmorContext(HideableEquipment.fromSlot(armorSlot), entity));
     }
 
-    @ModifyVariable(
+    @ModifyExpressionValue(
             method = "renderArmor",
-            at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;hasGlint()Z"),
-            index = 10
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;hasGlint()Z")
     )
     private boolean showmeyourskin$toggleGlint(boolean original) {
         var ctx = MixinContext.ARMOR.getContext();
@@ -66,10 +65,8 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
 
             if (t < 1) {
                 if (t > 0) {
-                    VertexConsumer vertexConsumer = ItemRenderer.getDirectItemGlintConsumer(
-                            vertexConsumers, RenderLayer.getEntityTranslucent(getArmorTexture(item, secondTextureLayer, overlay)),
-                            false, fuck
-                    );
+                    VertexConsumer vertexConsumer = vertexConsumers.getBuffer(
+                            ModRenderLayers.ARMOR_TRANSLUCENT_NO_CULL.apply(getArmorTexture(item, secondTextureLayer, overlay)));
                     model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, red, green, blue, t);
                 }
 
@@ -83,7 +80,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
             at = @At(value = "HEAD"),
             cancellable = true
     )
-    private void showmeyourskin$trimTransparency(ArmorMaterial material, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorTrim trim, boolean glint, A model, boolean leggings, float red, float green, float blue, CallbackInfo ci) {
+    private void showmeyourskin$trimTransparency(ArmorMaterial material, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorTrim trim, A model, boolean leggings, CallbackInfo ci) {
         var ctx = MixinContext.ARMOR.getContext();
 
         if (ctx != null && ctx.shouldModify()) {
@@ -93,14 +90,9 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
                 if (t > 0) {
                     Sprite sprite = armorTrimsAtlas.getSprite(
                             leggings ? trim.getLeggingsModelId(material) : trim.getGenericModelId(material));
-                    VertexConsumer vertexConsumer = sprite.getTextureSpecificVertexConsumer(
-                            ItemRenderer.getDirectItemGlintConsumer(
-                                    vertexConsumers,
-                                    RenderLayer.getEntityTranslucent(TexturedRenderLayers.ARMOR_TRIMS_ATLAS_TEXTURE),
-                                    true, glint
-                            )
-                    );
-                    model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, red, green, blue, t);
+                    VertexConsumer vertexConsumer = sprite.getTextureSpecificVertexConsumer(vertexConsumers
+                            .getBuffer(ModRenderLayers.ARMOR_TRANSLUCENT_NO_CULL.apply(TexturedRenderLayers.ARMOR_TRIMS_ATLAS_TEXTURE)));
+                    model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, t);
                 }
 
                 ci.cancel();
