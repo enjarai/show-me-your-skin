@@ -43,7 +43,7 @@
 
   "depends": {
     "fabric": "*",
-    "minecraft": ">=1.20- <1.20.1-",
+    "minecraft": ">=1.20- <1.20.2-",
     "cicada": "*",
     "cardinal-components-base": "*",
     "cardinal-components-entity": "*"
