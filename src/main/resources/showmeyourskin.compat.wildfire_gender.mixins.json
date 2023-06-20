@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "nl.enjarai.showmeyourskin.compat.wildfire_gender.mixin",
+  "plugin": "nl.enjarai.showmeyourskin.compat.wildfire_gender.WildfireGenderMixinPlugin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+  ],
+  "client": [
+    "GenderLayerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
