@@ -1,1 +1,2 @@
-- Marked compatible with 1.20.1
+- Fixed compatibility with Wildfire's Female Gender Mod's breastplate rendering.
+- Switched `fabric` dependency to `fabric-api` to be clearer to users.
