@@ -1,6 +1,10 @@
 package nl.enjarai.showmeyourskin.mixin;
 
-import net.minecraft.client.render.*;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.TexturedRenderLayers;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -84,6 +88,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
             cancellable = true
     )
     private void showmeyourskin$trimTransparency(ArmorMaterial material, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorTrim trim, boolean glint, A model, boolean leggings, float red, float green, float blue, CallbackInfo ci) {
+        if(FabricLoader.getInstance().isModLoaded("allthetrims")) return;
         var ctx = MixinContext.ARMOR.getContext();
 
         if (ctx != null && ctx.shouldModify()) {

@@ -60,6 +60,7 @@ public class ShowMeYourSkin implements ModInitializer {
             if (nbt != null) {
                 var component = player.getComponent(Components.ARMOR_CONFIG);
                 component.setFromNbt(nbt);
+                component.ensureValid();
                 Components.ARMOR_CONFIG.sync(player);
             }
         });
