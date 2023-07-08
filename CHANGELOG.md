@@ -1,2 +1,3 @@
+- Fixed compatibility with All The Trims.
 - Fixed clients using their local server config file for validity checks, causing setting changes not allowed by default to fail often.
 - Added some extra checks when receiving update packets from the client to prevent disconnects.
