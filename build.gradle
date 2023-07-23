@@ -51,8 +51,8 @@ dependencies {
 	include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cardinal_components_version}")
 	include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cardinal_components_version}")
 
-	// Make it easier to test skin compat.
-//	modImplementation 'com.ptsmods:devlogin:2.1'
+	// SpruceUI.
+	include modImplementation("dev.lambdaurora:spruceui:${project.spruceui_version}")
 }
 
 processResources {
