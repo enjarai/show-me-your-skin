@@ -1,5 +1,6 @@
 package nl.enjarai.showmeyourskin.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
@@ -47,10 +48,9 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
         MixinContext.ARMOR.setContext(new ArmorContext(HideableEquipment.fromSlot(armorSlot), entity));
     }
 
-    @ModifyVariable(
+    @ModifyExpressionValue(
             method = "renderArmor",
-            at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;hasGlint()Z"),
-            index = 10
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;hasGlint()Z")
     )
     private boolean showmeyourskin$toggleGlint(boolean original) {
         var ctx = MixinContext.ARMOR.getContext();
