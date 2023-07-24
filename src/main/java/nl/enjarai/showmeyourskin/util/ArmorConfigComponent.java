@@ -5,7 +5,6 @@ import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.network.ServerPlayerEntity;
-import nl.enjarai.showmeyourskin.Components;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.SyncedModConfigServer;
@@ -21,7 +20,9 @@ public class ArmorConfigComponent implements ComponentV3, AutoSyncedComponent {
 
     @Override
     public void readFromNbt(NbtCompound tag) {
-        ArmorConfig.CODEC.decode(NbtOps.INSTANCE, tag.getCompound("config")).result().ifPresent(pair -> config = pair.getFirst());
+        if (tag.contains("config")) {
+            ArmorConfig.CODEC.decode(NbtOps.INSTANCE, tag.getCompound("config")).result().ifPresent(pair -> config = pair.getFirst());
+        }
     }
 
     @Override
@@ -35,14 +36,10 @@ public class ArmorConfigComponent implements ComponentV3, AutoSyncedComponent {
 
     public void setConfig(ArmorConfig config) {
         this.config = config;
-
-        ensureValid();
     }
 
     public void setFromNbt(NbtCompound tag) {
         readFromNbt(tag);
-
-        ensureValid();
     }
 
     public void ensureValid() {

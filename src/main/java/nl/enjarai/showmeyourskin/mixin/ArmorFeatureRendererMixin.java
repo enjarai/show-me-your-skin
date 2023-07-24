@@ -1,5 +1,7 @@
 package nl.enjarai.showmeyourskin.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -18,12 +20,13 @@ import nl.enjarai.showmeyourskin.util.MixinContext;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = ArmorFeatureRenderer.class, priority = 999)
+@Mixin(value = ArmorFeatureRenderer.class, priority = 500)
 public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> {
     @Shadow protected abstract Identifier getArmorTexture(ArmorItem item, boolean legs, @Nullable String overlay);
 
@@ -35,10 +38,9 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
         MixinContext.ARMOR.setContext(new ArmorContext(HideableEquipment.fromSlot(armorSlot), entity));
     }
 
-    @ModifyVariable(
+    @ModifyExpressionValue(
             method = "renderArmor",
-            at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;hasGlint()Z"),
-            index = 10
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;hasGlint()Z")
     )
     private boolean showmeyourskin$toggleGlint(boolean original) {
         var ctx = MixinContext.ARMOR.getContext();

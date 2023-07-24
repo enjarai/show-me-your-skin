@@ -1,0 +1,1 @@
+- Fixed minor incompatibility with ImmediatelyFast.
