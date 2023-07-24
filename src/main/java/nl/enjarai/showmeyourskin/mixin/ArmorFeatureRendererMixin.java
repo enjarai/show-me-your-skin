@@ -21,16 +21,23 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = ArmorFeatureRenderer.class, priority = 999)
+import java.util.LinkedList;
+import java.util.Queue;
+
+@Mixin(value = ArmorFeatureRenderer.class, priority = 500)
 public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> {
     @Shadow protected abstract Identifier getArmorTexture(ArmorItem item, boolean legs, @Nullable String overlay);
 
     @Shadow @Final private SpriteAtlasTexture armorTrimsAtlas;
+
+    @Unique
+    private final LinkedList<ArmorContext> trimContextQueue = new LinkedList<>();
 
     @Inject(
             method = "renderArmor",
@@ -62,6 +69,10 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
     private void showmeyourskin$armorTransparency(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, boolean usesSecondLayer, A model, boolean legs, float red, float green, float blue, String overlay, CallbackInfo ci) {
         var ctx = MixinContext.ARMOR.getContext();
 
+        if (overlay == null) {
+            trimContextQueue.offer(ctx);
+        }
+
         if (ctx != null && ctx.shouldModify()) {
             var t = ctx.getApplicablePieceTransparency();
 
@@ -85,8 +96,8 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
             cancellable = true
     )
     private void showmeyourskin$trimTransparency(ArmorMaterial material, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorTrim trim, boolean glint, A model, boolean leggings, float red, float green, float blue, CallbackInfo ci) {
-        if(FabricLoader.getInstance().isModLoaded("allthetrims")) return;
-        var ctx = MixinContext.ARMOR.getContext();
+        if (FabricLoader.getInstance().isModLoaded("allthetrims")) return;
+        var ctx = trimContextQueue.poll();
 
         if (ctx != null && ctx.shouldModify()) {
             var t = ctx.getApplicableTrimTransparency();

@@ -1,1 +1,1 @@
-- Fixed compatibility with Wildfire's Female Gender mod on 1.19.4.
+- Fixed minor incompatibility with ImmediatelyFast.
