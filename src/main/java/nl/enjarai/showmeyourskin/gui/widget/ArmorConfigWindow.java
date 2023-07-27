@@ -2,6 +2,11 @@ package nl.enjarai.showmeyourskin.gui.widget;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
+import dev.lambdaurora.spruceui.Position;
+import dev.lambdaurora.spruceui.background.Background;
+import dev.lambdaurora.spruceui.border.Border;
+import dev.lambdaurora.spruceui.widget.SpruceWidget;
+import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.block.entity.BannerPatterns;
 import net.minecraft.block.entity.BlockEntityType;
@@ -26,7 +31,6 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -39,16 +43,16 @@ import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.config.ModConfig;
-import nl.enjarai.showmeyourskin.config.SyncedModConfig;
+import nl.enjarai.showmeyourskin.gui.style.EightSliceBorder;
+import nl.enjarai.showmeyourskin.gui.style.OneSliceBackground;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
-public class ArmorConfigWindow extends AbstractParentElement implements Drawable, Element, Selectable {
+public class ArmorConfigWindow extends SpruceContainerWidget {
     public static final Identifier TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen.png");
     public static final Identifier BACKGROUND_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_background.png");
     public static final Identifier OVERLAY_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_disabled.png");
@@ -73,7 +77,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         BlockItem.setBlockEntityNbt(SHIELD, BlockEntityType.BANNER, shieldNbt);
     }
 
-    private final List<ClickableWidget> buttons = Lists.newArrayList();
+    private final List<SpruceWidget> buttons = Lists.newArrayList();
     private final List<Element> children = Lists.newArrayList();
     private final List<SliderSetTab> sliderSetTabs = Lists.newArrayList();
     private SliderSetTab selectedSliderSetTab;
@@ -86,8 +90,8 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     private final DummyClientPlayerEntity player;
     private final ArmorConfig armorConfig;
 
-    public ArmorConfigWindow(Screen parent, int x, int y, Text name, DummyClientPlayerEntity player, ArmorConfig armorConfig, int tabIndex, boolean allowAllOptions) {
-        super();
+    public ArmorConfigWindow(Position position, Screen parent, Text name, DummyClientPlayerEntity player, ArmorConfig armorConfig, int tabIndex, boolean allowAllOptions) {
+        super(position, 236, 16 + 16 * 10);
         this.parent = parent;
         this.x = x;
         this.y = y;
@@ -131,14 +135,17 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         lastPlayerRotation = selectedSliderSetTab.sliderSet.rotatedBy;
 
         if (!hideOptions || serverConfig.get().allowNotShowInCombat()) {
-            buttons.add(new ToggleButtonWidget(
-                    parent, getWindowLeft() + 14, getWindowTop() + 115, 40, 38,
-                    TEXTURE, armorConfig.showInCombat, b -> armorConfig.showInCombat = b, COMBAT_TOOLTIP
-            ));
+            var showInCombat = new IconToggleButtonWidget(
+                    Position.of(14, 15), ShowMeYourSkin.id("textures/gui/button/show_in_combat.png"),
+                    0, 0, armorConfig.showInCombat
+            );
+            showInCombat.setCallback((btn, b) -> armorConfig.showInCombat = b);
+            showInCombat.setTooltip(COMBAT_TOOLTIP);
+            buttons.add(showInCombat);
         }
 
         if (!hideOptions || serverConfig.get().allowNotShowNameTag()) {
-            buttons.add(new ToggleButtonWidget(
+            buttons.add(new AbstractIconButtonWidget(
                     parent, getWindowLeft() + 14, getWindowTop() + 141, 80, 38,
                     TEXTURE, armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP
             ));
@@ -147,24 +154,14 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         children.addAll(buttons);
     }
 
-    protected int getWindowLeft() {
-        return x;
+    @Override
+    public Border getBorder() {
+        return EightSliceBorder.WINDOW;
     }
 
-    protected int getWindowRight() {
-        return getWindowLeft() + 236;
-    }
-
-    protected int getWindowTop() {
-        return y;
-    }
-
-    protected int getWindowBottom() {
-        return getWindowTop() + 16 + 16 * getHeightIterations();
-    }
-
-    protected int getHeightIterations() {
-        return 10;
+    @Override
+    public Background getBackground() {
+        return OneSliceBackground.WINDOW;
     }
 
     public ArmorConfig getArmorConfig() {
@@ -173,11 +170,13 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
+
         for (var sliderSetTabs : sliderSetTabs) {
             sliderSetTabs.render(context, mouseX, mouseY, sliderSetTabs == selectedSliderSetTab);
         }
 
-        renderBackground(context, BACKGROUND_TEXTURE, -999);
+//        renderBackground(context, BACKGROUND_TEXTURE, -999);
         for (var drawable : buttons) {
             drawable.render(
                     context,
@@ -225,7 +224,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         matrices.pop();
 
         if (!isEditable()) {
-            renderBackground(context, OVERLAY_TEXTURE, 999);
+//            renderBackground(context, OVERLAY_TEXTURE, 999);
         }
     }
 
@@ -307,7 +306,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     }
 
     protected TexturedButtonWidget getGlintButton(HideableEquipment slot, int x, int y) {
-        return new ToggleButtonWidget(
+        return new AbstractIconButtonWidget(
                 parent, getWindowLeft() + x, getWindowTop() + y, 0, 38,
                 TEXTURE, armorConfig.getGlints().get(slot).getTransparency() > 0,
                 b -> armorConfig.getGlints().get(slot).setTransparency((byte) (b ? 100 : 0)), GLINT_TOOLTIP
@@ -341,11 +340,6 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
 
     @Override
     public void appendNarrations(NarrationMessageBuilder builder) {
-    }
-
-    @Override
-    public List<? extends Element> children() {
-        return children;
     }
 
     @Override

@@ -1,16 +1,16 @@
 package nl.enjarai.showmeyourskin.gui;
 
+import dev.lambdaurora.spruceui.Position;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import nl.enjarai.showmeyourskin.Components;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
-import nl.enjarai.showmeyourskin.gui.widget.ToggleButtonWidget;
+import nl.enjarai.showmeyourskin.gui.widget.AbstractIconButtonWidget;
 
 public class ServerIntegratedConfigScreen extends ConfigScreen {
     private ButtonWidget overridesEnabledButton;
@@ -35,7 +35,7 @@ public class ServerIntegratedConfigScreen extends ConfigScreen {
                 client.world, client.getNetworkHandler()
         );
 
-        overridesEnabledButton = new ToggleButtonWidget(
+        overridesEnabledButton = new AbstractIconButtonWidget(
                 this, getWindowLeft() + 54, getWindowTop() - 22,
                 120, 38, ArmorConfigWindow.TEXTURE, ModConfig.INSTANCE.overridesEnabledInServerMode,
                 (enabled) -> {
@@ -44,7 +44,7 @@ public class ServerIntegratedConfigScreen extends ConfigScreen {
                 },
                 Text.translatable("gui.showmeyourskin.armorScreen.overridesEnabled")
         );
-        overridesConfigureButton = new ToggleButtonWidget(
+        overridesConfigureButton = new AbstractIconButtonWidget(
                 this, getWindowLeft() + 78, getWindowTop() - 22,
                 20, 78, ArmorConfigWindow.TEXTURE, true,
                 button -> {}, Text.translatable("gui.showmeyourskin.armorScreen.overridesConfigure")
@@ -58,7 +58,7 @@ public class ServerIntegratedConfigScreen extends ConfigScreen {
         };
 
         loadArmorConfigWindow(new ArmorConfigWindow(
-                this, getWindowLeft(), getWindowTop(),
+                Position.of(getWindowLeft(), getWindowTop()), this,
                 Text.translatable("gui.showmeyourskin.armorScreen.synced"),
                 dummyPlayer, config.copy(), 0, false
         ));

@@ -1,5 +1,6 @@
 package nl.enjarai.showmeyourskin.gui;
 
+import dev.lambdaurora.spruceui.Position;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -10,7 +11,7 @@ import nl.enjarai.showmeyourskin.client.ModKeyBindings;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
 import nl.enjarai.showmeyourskin.gui.widget.ConfigEntryWidget;
-import nl.enjarai.showmeyourskin.gui.widget.ToggleButtonWidget;
+import nl.enjarai.showmeyourskin.gui.widget.AbstractIconButtonWidget;
 
 public abstract class ConfigScreen extends Screen {
     public static final int TEXT_COLOR = 0x404040;
@@ -30,7 +31,7 @@ public abstract class ConfigScreen extends Screen {
                 getBackButtonX(), getBackButtonY(), 20, 20,
                 0, 78, ArmorConfigWindow.TEXTURE, button -> close()
         );
-        globalToggle = new ToggleButtonWidget(
+        globalToggle = new AbstractIconButtonWidget(
                 this, getGlobalToggleX(), getGlobalToggleY(),
                 0, 160, OverrideableConfigScreen.SELECTOR_TEXTURE, ModConfig.INSTANCE.globalEnabled,
                 (enabled) -> ModConfig.INSTANCE.globalEnabled = enabled,
@@ -69,7 +70,7 @@ public abstract class ConfigScreen extends Screen {
         }
 
         loadArmorConfigWindow(new ArmorConfigWindow(
-                this, getWindowLeft(), getWindowTop(),
+                Position.of(getWindowLeft(), getWindowTop()), this,
                 entry.getName(), entry.getDummyPlayer(), entry.getArmorConfig(), tabIndex, true
         ));
     }
@@ -81,7 +82,7 @@ public abstract class ConfigScreen extends Screen {
     }
 
     protected int getWindowLeft() {
-        return (this.width - 238) / 2;
+        return (this.width - 236) / 2;
     }
 
     protected int getWindowTop() {
