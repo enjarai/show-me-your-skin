@@ -9,9 +9,9 @@ import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.text.Text;
 import nl.enjarai.showmeyourskin.client.ModKeyBindings;
 import nl.enjarai.showmeyourskin.config.ModConfig;
+import nl.enjarai.showmeyourskin.gui.widget.AbstractIconButtonWidget;
 import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
 import nl.enjarai.showmeyourskin.gui.widget.ConfigEntryWidget;
-import nl.enjarai.showmeyourskin.gui.widget.AbstractIconButtonWidget;
 
 public abstract class ConfigScreen extends Screen {
     public static final int TEXT_COLOR = 0x404040;

@@ -9,8 +9,8 @@ import nl.enjarai.showmeyourskin.Components;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ModConfig;
-import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
 import nl.enjarai.showmeyourskin.gui.widget.AbstractIconButtonWidget;
+import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
 
 public class ServerIntegratedConfigScreen extends ConfigScreen {
     private ButtonWidget overridesEnabledButton;
