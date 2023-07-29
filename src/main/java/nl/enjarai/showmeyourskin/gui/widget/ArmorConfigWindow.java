@@ -5,23 +5,19 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.background.Background;
 import dev.lambdaurora.spruceui.border.Border;
-import dev.lambdaurora.spruceui.widget.SpruceWidget;
-import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
+import dev.lambdaurora.spruceui.widget.SpruceLabelWidget;
+import dev.lambdaurora.spruceui.widget.SpruceSliderWidget;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.block.entity.BannerPatterns;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -50,9 +46,8 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 import java.util.List;
-import java.util.function.Consumer;
 
-public class ArmorConfigWindow extends SpruceContainerWidget {
+public class ArmorConfigWindow extends dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget {
     public static final Identifier TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen.png");
     public static final Identifier BACKGROUND_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_background.png");
     public static final Identifier OVERLAY_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_disabled.png");
@@ -77,15 +72,11 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
         BlockItem.setBlockEntityNbt(SHIELD, BlockEntityType.BANNER, shieldNbt);
     }
 
-    private final List<SpruceWidget> buttons = Lists.newArrayList();
-    private final List<Element> children = Lists.newArrayList();
     private final List<SliderSetTab> sliderSetTabs = Lists.newArrayList();
     private SliderSetTab selectedSliderSetTab;
     private float lastPlayerRotation;
     private long lastTabSwitchTime;
     private final Screen parent;
-    public int x;
-    public int y;
     private final Text name;
     private final DummyClientPlayerEntity player;
     private final ArmorConfig armorConfig;
@@ -93,14 +84,16 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
     public ArmorConfigWindow(Position position, Screen parent, Text name, DummyClientPlayerEntity player, ArmorConfig armorConfig, int tabIndex, boolean allowAllOptions) {
         super(position, 236, 16 + 16 * 10);
         this.parent = parent;
-        this.x = x;
-        this.y = y;
         this.name = name;
         this.player = player;
         this.armorConfig = armorConfig;
 
         var serverConfig = ShowMeYourSkinClient.HANDSHAKE_CLIENT.getConfig();
         var hideOptions = serverConfig.isPresent() && !allowAllOptions;
+
+        var upperArea = new dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget(Position.of(14, 14), 208, 64);
+        upperArea.setBackground(OneSliceBackground.INDENT);
+        upperArea.setBorder(EightSliceBorder.INDENT);
 
         sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 12, 0, 240,
                 new SliderSet(this, getWindowLeft(), getWindowTop(), sliders -> {
@@ -132,7 +125,11 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
         );
 
         selectTab(sliderSetTabs.get(tabIndex));
-        lastPlayerRotation = selectedSliderSetTab.sliderSet.rotatedBy;
+        lastPlayerRotation = selectedSliderSetTab.container.rotatedBy;
+
+        var lowerArea = new dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget(Position.of(14, 100), 208, 64);
+        lowerArea.setBackground(OneSliceBackground.INDENT);
+        lowerArea.setBorder(EightSliceBorder.INDENT);
 
         if (!hideOptions || serverConfig.get().allowNotShowInCombat()) {
             var showInCombat = new IconToggleButtonWidget(
@@ -141,17 +138,28 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
             );
             showInCombat.setCallback((btn, b) -> armorConfig.showInCombat = b);
             showInCombat.setTooltip(COMBAT_TOOLTIP);
-            buttons.add(showInCombat);
+            lowerArea.addChild(showInCombat);
         }
 
         if (!hideOptions || serverConfig.get().allowNotShowNameTag()) {
-            buttons.add(new AbstractIconButtonWidget(
-                    parent, getWindowLeft() + 14, getWindowTop() + 141, 80, 38,
-                    TEXTURE, armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP
-            ));
+            var showNameTag = new IconToggleButtonWidget(
+                    Position.of(14, 41), ShowMeYourSkin.id("textures/gui/button/show_nametag.png"),
+                    0, 0, armorConfig.showNameTag
+            );
+            showNameTag.setCallback((btn, b) -> armorConfig.showNameTag = b);
+            showNameTag.setTooltip(NAME_TAG_TOOLTIP);
+            lowerArea.addChild(showNameTag);
         }
 
-        children.addAll(buttons);
+        var rightArea = new dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget(Position.of(210, 14), 208, 150);
+        rightArea.setBackground(OneSliceBackground.DARK_INDENT);
+        rightArea.setBorder(EightSliceBorder.DARK_INDENT);
+
+        rightArea.addChild(new SpruceLabelWidget(Position.of(14, 14), name, 200));
+
+        addChild(upperArea);
+        addChild(lowerArea);
+        addChild(rightArea);
     }
 
     @Override
@@ -185,7 +193,7 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
                     delta
             );
         }
-        selectedSliderSetTab.sliderSet.render(
+        selectedSliderSetTab.container.render(
                 context,
                 isEditable() ? mouseX : -1,
                 isEditable() ? mouseY : -1,
@@ -234,89 +242,39 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
     }
 
     private float getCurrentPlayerRotation() {
-        return MathHelper.lerp(getPlayerRotationDelta(), lastPlayerRotation, selectedSliderSetTab.sliderSet.rotatedBy);
+        return MathHelper.lerp(getPlayerRotationDelta(), lastPlayerRotation, selectedSliderSetTab.container.rotatedBy);
     }
 
-    public void renderBackground(DrawContext context, Identifier backgroundTexture, int zIndex) {
-        int leftSide = getWindowLeft() + 3;
-        int topSide = getWindowTop();
-        var matrices = context.getMatrices();
-
-        RenderSystem.enableBlend();
-
-        matrices.push();
-        matrices.translate(0, 0, zIndex);
-        context.drawTexture(backgroundTexture, leftSide, topSide, 1, 1, 236, 254);
-        matrices.pop();
-
-        RenderSystem.disableBlend();
-    }
-
-    protected SliderWidget getOpacitySlider(HideableEquipment slot, int x, int y, String translationKey) {
+    protected SpruceSliderWidget getOpacitySlider(HideableEquipment slot, int x, int y, String translationKey) {
         var pieceConfig = armorConfig.getPieces().get(slot);
         var trimConfig = armorConfig.getTrims().get(slot.toSlot());
         var initialValue = pieceConfig.getTransparency();
 
-        return new SliderWidget(getWindowLeft() + x, getWindowTop() + y,
-                77, 20, Text.translatable(translationKey, initialValue), initialValue / 100f) {
-            @Override
-            protected void updateMessage() {
-                setMessage(Text.translatable(translationKey, (byte) (this.value * 100)));
-            }
-
-            @Override
-            protected void applyValue() {
-                pieceConfig.setTransparency((byte) (this.value * 100));
-                if (trimConfig != null) trimConfig.setTransparency((byte) (this.value * 100));
-            }
-
-            @Override
-            public void playDownSound(SoundManager soundManager) {
-                soundManager.play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-            }
-
-            @Override
-            public void onRelease(double mouseX, double mouseY) {
-            }
-        };
-    }
-
-    protected SliderWidget getSlider(int x, int y, int width, int minValue, int maxValue, int initialValue, Consumer<Integer> onValueChange, String translationKey) {
-        return new SliderWidget(getWindowLeft() + x, getWindowTop() + y,
-                width, 20, Text.translatable(translationKey, initialValue), (initialValue - minValue) / (float) (maxValue - minValue)) {
-            @Override
-            protected void updateMessage() {
-                setMessage(Text.translatable(translationKey, (int) MathHelper.lerp(this.value, minValue, maxValue)));
-            }
-
-            @Override
-            protected void applyValue() {
-                onValueChange.accept((int) MathHelper.lerp(this.value, minValue, maxValue));
-            }
-
-            @Override
-            public void playDownSound(SoundManager soundManager) {
-                soundManager.play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-            }
-
-            @Override
-            public void onRelease(double mouseX, double mouseY) {
-            }
-        };
-    }
-
-    protected TexturedButtonWidget getGlintButton(HideableEquipment slot, int x, int y) {
-        return new AbstractIconButtonWidget(
-                parent, getWindowLeft() + x, getWindowTop() + y, 0, 38,
-                TEXTURE, armorConfig.getGlints().get(slot).getTransparency() > 0,
-                b -> armorConfig.getGlints().get(slot).setTransparency((byte) (b ? 100 : 0)), GLINT_TOOLTIP
+        return new SpruceSliderWidget(
+                Position.of(x, y), 77, 20,
+                Text.translatable(translationKey, initialValue), initialValue,
+                sld -> {
+                    pieceConfig.setTransparency((byte) sld.getIntValue());
+                    if (trimConfig != null) trimConfig.setTransparency((byte) sld.getIntValue());
+                },
+                100, ""
         );
+    }
+
+    protected IconToggleButtonWidget getGlintButton(HideableEquipment slot, int x, int y) {
+        var button = new IconToggleButtonWidget(
+                Position.of(x, y), ShowMeYourSkin.id("textures/gui/button/show_glint.png"), 0, 0,
+                armorConfig.getGlints().get(slot).getTransparency() > 0
+        );
+        button.setTooltip(GLINT_TOOLTIP);
+        button.setCallback((btn, b) -> armorConfig.getGlints().get(slot).setTransparency((byte) (b ? 100 : 0)));
+        return button;
     }
 
     public boolean isEditable() {
         return ModConfig.INSTANCE.globalEnabled;
     }
-    
+
     public boolean isOverridden() {
         return false; // !armorConfig.equals(ModConfig.INSTANCE.getApplicable(player.getUuid()));
     }
@@ -325,13 +283,13 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
         if (selectedSliderSetTab != null) {
             lastPlayerRotation = getCurrentPlayerRotation();
             MinecraftClient.getInstance().getSoundManager()
-                    .play(PositionedSoundInstance.master(sliderSetTab.sliderSet.sound, 1.0F));
+                    .play(PositionedSoundInstance.master(sliderSetTab.container.sound, 1.0F));
         }
         lastTabSwitchTime = System.currentTimeMillis();
 
         selectedSliderSetTab = sliderSetTab;
 
-        player.equippedStackSupplier = sliderSetTab.sliderSet.dummyEquipmentGetter;
+        player.equippedStackSupplier = sliderSetTab.container.dummyEquipmentGetter;
     }
 
     public int getTabIndex() {
@@ -358,7 +316,7 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
             }
         }
 
-        if (selectedSliderSetTab.sliderSet.mouseClicked(mouseX, mouseY, button)) {
+        if (selectedSliderSetTab.container.mouseClicked(mouseX, mouseY, button)) {
             return true;
         }
 
@@ -371,7 +329,7 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
             return false;
         }
 
-        if (selectedSliderSetTab.sliderSet.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
+        if (selectedSliderSetTab.container.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
             return true;
         }
 
@@ -385,7 +343,7 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
 
     public void drawEntity(MatrixStack matrices, int x, int y, int size, double mouseX, double mouseY, LivingEntity entity) {
         float f = (float) (Math.atan(mouseX / 40.0F) * Math.sin((getCurrentPlayerRotation() / 180.0 + 0.5) * Math.PI));
-        float g = (float)Math.atan(mouseY / 40.0F);
+        float g = (float) Math.atan(mouseY / 40.0F);
         Quaternionf quaternionf = (new Quaternionf()).rotateZ(3.1415927F);
         Quaternionf quaternionf2 = (new Quaternionf()).rotateX(g * 20.0F * 0.017453292F);
         quaternionf.mul(quaternionf2);

@@ -12,6 +12,7 @@ import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.gui.widget.AbstractIconButtonWidget;
 import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
 import nl.enjarai.showmeyourskin.gui.widget.ConfigEntryWidget;
+import nl.enjarai.showmeyourskin.gui.widget.IconToggleButtonWidget;
 
 public abstract class ConfigScreen extends Screen {
     public static final int TEXT_COLOR = 0x404040;
@@ -31,7 +32,7 @@ public abstract class ConfigScreen extends Screen {
                 getBackButtonX(), getBackButtonY(), 20, 20,
                 0, 78, ArmorConfigWindow.TEXTURE, button -> close()
         );
-        globalToggle = new AbstractIconButtonWidget(
+        globalToggle = new IconToggleButtonWidget(
                 this, getGlobalToggleX(), getGlobalToggleY(),
                 0, 160, OverrideableConfigScreen.SELECTOR_TEXTURE, ModConfig.INSTANCE.globalEnabled,
                 (enabled) -> ModConfig.INSTANCE.globalEnabled = enabled,
