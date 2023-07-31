@@ -25,11 +25,13 @@ public abstract class AbstractIconButtonWidget extends AbstractSprucePressableBu
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        getTooltip().ifPresent(tooltip -> {
-            var wrappedTooltipText = MinecraftClient.getInstance().textRenderer
-                    .wrapLines(tooltip, Math.max(getWidth() * 2 / 3, 200));
-            Tooltip.create(mouseX, mouseY, wrappedTooltipText).queue();
-        });
+        if (isMouseOver(mouseX, mouseY)) {
+            getTooltip().ifPresent(tooltip -> {
+                var wrappedTooltipText = MinecraftClient.getInstance().textRenderer
+                        .wrapLines(tooltip, Math.max(getWidth() * 2 / 3, 200));
+                Tooltip.create(mouseX, mouseY, wrappedTooltipText).queue();
+            });
+        }
         super.render(context, mouseX, mouseY, delta);
     }
 
@@ -45,7 +47,7 @@ public abstract class AbstractIconButtonWidget extends AbstractSprucePressableBu
     }
 
     @Override
-    protected void renderButton(DrawContext graphics, int mouseX, int mouseY, float delta) {
+    protected void renderWidget(DrawContext graphics, int mouseX, int mouseY, float delta) {
         graphics.drawTexture(
                 texture,
                 getX(), getY(),
@@ -53,6 +55,14 @@ public abstract class AbstractIconButtonWidget extends AbstractSprucePressableBu
                 getWidth(), getHeight(),
                 64, 64
         );
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     protected abstract boolean isDisabled();

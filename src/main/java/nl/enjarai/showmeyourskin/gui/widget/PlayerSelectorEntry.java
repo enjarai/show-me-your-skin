@@ -2,19 +2,17 @@ package nl.enjarai.showmeyourskin.gui.widget;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MinecraftClient;
+import dev.lambdaurora.spruceui.Position;
+import dev.lambdaurora.spruceui.widget.SpruceWidget;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ModConfig;
-import nl.enjarai.showmeyourskin.gui.OverrideableConfigScreen;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,15 +20,22 @@ import java.util.function.Supplier;
 
 public class PlayerSelectorEntry extends ConfigEntryWidget {
     public final UUID uuid;
-    public final ButtonWidget clearButton;
+    public final IconPressButtonWidget clearButton;
 
-    public PlayerSelectorEntry(MinecraftClient client, PlayerSelectorWidget parent, UUID uuid, Text name, Supplier<Identifier> skinTexture, Supplier<String> model) {
-        super(client, parent, -1, -1, name, skinTexture, model);
+    public PlayerSelectorEntry(PlayerSelectorWidget parent, UUID uuid, Text name, Supplier<Identifier> skinTexture, Supplier<String> model) {
+        super(parent, name, skinTexture, model);
         this.armorConfig = ModConfig.INSTANCE.getOverride(uuid);
         this.uuid = uuid;
-        this.clearButton = new TexturedButtonWidget(0, 0, 11, 11, 0, 128,
-                OverrideableConfigScreen.SELECTOR_TEXTURE, button -> clearConfig());
-        this.clearButton.visible = armorConfig != null;
+        this.clearButton = new IconPressButtonWidget(Position.origin(), ShowMeYourSkin.id("textures/gui/button/delete_override.png"), 0, 0) {
+            @Override
+            protected void renderBackground(DrawContext graphics, int mouseX, int mouseY, float delta) {
+            }
+        };
+        this.clearButton.setCallback(button -> clearConfig());
+        this.clearButton.getPosition().setAnchor(this);
+        this.clearButton.setVisible(armorConfig != null);
+        this.clearButton.setWidth(11);
+        this.clearButton.setHeight(11);
     }
 
     @Override
@@ -38,7 +43,7 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
         super.setSelected(selected);
         if (selected && armorConfig == null) {
             armorConfig = ModConfig.INSTANCE.getOrCreateOverride(uuid);
-            clearButton.visible = true;
+            clearButton.setVisible(true);
             ModConfig.INSTANCE.save();
         }
     }
@@ -48,28 +53,16 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
             parent.setSelected(null);
         }
         armorConfig = null;
-        clearButton.visible = false;
+        clearButton.setVisible(false);
         ModConfig.INSTANCE.deleteOverride(uuid);
         ModConfig.INSTANCE.save();
     }
 
     @Override
-    public void directRender(DrawContext context, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        super.directRender(context, index, x, y, mouseX, mouseY, hovered, tickDelta);
-
-        if (clearButton != null) {
-            clearButton.setX(x);
-            clearButton.setY(y);
-
-            clearButton.render(context, mouseX, mouseY, tickDelta);
-        }
-    }
-
-    @Override
-    protected void renderIcon(DrawContext context, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        context.drawTexture(texture.get(), x + 3, y + 3, 24, 24, 8.0F, 8.0F, 8, 8, 64, 64);
+    protected void renderIcon(DrawContext graphics, int mouseX, int mouseY, float delta) {
+        graphics.drawTexture(texture.get(), getX() + 3, getY() + 3, 24, 24, 8.0F, 8.0F, 8, 8, 64, 64);
         RenderSystem.enableBlend();
-        context.drawTexture(texture.get(), x + 3, y + 3, 24, 24, 40.0F, 8.0F, 8, 8, 64, 64);
+        graphics.drawTexture(texture.get(), getX() + 3, getY() + 3, 24, 24, 40.0F, 8.0F, 8, 8, 64, 64);
         RenderSystem.disableBlend();
     }
 
@@ -86,7 +79,7 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
     }
 
     @Override
-    public List<? extends Element> children() {
+    public List<SpruceWidget> children() {
         return ImmutableList.of(clearButton);
     }
 

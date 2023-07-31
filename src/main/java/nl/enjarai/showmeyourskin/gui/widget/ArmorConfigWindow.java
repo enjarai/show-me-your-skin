@@ -1,19 +1,18 @@
 package nl.enjarai.showmeyourskin.gui.widget;
 
-import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.background.Background;
 import dev.lambdaurora.spruceui.border.Border;
-import dev.lambdaurora.spruceui.widget.SpruceLabelWidget;
+import dev.lambdaurora.spruceui.util.ScissorManager;
 import dev.lambdaurora.spruceui.widget.SpruceSliderWidget;
+import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.block.entity.BannerPatterns;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
@@ -45,9 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
-import java.util.List;
-
-public class ArmorConfigWindow extends dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget {
+public class ArmorConfigWindow extends SpruceContainerWidget {
     public static final Identifier TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen.png");
     public static final Identifier BACKGROUND_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_background.png");
     public static final Identifier OVERLAY_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_disabled.png");
@@ -72,17 +69,17 @@ public class ArmorConfigWindow extends dev.lambdaurora.spruceui.widget.container
         BlockItem.setBlockEntityNbt(SHIELD, BlockEntityType.BANNER, shieldNbt);
     }
 
-    private final List<SliderSetTab> sliderSetTabs = Lists.newArrayList();
-    private SliderSetTab selectedSliderSetTab;
+    private final SliderSetManager tabManager;
     private float lastPlayerRotation;
     private long lastTabSwitchTime;
     private final Screen parent;
     private final Text name;
     private final DummyClientPlayerEntity player;
     private final ArmorConfig armorConfig;
+    private final SpruceContainerWidget rightArea;
 
     public ArmorConfigWindow(Position position, Screen parent, Text name, DummyClientPlayerEntity player, ArmorConfig armorConfig, int tabIndex, boolean allowAllOptions) {
-        super(position, 236, 16 + 16 * 10);
+        super(position, 236, 173);
         this.parent = parent;
         this.name = name;
         this.player = player;
@@ -91,49 +88,59 @@ public class ArmorConfigWindow extends dev.lambdaurora.spruceui.widget.container
         var serverConfig = ShowMeYourSkinClient.HANDSHAKE_CLIENT.getConfig();
         var hideOptions = serverConfig.isPresent() && !allowAllOptions;
 
-        var upperArea = new dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget(Position.of(14, 14), 208, 64);
-        upperArea.setBackground(OneSliceBackground.INDENT);
-        upperArea.setBorder(EightSliceBorder.INDENT);
-
-        sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 12, 0, 240,
-                new SliderSet(this, getWindowLeft(), getWindowTop(), sliders -> {
-                    sliders.add(getOpacitySlider(HideableEquipment.HEAD,
-                            14, 11, "gui.showmeyourskin.armorScreen.piece.head"));
-                    sliders.add(getOpacitySlider(HideableEquipment.CHEST,
-                            14, 35, "gui.showmeyourskin.armorScreen.piece.chest"));
-                    sliders.add(getOpacitySlider(HideableEquipment.LEGS,
-                            14, 59, "gui.showmeyourskin.armorScreen.piece.legs"));
-                    sliders.add(getOpacitySlider(HideableEquipment.FEET,
-                            14, 83, "gui.showmeyourskin.armorScreen.piece.feet"));
-
-                    sliders.add(getGlintButton(HideableEquipment.HEAD, 94, 11));
-                    sliders.add(getGlintButton(HideableEquipment.CHEST, 94, 35));
-                    sliders.add(getGlintButton(HideableEquipment.LEGS, 94, 59));
-                    sliders.add(getGlintButton(HideableEquipment.FEET, 94, 83));
-                }, ArmorConfigWindow::getDummyArmor, 0, SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE))
+        this.tabManager = new SliderSetManager(tabIndex,
+                new SliderSetTab(Position.of(-28, 12), ShowMeYourSkin.id("textures/gui/tab/armor.png"),
+                        new SliderSet(Position.of(7, 7), 109, 101, con -> {
+                            con.setBackground(OneSliceBackground.INDENT);
+                            con.setBorder(EightSliceBorder.INDENT);
+                            
+                            con.addChild(getOpacitySlider(HideableEquipment.HEAD,
+                                    4, 4, "gui.showmeyourskin.armorScreen.piece.head"));
+                            con.addChild(getOpacitySlider(HideableEquipment.CHEST,
+                                    4, 28, "gui.showmeyourskin.armorScreen.piece.chest"));
+                            con.addChild(getOpacitySlider(HideableEquipment.LEGS,
+                                    4, 52, "gui.showmeyourskin.armorScreen.piece.legs"));
+                            con.addChild(getOpacitySlider(HideableEquipment.FEET,
+                                    4, 76, "gui.showmeyourskin.armorScreen.piece.feet"));
+        
+                            con.addChild(getGlintButton(HideableEquipment.HEAD, 84, 4));
+                            con.addChild(getGlintButton(HideableEquipment.CHEST, 84, 28));
+                            con.addChild(getGlintButton(HideableEquipment.LEGS, 84, 52));
+                            con.addChild(getGlintButton(HideableEquipment.FEET, 84, 76));
+                        }, ArmorConfigWindow::getDummyArmor, 0, SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE)
+                ),
+                new SliderSetTab(Position.of(-28, 42), ShowMeYourSkin.id("textures/gui/tab/equipment.png"),
+                        new SliderSet(Position.of(7, 7), 109, 101, con -> {
+                            con.setBackground(OneSliceBackground.INDENT);
+                            con.setBorder(EightSliceBorder.INDENT);
+                            
+                            con.addChild(getOpacitySlider(HideableEquipment.ELYTRA,
+                                    4, 4, "gui.showmeyourskin.armorScreen.piece.elytra"));
+                            con.addChild(getOpacitySlider(HideableEquipment.SHIELD,
+                                    4, 28, "gui.showmeyourskin.armorScreen.piece.shield"));
+        
+                            con.addChild(getGlintButton(HideableEquipment.ELYTRA, 84, 4));
+                            con.addChild(getGlintButton(HideableEquipment.SHIELD, 84, 28));
+                        }, ArmorConfigWindow::getDummyEquipment, -180, SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA)
+                )
         );
-        sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 42, 16, 240,
-                new SliderSet(this, getWindowLeft(), getWindowTop(), sliders -> {
-                    sliders.add(getOpacitySlider(HideableEquipment.ELYTRA,
-                            14, 11, "gui.showmeyourskin.armorScreen.piece.elytra"));
-                    sliders.add(getOpacitySlider(HideableEquipment.SHIELD,
-                            14, 35, "gui.showmeyourskin.armorScreen.piece.shield"));
+        lastPlayerRotation = tabManager.getActiveTab().getContainer().rotatedBy;
+        tabManager.setTabSwitchCallback(tab -> {
+            lastPlayerRotation = getCurrentPlayerRotation();
+            lastTabSwitchTime = System.currentTimeMillis();
+            MinecraftClient.getInstance().getSoundManager()
+                    .play(PositionedSoundInstance.master(tab.getContainer().sound, 1.0F));
 
-                    sliders.add(getGlintButton(HideableEquipment.ELYTRA, 94, 11));
-                    sliders.add(getGlintButton(HideableEquipment.SHIELD, 94, 35));
-                }, ArmorConfigWindow::getDummyEquipment, -180, SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA))
-        );
+            player.equippedStackSupplier = tab.getContainer().getDummyEquipmentGetter();
+        });
 
-        selectTab(sliderSetTabs.get(tabIndex));
-        lastPlayerRotation = selectedSliderSetTab.container.rotatedBy;
-
-        var lowerArea = new dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget(Position.of(14, 100), 208, 64);
+        var lowerArea = new SpruceContainerWidget(Position.of(7, 113), 109, 53);
         lowerArea.setBackground(OneSliceBackground.INDENT);
         lowerArea.setBorder(EightSliceBorder.INDENT);
 
         if (!hideOptions || serverConfig.get().allowNotShowInCombat()) {
             var showInCombat = new IconToggleButtonWidget(
-                    Position.of(14, 15), ShowMeYourSkin.id("textures/gui/button/show_in_combat.png"),
+                    Position.of(4, 4), ShowMeYourSkin.id("textures/gui/button/show_in_combat.png"),
                     0, 0, armorConfig.showInCombat
             );
             showInCombat.setCallback((btn, b) -> armorConfig.showInCombat = b);
@@ -143,7 +150,7 @@ public class ArmorConfigWindow extends dev.lambdaurora.spruceui.widget.container
 
         if (!hideOptions || serverConfig.get().allowNotShowNameTag()) {
             var showNameTag = new IconToggleButtonWidget(
-                    Position.of(14, 41), ShowMeYourSkin.id("textures/gui/button/show_nametag.png"),
+                    Position.of(4, 28), ShowMeYourSkin.id("textures/gui/button/show_nametag.png"),
                     0, 0, armorConfig.showNameTag
             );
             showNameTag.setCallback((btn, b) -> armorConfig.showNameTag = b);
@@ -151,15 +158,18 @@ public class ArmorConfigWindow extends dev.lambdaurora.spruceui.widget.container
             lowerArea.addChild(showNameTag);
         }
 
-        var rightArea = new dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget(Position.of(210, 14), 208, 150);
+        rightArea = new SpruceContainerWidget(Position.of(120, 7), 109, 159);
         rightArea.setBackground(OneSliceBackground.DARK_INDENT);
         rightArea.setBorder(EightSliceBorder.DARK_INDENT);
 
-        rightArea.addChild(new SpruceLabelWidget(Position.of(14, 14), name, 200));
+        var label = new SuperiorLabelWidget(Position.of(4, 4), name, 200);
+        label.setColor(TEXT_COLOR);
+        label.setShadow(false);
+        rightArea.addChild(label);
 
-        addChild(upperArea);
-        addChild(lowerArea);
-        addChild(rightArea);
+        this.tabManager.addChildrenTo(this);
+        this.addChild(lowerArea);
+        this.addChild(rightArea);
     }
 
     @Override
@@ -177,45 +187,26 @@ public class ArmorConfigWindow extends dev.lambdaurora.spruceui.widget.container
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.renderWidget(context, mouseX, mouseY, delta);
 
-        for (var sliderSetTabs : sliderSetTabs) {
-            sliderSetTabs.render(context, mouseX, mouseY, sliderSetTabs == selectedSliderSetTab);
-        }
-
-//        renderBackground(context, BACKGROUND_TEXTURE, -999);
-        for (var drawable : buttons) {
-            drawable.render(
-                    context,
-                    isEditable() ? mouseX : -1,
-                    isEditable() ? mouseY : -1,
-                    delta
-            );
-        }
-        selectedSliderSetTab.container.render(
-                context,
-                isEditable() ? mouseX : -1,
-                isEditable() ? mouseY : -1,
-                delta
-        );
-
-        var playerX = getWindowRight() - 59;
-        var playerY = getWindowTop() + 155;
+        var playerX = rightArea.getX() + rightArea.getWidth() / 2;
+        var playerY = rightArea.getY() + rightArea.getHeight() / 10 * 10;
         var playerRotation = getCurrentPlayerRotation();
+        var playerBorder = rightArea.getBorder().getThickness();
 
-        var textRenderer = MinecraftClient.getInstance().textRenderer;
-        context.drawText(
-                textRenderer, name,
-                getWindowRight() - 110, getWindowTop() + 10, TEXT_COLOR, false
-        );
-        if (isOverridden()) {
-            var text = Text.translatable("gui.showmeyourskin.armorScreen.overridden");
-            context.drawText(
-                    textRenderer, text,
-                    getWindowRight() - 7 - textRenderer.getWidth(text), getWindowTop() + 10, TEXT_COLOR_RED, false
-            );
-        }
+//        var textRenderer = MinecraftClient.getInstance().textRenderer;
+//        context.drawText(
+//                textRenderer, name,
+//                getWindowRight() - 110, getWindowTop() + 10, TEXT_COLOR, false
+//        );
+//        if (isOverridden()) {
+//            var text = Text.translatable("gui.showmeyourskin.armorScreen.overridden");
+//            context.drawText(
+//                    textRenderer, text,
+//                    getWindowRight() - 7 - textRenderer.getWidth(text), getWindowTop() + 10, TEXT_COLOR_RED, false
+//            );
+//        }
 
         var matrices = context.getMatrices();
 
@@ -223,16 +214,16 @@ public class ArmorConfigWindow extends dev.lambdaurora.spruceui.widget.container
         matrices.translate(playerX, playerY, -950);
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(playerRotation));
         matrices.translate(0, 0, 950.0);
-        context.enableScissor(
-                getWindowRight() - 112, getWindowTop() + 8,
-                getWindowRight() - 5, getWindowTop() + 168
+        ScissorManager.push(
+                rightArea.getX() + playerBorder, rightArea.getY() + playerBorder,
+                rightArea.getWidth() - playerBorder, rightArea.getHeight() - playerBorder
         );
         drawEntity(matrices, 0, 0, 70, -mouseX + playerX, -mouseY + playerY - 110, player);
-        context.disableScissor();
+        ScissorManager.pop();
         matrices.pop();
 
         if (!isEditable()) {
-//            renderBackground(context, OVERLAY_TEXTURE, 999);
+//            renderBackground(context, OVERLAY_TEXTURE, 999); TODO
         }
     }
 
@@ -242,7 +233,7 @@ public class ArmorConfigWindow extends dev.lambdaurora.spruceui.widget.container
     }
 
     private float getCurrentPlayerRotation() {
-        return MathHelper.lerp(getPlayerRotationDelta(), lastPlayerRotation, selectedSliderSetTab.container.rotatedBy);
+        return MathHelper.lerp(getPlayerRotationDelta(), lastPlayerRotation, tabManager.getActiveTab().getContainer().rotatedBy);
     }
 
     protected SpruceSliderWidget getOpacitySlider(HideableEquipment slot, int x, int y, String translationKey) {
@@ -252,12 +243,12 @@ public class ArmorConfigWindow extends dev.lambdaurora.spruceui.widget.container
 
         return new SpruceSliderWidget(
                 Position.of(x, y), 77, 20,
-                Text.translatable(translationKey, initialValue), initialValue,
+                Text.translatable(translationKey), initialValue / 100.0,
                 sld -> {
                     pieceConfig.setTransparency((byte) sld.getIntValue());
                     if (trimConfig != null) trimConfig.setTransparency((byte) sld.getIntValue());
                 },
-                100, ""
+                100, "%"
         );
     }
 
@@ -279,66 +270,16 @@ public class ArmorConfigWindow extends dev.lambdaurora.spruceui.widget.container
         return false; // !armorConfig.equals(ModConfig.INSTANCE.getApplicable(player.getUuid()));
     }
 
-    public void selectTab(SliderSetTab sliderSetTab) {
-        if (selectedSliderSetTab != null) {
-            lastPlayerRotation = getCurrentPlayerRotation();
-            MinecraftClient.getInstance().getSoundManager()
-                    .play(PositionedSoundInstance.master(sliderSetTab.container.sound, 1.0F));
-        }
-        lastTabSwitchTime = System.currentTimeMillis();
-
-        selectedSliderSetTab = sliderSetTab;
-
-        player.equippedStackSupplier = sliderSetTab.container.dummyEquipmentGetter;
-    }
-
-    public int getTabIndex() {
-        return sliderSetTabs.indexOf(selectedSliderSetTab);
-    }
-
-    @Override
-    public void appendNarrations(NarrationMessageBuilder builder) {
+    public SliderSetManager getTabManager() {
+        return tabManager;
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (!isEditable()) {
+        if (!this.isActive() || !this.isVisible())
             return false;
-        }
 
-        for (var sliderSetTab : sliderSetTabs) {
-            if (sliderSetTab.isMouseOver(mouseX, mouseY)) {
-                MinecraftClient.getInstance().getSoundManager()
-                        .play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-
-                selectTab(sliderSetTab);
-                return true;
-            }
-        }
-
-        if (selectedSliderSetTab.container.mouseClicked(mouseX, mouseY, button)) {
-            return true;
-        }
-
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (!isEditable()) {
-            return false;
-        }
-
-        if (selectedSliderSetTab.container.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
-            return true;
-        }
-
-        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
-    }
-
-    @Override
-    public SelectionType getType() {
-        return SelectionType.NONE;
+        return this.onMouseClick(mouseX, mouseY, button);
     }
 
     public void drawEntity(MatrixStack matrices, int x, int y, int size, double mouseX, double mouseY, LivingEntity entity) {

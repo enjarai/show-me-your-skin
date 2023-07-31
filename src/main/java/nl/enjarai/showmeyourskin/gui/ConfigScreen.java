@@ -1,20 +1,16 @@
 package nl.enjarai.showmeyourskin.gui;
 
 import dev.lambdaurora.spruceui.Position;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.text.Text;
-import nl.enjarai.showmeyourskin.client.ModKeyBindings;
-import nl.enjarai.showmeyourskin.config.ModConfig;
-import nl.enjarai.showmeyourskin.gui.widget.AbstractIconButtonWidget;
 import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
 import nl.enjarai.showmeyourskin.gui.widget.ConfigEntryWidget;
-import nl.enjarai.showmeyourskin.gui.widget.IconToggleButtonWidget;
 
-public abstract class ConfigScreen extends Screen {
+public abstract class ConfigScreen extends SpruceScreen {
     public static final int TEXT_COLOR = 0x404040;
     protected final Screen parent;
     protected ArmorConfigWindow armorConfigWindow;
@@ -32,13 +28,13 @@ public abstract class ConfigScreen extends Screen {
                 getBackButtonX(), getBackButtonY(), 20, 20,
                 0, 78, ArmorConfigWindow.TEXTURE, button -> close()
         );
-        globalToggle = new IconToggleButtonWidget(
-                this, getGlobalToggleX(), getGlobalToggleY(),
-                0, 160, OverrideableConfigScreen.SELECTOR_TEXTURE, ModConfig.INSTANCE.globalEnabled,
-                (enabled) -> ModConfig.INSTANCE.globalEnabled = enabled,
-                Text.translatable("gui.showmeyourskin.armorScreen.globalToggleTooltip",
-                        KeyBindingHelper.getBoundKeyOf(ModKeyBindings.GLOBAL_TOGGLE).getLocalizedText())
-        );
+//        globalToggle = new IconToggleButtonWidget( TODO
+//                Position.of(getGlobalToggleX(), getGlobalToggleY()),
+//                0, 160, OverrideableConfigScreen.SELECTOR_TEXTURE, ModConfig.INSTANCE.globalEnabled,
+//                (enabled) -> ModConfig.INSTANCE.globalEnabled = enabled,
+//                Text.translatable("gui.showmeyourskin.armorScreen.globalToggleTooltip",
+//                        KeyBindingHelper.getBoundKeyOf(ModKeyBindings.GLOBAL_TOGGLE).getLocalizedText())
+//        );
     }
 
     @Override
@@ -60,14 +56,14 @@ public abstract class ConfigScreen extends Screen {
     protected void fixChildren() {
         clearChildren();
         addDrawableChild(backButton);
-        addDrawableChild(globalToggle);
+//        addDrawableChild(globalToggle); TODO
         addDrawableChild(armorConfigWindow);
     }
 
     protected void loadConfigEntry(ConfigEntryWidget entry) {
         var tabIndex = 0;
         if (armorConfigWindow != null) {
-            tabIndex = armorConfigWindow.getTabIndex();
+            tabIndex = armorConfigWindow.getTabManager().getActiveIndex();
         }
 
         loadArmorConfigWindow(new ArmorConfigWindow(

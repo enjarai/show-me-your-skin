@@ -9,7 +9,6 @@ import nl.enjarai.showmeyourskin.Components;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ModConfig;
-import nl.enjarai.showmeyourskin.gui.widget.AbstractIconButtonWidget;
 import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
 
 public class ServerIntegratedConfigScreen extends ConfigScreen {
@@ -35,27 +34,27 @@ public class ServerIntegratedConfigScreen extends ConfigScreen {
                 client.world, client.getNetworkHandler()
         );
 
-        overridesEnabledButton = new AbstractIconButtonWidget(
-                this, getWindowLeft() + 54, getWindowTop() - 22,
-                120, 38, ArmorConfigWindow.TEXTURE, ModConfig.INSTANCE.overridesEnabledInServerMode,
-                (enabled) -> {
-                    ModConfig.INSTANCE.overridesEnabledInServerMode = enabled;
-                    fixChildren();
-                },
-                Text.translatable("gui.showmeyourskin.armorScreen.overridesEnabled")
-        );
-        overridesConfigureButton = new AbstractIconButtonWidget(
-                this, getWindowLeft() + 78, getWindowTop() - 22,
-                20, 78, ArmorConfigWindow.TEXTURE, true,
-                button -> {}, Text.translatable("gui.showmeyourskin.armorScreen.overridesConfigure")
-        ) {
-            @Override
-            public void onPress() {
-                if (client != null) {
-                    client.setScreen(new ServerOverridesConfigScreen(ServerIntegratedConfigScreen.this));
-                }
-            }
-        };
+//        overridesEnabledButton = new AbstractIconButtonWidget( TODO
+//                this, getWindowLeft() + 54, getWindowTop() - 22,
+//                120, 38, ArmorConfigWindow.TEXTURE, ModConfig.INSTANCE.overridesEnabledInServerMode,
+//                (enabled) -> {
+//                    ModConfig.INSTANCE.overridesEnabledInServerMode = enabled;
+//                    fixChildren();
+//                },
+//                Text.translatable("gui.showmeyourskin.armorScreen.overridesEnabled")
+//        );
+//        overridesConfigureButton = new AbstractIconButtonWidget(
+//                this, getWindowLeft() + 78, getWindowTop() - 22,
+//                20, 78, ArmorConfigWindow.TEXTURE, true,
+//                button -> {}, Text.translatable("gui.showmeyourskin.armorScreen.overridesConfigure")
+//        ) {
+//            @Override
+//            public void onPress() {
+//                if (client != null) {
+//                    client.setScreen(new ServerOverridesConfigScreen(ServerIntegratedConfigScreen.this));
+//                }
+//            }
+//        };
 
         loadArmorConfigWindow(new ArmorConfigWindow(
                 Position.of(getWindowLeft(), getWindowTop()), this,

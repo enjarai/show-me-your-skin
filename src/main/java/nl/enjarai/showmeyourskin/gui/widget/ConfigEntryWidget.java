@@ -2,9 +2,10 @@ package nl.enjarai.showmeyourskin.gui.widget;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import dev.lambdaurora.spruceui.Position;
+import dev.lambdaurora.spruceui.widget.SpruceWidget;
+import dev.lambdaurora.spruceui.widget.container.AbstractSpruceParentWidget;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.sound.SoundEvents;
@@ -18,14 +19,11 @@ import nl.enjarai.showmeyourskin.config.ModConfig;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ConfigEntryWidget extends AbstractParentElement implements Drawable, Selectable {
+public class ConfigEntryWidget extends AbstractSpruceParentWidget<SpruceWidget> {
     protected static final int WHITE = 0xEEEEEEEE;
     protected static final int GRAY = 0xCCCCCCCC;
     protected static final Identifier SELECTION_TEXTURE = ShowMeYourSkin.id("textures/gui/selection.png");
 
-    public int x;
-    public int y;
-    public final MinecraftClient client;
     public final PlayerSelectorWidget parent;
     private final Text name;
     public final Supplier<Identifier> texture;
@@ -33,28 +31,15 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
     protected ArmorConfig armorConfig;
     public boolean selected = false;
 
-    public ConfigEntryWidget(MinecraftClient client, PlayerSelectorWidget parent, int x, int y, Text name, Supplier<Identifier> texture, Supplier<String> model) {
-        this.client = client;
+    public ConfigEntryWidget(PlayerSelectorWidget parent, Text name, Supplier<Identifier> texture, Supplier<String> model) {
+        super(Position.origin(), SpruceWidget.class);
         this.parent = parent;
-        this.x = x;
-        this.y = y;
         this.name = name;
         this.texture = texture;
         this.model = model;
         this.armorConfig = ModConfig.INSTANCE.global;
-    }
-
-    public void updatePosition(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getWidth() {
-        return 30;
-    }
-
-    public int getHeight() {
-        return 30;
+        this.width = 30;
+        this.height = 30;
     }
 
     public void setSelected(boolean selected) {
@@ -63,7 +48,7 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && (x < 0 || y < 0 || isMouseOver(mouseX, mouseY))) {
+        if (button == 0 && isMouseOver(mouseX, mouseY)) {
             if (!super.mouseClicked(mouseX, mouseY, button)) {
                 playDownSound(client.getSoundManager());
                 parent.setSelected(this);
@@ -74,26 +59,24 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        directRender(context, -1, x, y, mouseX, mouseY, isMouseOver(mouseX, mouseY), delta);
-    }
+    protected void renderWidget(DrawContext graphics, int mouseX, int mouseY, float delta) {
+        var x = getX();
+        var y = getY();
 
-    public void directRender(DrawContext context, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
         RenderSystem.enableBlend();
-
         if (selected) {
-            context.drawTexture(SELECTION_TEXTURE, x - 1, y - 1, 0, 0, 32, 32, 128, 128);
-        } else if (hovered && children().stream().noneMatch(element -> element.isMouseOver(mouseX, mouseY))) {
-            context.drawTexture(SELECTION_TEXTURE, x - 1, y - 1, 32, 0, 32, 32, 128, 128);
+            graphics.drawTexture(SELECTION_TEXTURE, x - 1, y - 1, 0, 0, 32, 32, 128, 128);
+        } else if (isMouseHovered() && children().stream().noneMatch(SpruceWidget::isMouseHovered)) {
+            graphics.drawTexture(SELECTION_TEXTURE, x - 1, y - 1, 32, 0, 32, 32, 128, 128);
         }
-
-        renderIcon(context, index, x, y, mouseX, mouseY, hovered, tickDelta);
-
+        renderIcon(graphics, mouseX, mouseY, delta);
         RenderSystem.disableBlend();
+
+        children().forEach(e -> e.render(graphics, mouseX, mouseY, delta));
     }
 
-    protected void renderIcon(DrawContext context, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        context.drawTexture(texture.get(), x + 3, y + 3, 24, 24, 0, 0, 24, 24, 24, 24);
+    protected void renderIcon(DrawContext graphics, int mouseX, int mouseY, float delta) {
+        graphics.drawTexture(texture.get(), getX() + 3, getY() + 3, 24, 24, 0, 0, 24, 24, 24, 24);
     }
 
     public void playDownSound(SoundManager soundManager) {
@@ -101,7 +84,7 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
     }
 
     @Override
-    public List<? extends Element> children() {
+    public List<SpruceWidget> children() {
         return ImmutableList.of();
     }
 
@@ -115,19 +98,5 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
 
     public Text getName() {
         return name;
-    }
-
-    @Override
-    public boolean isMouseOver(double mouseX, double mouseY) {
-        return mouseX >= x && mouseX < x + getWidth() && mouseY >= y && mouseY < y + getHeight();
-    }
-
-    @Override
-    public void appendNarrations(NarrationMessageBuilder builder) {
-    }
-
-    @Override
-    public SelectionType getType() {
-        return SelectionType.NONE;
     }
 }
