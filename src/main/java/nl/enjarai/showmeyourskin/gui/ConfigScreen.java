@@ -2,20 +2,25 @@ package nl.enjarai.showmeyourskin.gui;
 
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.text.Text;
+import nl.enjarai.showmeyourskin.ShowMeYourSkin;
+import nl.enjarai.showmeyourskin.client.ModKeyBindings;
+import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
 import nl.enjarai.showmeyourskin.gui.widget.ConfigEntryWidget;
+import nl.enjarai.showmeyourskin.gui.widget.IconPressButtonWidget;
+import nl.enjarai.showmeyourskin.gui.widget.IconToggleButtonWidget;
 
 public abstract class ConfigScreen extends SpruceScreen {
     public static final int TEXT_COLOR = 0x404040;
     protected final Screen parent;
     protected ArmorConfigWindow armorConfigWindow;
-    private ButtonWidget backButton;
-    private ButtonWidget globalToggle;
+    protected final Position windowRelative = Position.origin();
+    private IconPressButtonWidget backButton;
+    private IconToggleButtonWidget globalToggle;
 
     public ConfigScreen(Screen parent, Text title) {
         super(title);
@@ -24,17 +29,22 @@ public abstract class ConfigScreen extends SpruceScreen {
 
     @Override
     protected void init() {
-        backButton = new TexturedButtonWidget(
-                getBackButtonX(), getBackButtonY(), 20, 20,
-                0, 78, ArmorConfigWindow.TEXTURE, button -> close()
+        backButton = new IconPressButtonWidget(
+                getBackButtonPos(), ShowMeYourSkin.id("textures/gui/button/back.png"),
+                0, 0
         );
-//        globalToggle = new IconToggleButtonWidget( TODO
-//                Position.of(getGlobalToggleX(), getGlobalToggleY()),
-//                0, 160, OverrideableConfigScreen.SELECTOR_TEXTURE, ModConfig.INSTANCE.globalEnabled,
-//                (enabled) -> ModConfig.INSTANCE.globalEnabled = enabled,
-//                Text.translatable("gui.showmeyourskin.armorScreen.globalToggleTooltip",
-//                        KeyBindingHelper.getBoundKeyOf(ModKeyBindings.GLOBAL_TOGGLE).getLocalizedText())
-//        );
+        backButton.setCallback(btn -> close());
+
+        globalToggle = new IconToggleButtonWidget(
+                getGlobalTogglePos(), ShowMeYourSkin.id("textures/gui/button/global_toggle.png"),
+                0, 0, ModConfig.INSTANCE.globalEnabled
+        );
+        globalToggle.setCallback((btn, enabled) -> ModConfig.INSTANCE.globalEnabled = enabled);
+        globalToggle.setTooltip(Text.translatable("gui.showmeyourskin.armorScreen.globalToggleTooltip",
+                KeyBindingHelper.getBoundKeyOf(ModKeyBindings.GLOBAL_TOGGLE).getLocalizedText()));
+
+        addDrawableChild(backButton);
+        addDrawableChild(globalToggle);
     }
 
     @Override
@@ -45,19 +55,8 @@ public abstract class ConfigScreen extends SpruceScreen {
         matrices.translate(0, 0, -999);
 
         super.renderBackground(context);
-        renderBackgroundTextures(context);
 
         matrices.pop();
-    }
-
-    protected void renderBackgroundTextures(DrawContext context) {
-    }
-
-    protected void fixChildren() {
-        clearChildren();
-        addDrawableChild(backButton);
-//        addDrawableChild(globalToggle); TODO
-        addDrawableChild(armorConfigWindow);
     }
 
     protected void loadConfigEntry(ConfigEntryWidget entry) {
@@ -73,9 +72,10 @@ public abstract class ConfigScreen extends SpruceScreen {
     }
 
     protected void loadArmorConfigWindow(ArmorConfigWindow window) {
+        remove(armorConfigWindow);
         armorConfigWindow = window;
-
-        fixChildren();
+        windowRelative.setAnchor(window);
+        addDrawableChild(armorConfigWindow);
     }
 
     protected int getWindowLeft() {
@@ -86,20 +86,12 @@ public abstract class ConfigScreen extends SpruceScreen {
         return (this.height - 180) / 2;
     }
 
-    protected int getBackButtonX() {
-        return getWindowLeft() + 6;
+    protected Position getBackButtonPos() {
+        return Position.of(windowRelative, 6, -22);
     }
 
-    protected int getBackButtonY() {
-        return getWindowTop() - 22;
-    }
-
-    protected int getGlobalToggleX() {
-        return getWindowLeft() + 30;
-    }
-
-    protected int getGlobalToggleY() {
-        return getWindowTop() - 22;
+    protected Position getGlobalTogglePos() {
+        return Position.of(windowRelative, 30, -22);
     }
 
     @Override

@@ -1,11 +1,14 @@
 package nl.enjarai.showmeyourskin.gui.widget;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.MinecraftClient;
+import dev.lambdaurora.spruceui.Position;
+import dev.lambdaurora.spruceui.util.ScissorManager;
+import dev.lambdaurora.spruceui.widget.container.AbstractSpruceParentWidget;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 
 import javax.annotation.Nullable;
@@ -13,41 +16,25 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class PlayerSelectorWidget extends AbstractParentElement implements Drawable, Element, Selectable {
-    protected final MinecraftClient client;
-    protected int screenWidth;
-    protected int screenHeight;
-    protected int x;
-    protected int y;
-    protected int width;
-    protected int height;
+public class PlayerSelectorWidget extends AbstractSpruceParentWidget<ConfigEntryWidget> {
     protected Consumer<ConfigEntryWidget> onSelect;
     private final List<ConfigEntryWidget> entries = Lists.newArrayList();
     private final List<ConfigEntryWidget> allEntries = Lists.newArrayList();
-    private int scroll = 0;
+    private Position scrollOffset = Position.origin();
     private ConfigEntryWidget selected;
     private ConfigEntryWidget defaultSelected;
+    protected int childSize = 30;
 
-    public PlayerSelectorWidget(MinecraftClient client, int screenWidth, int screenHeight, int x, int y, int width, Consumer<ConfigEntryWidget> onSelect) {
-        this.screenWidth = screenWidth;
-        this.screenHeight = screenHeight;
-        this.x = x;
-        this.y = y;
+    public PlayerSelectorWidget(Position position, int width, Consumer<ConfigEntryWidget> onSelect) {
+        super(position, ConfigEntryWidget.class);
         this.width = width;
-        this.height = 30;
-        this.client = client;
+        this.height = childSize;
         this.onSelect = onSelect;
+        scrollOffset.setAnchor(this);
     }
 
     public void linkDefault(ConfigEntryWidget defaultSelected) {
         this.defaultSelected = defaultSelected;
-    }
-
-    public void updatePosition(int screenWidth, int screenHeight, int x, int y) {
-        this.screenWidth = screenWidth;
-        this.screenHeight = screenHeight;
-        this.x = x;
-        this.y = y;
     }
 
     public void updateEntries() {
@@ -58,7 +45,7 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
             var dummyPlayer = DummyClientPlayerEntity.getInstance();
             var profile = dummyPlayer.getGameProfile();
             entries.add(new PlayerSelectorEntry(
-                    client, this, profile.getId(),
+                    this, profile.getId(),
                     Text.translatable("gui.showmeyourskin.armorScreen.playerName", profile.getName()), dummyPlayer::getSkinTexture,
                     dummyPlayer::getModel
             ));
@@ -69,7 +56,7 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
                     UUID playerUuid = playerListEntry.getProfile().getId();
                     String playerName = playerListEntry.getProfile().getName();
                     entries.add(new PlayerSelectorEntry(
-                            client, this, playerUuid,
+                            this, playerUuid,
                             Text.translatable("gui.showmeyourskin.armorScreen.playerName", playerName), playerListEntry::getSkinTexture,
                             playerListEntry::getModel
                     ));
@@ -78,6 +65,13 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
         }
 
         entries.sort((player1, player2) -> player1.getName().getString().compareToIgnoreCase(player2.getName().getString()));
+        for (int i = 0; i < entries.size(); i++) {
+            var entry = entries.get(i);
+            var position = entry.getPosition();
+            position.setAnchor(scrollOffset);
+            position.setRelativeX(getEntryX(i));
+            position.setRelativeY(getEntryY(i));
+        }
 
         allEntries.addAll(this.entries);
         if (defaultSelected != null && !allEntries.contains(defaultSelected)) {
@@ -106,8 +100,8 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
     @Nullable
     public ConfigEntryWidget getHovered(int mouseX, int mouseY) {
         for (ConfigEntryWidget entry : allEntries) {
-            var x = getEntryX(entry);
-            var y = getEntryY(entry);
+            var x = entry.getX();
+            var y = entry.getY();
             if (mouseX >= x && mouseX < x + entry.getWidth() && mouseY >= y && mouseY < y + entry.getHeight()) {
                 return entry;
             }
@@ -115,31 +109,35 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
         return null;
     }
 
-    private int getEntryX(ConfigEntryWidget child) {
-        return x + getEntries().indexOf(child) * 30 - scroll;
+    protected int getEntryX(int index) {
+        return index * childSize;
     }
 
-    private int getEntryY(ConfigEntryWidget child) {
-        return y;
+    protected int getEntryY(int index) {
+        return 0;
     }
 
     private int getMaxScroll() {
-        return Math.max(0, getEntries().size() * 30 - width);
+        return Math.max(0, getEntries().size() * childSize - width);
+    }
+
+    public void setScroll(int scroll) {
+        this.scrollOffset.setRelativeX(scroll);
+    }
+
+    public int getScroll() {
+        return scrollOffset.getRelativeX();
+    }
+
+    public void scroll(int amount) {
+        setScroll(MathHelper.clamp(getScroll() - amount, 0, getMaxScroll()));
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        context.enableScissor(x, 0, x + width, screenHeight);
-        var players = getEntries();
-        for (int i = 0; i < players.size(); i++) {
-            var entry = players.get(i);
-            var x = getEntryX(entry);
-            var y = getEntryY(entry);
-            entry.directRender(
-                    context, i, x, y, mouseX, mouseY,
-                    mouseX >= x && mouseX < x + entry.getWidth() && mouseY >= y && mouseY < y + entry.getHeight(),
-                    delta
-            );
+    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        ScissorManager.push(getX(), getY(), getWidth(), getHeight());
+        for (ConfigEntryWidget entry : children()) {
+            entry.render(context, mouseX, mouseY, delta);
         }
         context.disableScissor();
     }
@@ -149,46 +147,13 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
     }
 
     @Override
-    public List<? extends Element> children() {
+    public List<ConfigEntryWidget> children() {
         return getEntries();
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height) {
-            for (var child : getEntries()) {
-                var childX = getEntryX(child);
-                var childY = getEntryY(child);
-                if (mouseX >= childX && mouseX < childX + child.getWidth() && mouseY >= childY && mouseY < childY + child.getHeight()) {
-                    return child.mouseClicked(mouseX, mouseY, button);
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        scroll -= amount * 30;
-        if (scroll < 0) {
-            scroll = 0;
-        } else if (scroll > getMaxScroll()) {
-            scroll = getMaxScroll();
-        }
+        scroll(((int) amount) * childSize);
         return true;
-    }
-
-    @Override
-    public void appendNarrations(NarrationMessageBuilder builder) {
-    }
-
-    @Override
-    public SelectionType getType() {
-        return SelectionType.NONE;
-    }
-
-    @Override
-    public boolean isMouseOver(double mouseX, double mouseY) {
-        return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
     }
 }

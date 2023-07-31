@@ -40,14 +40,6 @@ public abstract class OverrideableConfigScreen extends ConfigScreen {
     }
 
     @Override
-    protected void renderBackgroundTextures(DrawContext context) {
-        int leftSide = getWindowLeft() + 3;
-        int topSide = getSelectorTop();
-
-        context.drawTexture(OverrideableConfigScreen.SELECTOR_TEXTURE, leftSide, topSide, 1, 1, 236, 127);
-    }
-
-    @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         renderBackground(context);
 

@@ -32,7 +32,7 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
             }
         };
         this.clearButton.setCallback(button -> clearConfig());
-        this.clearButton.getPosition().setAnchor(this);
+        this.setOwnerShip(this.clearButton);
         this.clearButton.setVisible(armorConfig != null);
         this.clearButton.setWidth(11);
         this.clearButton.setHeight(11);
