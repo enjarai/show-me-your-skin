@@ -1,5 +1,7 @@
 package nl.enjarai.showmeyourskin.gui;
 
+import dev.lambdaurora.spruceui.Position;
+import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -7,13 +9,17 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.config.ModConfig;
+import nl.enjarai.showmeyourskin.gui.style.EightSliceBorder;
+import nl.enjarai.showmeyourskin.gui.style.OneSliceBackground;
 import nl.enjarai.showmeyourskin.gui.widget.ConfigEntryWidget;
 import nl.enjarai.showmeyourskin.gui.widget.PlayerSelectorWidget;
 
 public abstract class OverrideableConfigScreen extends ConfigScreen {
-    public static final Identifier SELECTOR_TEXTURE = ShowMeYourSkin.id("textures/gui/config_screen.png");
     public static final Identifier GLOBAL_ICON = ShowMeYourSkin.id("textures/gui/global_icon.png");
 
+    private Position selectorRelative = Position.of(0, 0);
+    private SpruceContainerWidget selectorContainer;
+    private SpruceContainerWidget listContainer;
     private ConfigEntryWidget globalConfig;
     private PlayerSelectorWidget playerSelector;
 
@@ -25,68 +31,71 @@ public abstract class OverrideableConfigScreen extends ConfigScreen {
     protected void init() {
         super.init();
 
-        // When the server either doesn't exist or doesn't have the mod, all players will be configurable
-        playerSelector = new PlayerSelectorWidget(
-                client, width, height, getWindowLeft() + 44, getSelectorTop() + 63,
-                187, this::loadConfigEntry
-        );
+        selectorContainer = new SpruceContainerWidget(Position.of(getWindowLeft(), getSelectorTop()), 236, 58);
+        selectorContainer.setBackground(OneSliceBackground.WINDOW);
+        selectorContainer.setBorder(EightSliceBorder.WINDOW);
+        selectorRelative.setAnchor(selectorContainer);
+
+        listContainer = new SpruceContainerWidget(Position.of(7, 19), 222, 32);
+        listContainer.setBackground(OneSliceBackground.DARK_INDENT);
+        listContainer.setBorder(EightSliceBorder.DARK_INDENT);
+
+        playerSelector = new PlayerSelectorWidget(Position.of(34, 1), 187, this::loadConfigEntry);
         globalConfig = new ConfigEntryWidget(
-                client, playerSelector, getWindowLeft() + 11, getSelectorTop() + 63,
-                Text.translatable("gui.showmeyourskin.armorScreen.global"),
+                playerSelector, Text.translatable("gui.showmeyourskin.armorScreen.global"),
                 () -> OverrideableConfigScreen.GLOBAL_ICON, () -> null
         );
+        var globalConfigPosition = globalConfig.getPosition();
+        globalConfigPosition.setRelativeX(1);
+        globalConfigPosition.setRelativeY(1);
         playerSelector.linkDefault(globalConfig);
         playerSelector.updateEntries();
+
+        listContainer.addChild(playerSelector);
+        listContainer.addChild(globalConfig);
+
+        selectorContainer.addChild(listContainer);
+
+        addDrawableChild(selectorContainer);
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context);
+        super.render(context, mouseX, mouseY, delta);
 
+        // Screen title/hovered player name
         var hovered = playerSelector.getHovered(mouseX, mouseY);
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         context.drawText(
                 textRenderer, hovered == null ? title : hovered.getName(),
-                getWindowLeft() + 11, getSelectorTop() + 52, TEXT_COLOR, false
+                selectorContainer.getX() + 8, selectorContainer.getY() + 8, TEXT_COLOR, false
         );
 
-        super.render(context, mouseX, mouseY, delta);
-    }
-
-    @Override
-    protected void fixChildren() {
-        super.fixChildren();
-        addDrawableChild(globalConfig);
-        addDrawableChild(playerSelector);
+        // Player list/global config divider texture
+        context.drawTexture(
+                ShowMeYourSkin.id("textures/gui/divider.png"),
+                listContainer.getX() + 31, listContainer.getY() + 1,
+                0, 0, 3, 30, 32, 32
+        );
     }
 
     protected int getSelectorTop() {
-        return -49;
+        return -4;
     }
 
     @Override
     protected int getWindowTop() {
-        return Math.max(getSelectorTop() + 100, super.getWindowTop());
+        return Math.max(getSelectorTop() + 57, super.getWindowTop());
     }
 
     @Override
-    protected int getBackButtonX() {
-        return getWindowLeft() - 20;
+    protected Position getBackButtonPos() {
+        return Position.of(selectorRelative, -24, 8);
     }
 
     @Override
-    protected int getBackButtonY() {
-        return getSelectorTop() + 52;
-    }
-
-    @Override
-    protected int getGlobalToggleX() {
-        return getWindowLeft() - 20;
-    }
-
-    @Override
-    protected int getGlobalToggleY() {
-        return getSelectorTop() + 76;
+    protected Position getGlobalTogglePos() {
+        return Position.of(selectorRelative, -24, 32);
     }
 
     @Override

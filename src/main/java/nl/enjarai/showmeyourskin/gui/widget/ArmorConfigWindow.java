@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.background.Background;
 import dev.lambdaurora.spruceui.border.Border;
-import dev.lambdaurora.spruceui.util.ScissorManager;
 import dev.lambdaurora.spruceui.widget.SpruceSliderWidget;
 import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
 import net.minecraft.block.entity.BannerPattern;
@@ -28,7 +27,6 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
@@ -45,9 +43,6 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 public class ArmorConfigWindow extends SpruceContainerWidget {
-    public static final Identifier TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen.png");
-    public static final Identifier BACKGROUND_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_background.png");
-    public static final Identifier OVERLAY_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_disabled.png");
     private static final int TEXT_COLOR = 0x505050;
     private static final int TEXT_COLOR_RED = 0x880000;
     private static final Text GLINT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.glintTooltip");
@@ -133,6 +128,7 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
 
             player.equippedStackSupplier = tab.getContainer().getDummyEquipmentGetter();
         });
+        player.equippedStackSupplier = tabManager.getActiveTab().getContainer().getDummyEquipmentGetter();
 
         var lowerArea = new SpruceContainerWidget(Position.of(7, 113), 109, 53);
         lowerArea.setBackground(OneSliceBackground.INDENT);
@@ -188,6 +184,8 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
 
     @Override
     public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        var matrices = context.getMatrices();
+
         super.renderWidget(context, mouseX, mouseY, delta);
 
         var playerX = rightArea.getX() + rightArea.getWidth() / 2;
@@ -208,23 +206,18 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
 //            );
 //        }
 
-        var matrices = context.getMatrices();
 
         matrices.push();
         matrices.translate(playerX, playerY, -950);
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(playerRotation));
         matrices.translate(0, 0, 950.0);
-        ScissorManager.push(
+        context.enableScissor(
                 rightArea.getX() + playerBorder, rightArea.getY() + playerBorder,
-                rightArea.getWidth() - playerBorder, rightArea.getHeight() - playerBorder
+                rightArea.getX() + rightArea.getWidth() - playerBorder, rightArea.getY() + rightArea.getHeight() - playerBorder
         );
         drawEntity(matrices, 0, 0, 70, -mouseX + playerX, -mouseY + playerY - 110, player);
-        ScissorManager.pop();
+        context.disableScissor();
         matrices.pop();
-
-        if (!isEditable()) {
-//            renderBackground(context, OVERLAY_TEXTURE, 999); TODO
-        }
     }
 
     private float getPlayerRotationDelta() {

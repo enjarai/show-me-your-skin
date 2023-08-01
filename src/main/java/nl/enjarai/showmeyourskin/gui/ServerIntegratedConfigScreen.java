@@ -1,19 +1,20 @@
 package nl.enjarai.showmeyourskin.gui;
 
 import dev.lambdaurora.spruceui.Position;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import nl.enjarai.showmeyourskin.Components;
+import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
+import nl.enjarai.showmeyourskin.gui.widget.IconPressButtonWidget;
+import nl.enjarai.showmeyourskin.gui.widget.IconToggleButtonWidget;
 
 public class ServerIntegratedConfigScreen extends ConfigScreen {
-    private ButtonWidget overridesEnabledButton;
-    private ButtonWidget overridesConfigureButton;
+    private IconToggleButtonWidget overridesEnabledButton;
+    private IconPressButtonWidget overridesConfigureButton;
 
     public ServerIntegratedConfigScreen(Screen parent) {
         super(parent, Text.translatable("gui.showmeyourskin.armorScreen.title.serverIntegrated"));
@@ -34,49 +35,33 @@ public class ServerIntegratedConfigScreen extends ConfigScreen {
                 client.world, client.getNetworkHandler()
         );
 
-//        overridesEnabledButton = new AbstractIconButtonWidget( TODO
-//                this, getWindowLeft() + 54, getWindowTop() - 22,
-//                120, 38, ArmorConfigWindow.TEXTURE, ModConfig.INSTANCE.overridesEnabledInServerMode,
-//                (enabled) -> {
-//                    ModConfig.INSTANCE.overridesEnabledInServerMode = enabled;
-//                    fixChildren();
-//                },
-//                Text.translatable("gui.showmeyourskin.armorScreen.overridesEnabled")
-//        );
-//        overridesConfigureButton = new AbstractIconButtonWidget(
-//                this, getWindowLeft() + 78, getWindowTop() - 22,
-//                20, 78, ArmorConfigWindow.TEXTURE, true,
-//                button -> {}, Text.translatable("gui.showmeyourskin.armorScreen.overridesConfigure")
-//        ) {
-//            @Override
-//            public void onPress() {
-//                if (client != null) {
-//                    client.setScreen(new ServerOverridesConfigScreen(ServerIntegratedConfigScreen.this));
-//                }
-//            }
-//        };
+        overridesEnabledButton = new IconToggleButtonWidget(
+                getOverridesEnabledPos(), ShowMeYourSkin.id("textures/gui/button/enable_local_overrides.png"),
+                0, 0, ModConfig.INSTANCE.overridesEnabledInServerMode
+        );
+        overridesEnabledButton.setCallback((btn, enabled) -> {
+            ModConfig.INSTANCE.overridesEnabledInServerMode = enabled;
+            overridesConfigureButton.setVisible(enabled);
+        });
+
+        overridesConfigureButton = new IconPressButtonWidget(
+                getOverridesConfigurePos(), ShowMeYourSkin.id("textures/gui/button/edit_local_overrides.png"),
+                0, 0
+        );
+        overridesConfigureButton.setCallback(btn -> {
+            if (client != null) {
+                client.setScreen(new ServerOverridesConfigScreen(ServerIntegratedConfigScreen.this));
+            }
+        });
+
+        addDrawableChild(overridesEnabledButton);
+        addDrawableChild(overridesConfigureButton);
 
         loadArmorConfigWindow(new ArmorConfigWindow(
                 Position.of(getWindowLeft(), getWindowTop()), this,
                 Text.translatable("gui.showmeyourskin.armorScreen.synced"),
                 dummyPlayer, config.copy(), 0, false
         ));
-    }
-
-    @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context);
-
-        super.render(context, mouseX, mouseY, delta);
-    }
-
-    @Override
-    protected void fixChildren() {
-        super.fixChildren();
-        addDrawableChild(overridesEnabledButton);
-        if (ModConfig.INSTANCE.overridesEnabledInServerMode) {
-            addDrawableChild(overridesConfigureButton);
-        }
     }
 
     @Override
@@ -90,6 +75,14 @@ public class ServerIntegratedConfigScreen extends ConfigScreen {
                 ShowMeYourSkinClient.syncToServer(config);
             }
         }
+    }
+
+    protected Position getOverridesEnabledPos() {
+        return Position.of(windowRelative, 54, -22);
+    }
+
+    protected Position getOverridesConfigurePos() {
+        return Position.of(windowRelative, 78, -22);
     }
 
     @Override

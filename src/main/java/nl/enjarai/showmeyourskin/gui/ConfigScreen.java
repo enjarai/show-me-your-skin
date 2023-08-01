@@ -1,7 +1,9 @@
 package nl.enjarai.showmeyourskin.gui;
 
 import dev.lambdaurora.spruceui.Position;
+import dev.lambdaurora.spruceui.Tooltip;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
+import dev.lambdaurora.spruceui.util.ScissorManager;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -18,7 +20,7 @@ public abstract class ConfigScreen extends SpruceScreen {
     public static final int TEXT_COLOR = 0x404040;
     protected final Screen parent;
     protected ArmorConfigWindow armorConfigWindow;
-    protected final Position windowRelative = Position.origin();
+    protected final Position windowRelative = Position.of(0, 0);
     private IconPressButtonWidget backButton;
     private IconToggleButtonWidget globalToggle;
 
@@ -57,6 +59,16 @@ public abstract class ConfigScreen extends SpruceScreen {
         super.renderBackground(context);
 
         matrices.pop();
+    }
+
+    @Override
+    public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
+        ScissorManager.pushScaleFactor(this.scaleFactor);
+        this.renderBackground(graphics);
+        this.renderWidgets(graphics, mouseX, mouseY, delta);
+        this.renderTitle(graphics, mouseX, mouseY, delta);
+        Tooltip.renderAll(graphics);
+        ScissorManager.popScaleFactor();
     }
 
     protected void loadConfigEntry(ConfigEntryWidget entry) {

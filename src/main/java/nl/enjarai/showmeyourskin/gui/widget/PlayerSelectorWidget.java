@@ -2,10 +2,8 @@ package nl.enjarai.showmeyourskin.gui.widget;
 
 import com.google.common.collect.Lists;
 import dev.lambdaurora.spruceui.Position;
-import dev.lambdaurora.spruceui.util.ScissorManager;
 import dev.lambdaurora.spruceui.widget.container.AbstractSpruceParentWidget;
-import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
@@ -135,7 +133,7 @@ public class PlayerSelectorWidget extends AbstractSpruceParentWidget<ConfigEntry
 
     @Override
     public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-        ScissorManager.push(getX(), getY(), getWidth(), getHeight());
+        context.enableScissor(getX(), getY(), getX() + getWidth(), getY() + getHeight());
         for (ConfigEntryWidget entry : children()) {
             entry.render(context, mouseX, mouseY, delta);
         }
