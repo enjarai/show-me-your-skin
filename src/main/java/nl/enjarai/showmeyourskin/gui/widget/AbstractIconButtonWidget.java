@@ -25,7 +25,7 @@ public abstract class AbstractIconButtonWidget extends AbstractSprucePressableBu
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        if (isMouseOver(mouseX, mouseY)) {
+        if (isMouseHovered()) {
             getTooltip().ifPresent(tooltip -> {
                 var wrappedTooltipText = MinecraftClient.getInstance().textRenderer
                         .wrapLines(tooltip, Math.max(getWidth() * 2 / 3, 200));
@@ -55,6 +55,11 @@ public abstract class AbstractIconButtonWidget extends AbstractSprucePressableBu
                 getWidth(), getHeight(),
                 64, 64
         );
+    }
+
+    @Override
+    public boolean isMouseHovered() {
+        return isActive() && super.isMouseHovered();
     }
 
     public void setWidth(int width) {

@@ -72,6 +72,7 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
     private final DummyClientPlayerEntity player;
     private final ArmorConfig armorConfig;
     private final SpruceContainerWidget rightArea;
+    private final SpruceContainerWidget lowerArea;
 
     public ArmorConfigWindow(Position position, Screen parent, Text name, DummyClientPlayerEntity player, ArmorConfig armorConfig, int tabIndex, boolean allowAllOptions) {
         super(position, 236, 173);
@@ -130,7 +131,7 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
         });
         player.equippedStackSupplier = tabManager.getActiveTab().getContainer().getDummyEquipmentGetter();
 
-        var lowerArea = new SpruceContainerWidget(Position.of(7, 113), 109, 53);
+        lowerArea = new DisableableContainerWidget(Position.of(7, 113), 109, 53);
         lowerArea.setBackground(OneSliceBackground.INDENT);
         lowerArea.setBorder(EightSliceBorder.INDENT);
 
@@ -154,7 +155,7 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
             lowerArea.addChild(showNameTag);
         }
 
-        rightArea = new SpruceContainerWidget(Position.of(120, 7), 109, 159);
+        rightArea = new DisableableContainerWidget(Position.of(120, 7), 109, 159);
         rightArea.setBackground(OneSliceBackground.DARK_INDENT);
         rightArea.setBorder(EightSliceBorder.DARK_INDENT);
 
@@ -242,7 +243,12 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
                     if (trimConfig != null) trimConfig.setTransparency((byte) sld.getIntValue());
                 },
                 100, "%"
-        );
+        ) {
+            @Override
+            public boolean isMouseHovered() {
+                return isActive() && super.isMouseHovered();
+            }
+        };
     }
 
     protected IconToggleButtonWidget getGlintButton(HideableEquipment slot, int x, int y) {
@@ -265,6 +271,15 @@ public class ArmorConfigWindow extends SpruceContainerWidget {
 
     public SliderSetManager getTabManager() {
         return tabManager;
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        super.setActive(active);
+
+        tabManager.getTabs().forEach(t -> t.getContainer().setActive(active));
+        lowerArea.setActive(active);
+        rightArea.setActive(active);
     }
 
     @Override

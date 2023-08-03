@@ -8,7 +8,7 @@ import net.minecraft.sound.SoundEvent;
 
 import java.util.function.Function;
 
-public class SliderSet extends SpruceContainerWidget {
+public class SliderSet extends DisableableContainerWidget {
     private Function<EquipmentSlot, ItemStack> dummyEquipmentGetter;
     public final float rotatedBy;
     public final SoundEvent sound;

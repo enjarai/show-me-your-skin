@@ -41,7 +41,10 @@ public abstract class ConfigScreen extends SpruceScreen {
                 getGlobalTogglePos(), ShowMeYourSkin.id("textures/gui/button/global_toggle.png"),
                 0, 0, ModConfig.INSTANCE.globalEnabled
         );
-        globalToggle.setCallback((btn, enabled) -> ModConfig.INSTANCE.globalEnabled = enabled);
+        globalToggle.setCallback((btn, enabled) -> {
+            ModConfig.INSTANCE.globalEnabled = enabled;
+            armorConfigWindow.setActive(enabled);
+        });
         globalToggle.setTooltip(Text.translatable("gui.showmeyourskin.armorScreen.globalToggleTooltip",
                 KeyBindingHelper.getBoundKeyOf(ModKeyBindings.GLOBAL_TOGGLE).getLocalizedText()));
 
@@ -86,6 +89,7 @@ public abstract class ConfigScreen extends SpruceScreen {
     protected void loadArmorConfigWindow(ArmorConfigWindow window) {
         remove(armorConfigWindow);
         armorConfigWindow = window;
+        armorConfigWindow.setActive(globalToggle.getValue());
         windowRelative.setAnchor(window);
         addDrawableChild(armorConfigWindow);
     }
