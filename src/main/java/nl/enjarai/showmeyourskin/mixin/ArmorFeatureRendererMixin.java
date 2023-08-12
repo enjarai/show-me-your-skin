@@ -68,12 +68,13 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
     )
     private void showmeyourskin$armorTransparency(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, boolean usesSecondLayer, A model, boolean legs, float red, float green, float blue, String overlay, CallbackInfo ci) {
         var ctx = MixinContext.ARMOR.getContext();
+        if (ctx == null) throw new IllegalStateException("ArmorContext is null");
 
-        if (overlay == null) {
+        if (overlay == null && ArmorTrim.getTrim(ctx.getEntity().getWorld().getRegistryManager(), ctx.getEntity().getEquippedStack(ctx.getSlot().toSlot())).isPresent()) {
             trimContextQueue.offer(ctx);
         }
 
-        if (ctx != null && ctx.shouldModify()) {
+        if (ctx.shouldModify()) {
             var t = ctx.getApplicablePieceTransparency();
 
             if (t < 1) {

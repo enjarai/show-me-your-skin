@@ -1,1 +1,1 @@
-- Fixed minor incompatibility with ImmediatelyFast.
+- Fixed flickering trims when not all equipped armor pieces are trimmed.
