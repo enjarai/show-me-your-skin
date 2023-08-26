@@ -1,1 +1,1 @@
-- Fixed flickering trims when not all equipped armor pieces are trimmed.
+- Fixed compatibility with Create Fabric 0.5.1.
