@@ -1,8 +1,6 @@
 package nl.enjarai.showmeyourskin.net;
 
-import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
 import io.netty.buffer.Unpooled;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;

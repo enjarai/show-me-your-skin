@@ -1,6 +1,5 @@
 package nl.enjarai.showmeyourskin.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -13,7 +12,6 @@ import nl.enjarai.showmeyourskin.gui.widget.PlayerSelectorWidget;
 
 public abstract class OverrideableConfigScreen extends ConfigScreen {
     public static final Identifier SELECTOR_TEXTURE = ShowMeYourSkin.id("textures/gui/config_screen.png");
-    public static final Identifier GLOBAL_ICON = ShowMeYourSkin.id("textures/gui/global_icon.png");
 
     private ConfigEntryWidget globalConfig;
     private PlayerSelectorWidget playerSelector;
@@ -33,8 +31,7 @@ public abstract class OverrideableConfigScreen extends ConfigScreen {
         );
         globalConfig = new ConfigEntryWidget(
                 client, playerSelector, getWindowLeft() + 11, getSelectorTop() + 63,
-                Text.translatable("gui.showmeyourskin.armorScreen.global"),
-                () -> OverrideableConfigScreen.GLOBAL_ICON, () -> null
+                Text.translatable("gui.showmeyourskin.armorScreen.global")
         );
         playerSelector.linkDefault(globalConfig);
         playerSelector.updateEntries();
@@ -50,7 +47,7 @@ public abstract class OverrideableConfigScreen extends ConfigScreen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context);
+        super.render(context, mouseX, mouseY, delta);
 
         var hovered = playerSelector.getHovered(mouseX, mouseY);
         var textRenderer = MinecraftClient.getInstance().textRenderer;
@@ -58,8 +55,6 @@ public abstract class OverrideableConfigScreen extends ConfigScreen {
                 textRenderer, hovered == null ? title : hovered.getName(),
                 getWindowLeft() + 11, getSelectorTop() + 52, TEXT_COLOR, false
         );
-
-        super.render(context, mouseX, mouseY, delta);
     }
 
     @Override

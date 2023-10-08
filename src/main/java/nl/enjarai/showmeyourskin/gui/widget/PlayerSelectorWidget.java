@@ -1,16 +1,14 @@
 package nl.enjarai.showmeyourskin.gui.widget;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -61,8 +59,7 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
             var profile = dummyPlayer.getGameProfile();
             entries.add(new PlayerSelectorEntry(
                     client, this, profile.getId(),
-                    Text.translatable("gui.showmeyourskin.armorScreen.playerName", profile.getName()), dummyPlayer::getSkinTexture,
-                    dummyPlayer::getModel
+                    Text.translatable("gui.showmeyourskin.armorScreen.playerName", profile.getName()), dummyPlayer::getSkinTextures
             ));
         } else {
             for (UUID uuid : client.player.networkHandler.getPlayerUuids()) {
@@ -72,8 +69,7 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
                     String playerName = playerListEntry.getProfile().getName();
                     entries.add(new PlayerSelectorEntry(
                             client, this, playerUuid,
-                            Text.translatable("gui.showmeyourskin.armorScreen.playerName", playerName), playerListEntry::getSkinTexture,
-                            playerListEntry::getModel
+                            Text.translatable("gui.showmeyourskin.armorScreen.playerName", playerName), playerListEntry::getSkinTextures
                     ));
                 }
             }
@@ -170,8 +166,8 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        scroll -= amount * 30;
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        scroll -= (verticalAmount + horizontalAmount) * 30;
         if (scroll < 0) {
             scroll = 0;
         } else if (scroll > getMaxScroll()) {

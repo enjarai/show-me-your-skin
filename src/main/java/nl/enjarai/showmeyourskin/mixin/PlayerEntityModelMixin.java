@@ -2,10 +2,8 @@ package nl.enjarai.showmeyourskin.mixin;
 
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.util.CombatLogger;
 import org.spongepowered.asm.mixin.Final;

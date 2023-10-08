@@ -31,7 +31,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.LinkedList;
-import java.util.Queue;
 
 @Mixin(value = ArmorFeatureRenderer.class, priority = 500)
 public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> {
@@ -72,7 +71,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
         var ctx = MixinContext.ARMOR.getContext();
         if (ctx == null) throw new IllegalStateException("ArmorContext is null");
 
-        if (overlay == null && ArmorTrim.getTrim(ctx.getEntity().getWorld().getRegistryManager(), ctx.getEntity().getEquippedStack(ctx.getSlot().toSlot())).isPresent()) {
+        if (overlay == null && ArmorTrim.getTrim(ctx.getEntity().getWorld().getRegistryManager(), ctx.getEntity().getEquippedStack(ctx.getSlot().toSlot()), true).isPresent()) {
             trimContextQueue.offer(ctx);
         }
 
