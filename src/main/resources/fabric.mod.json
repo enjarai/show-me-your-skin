@@ -45,7 +45,7 @@
   "depends": {
     "fabricloader": ">=0.15.0",
     "fabric-api": "*",
-    "minecraft": ">=1.20.2- <=1.20.4",
+    "minecraft": ">=1.20.3- <=1.20.4-",
     "cicada": "*",
     "cardinal-components-base": "*",
     "cardinal-components-entity": "*"
