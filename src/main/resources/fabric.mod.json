@@ -50,6 +50,9 @@
     "cardinal-components-base": "*",
     "cardinal-components-entity": "*"
   },
+  "breaks": {
+    "optifabric": "*"
+  },
 
   "custom": {
     "projects": {

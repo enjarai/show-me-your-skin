@@ -1,6 +1,7 @@
 plugins {
 	id 'fabric-loom' version '1.4-SNAPSHOT'
 	id 'maven-publish'
+	id "me.modmuss50.mod-publish-plugin" version "0.4.4"
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -101,4 +102,72 @@ publishing {
 
 loom {
 	accessWidenerPath = file("src/main/resources/showmeyourskin.accesswidener")
+}
+
+publishMods {
+	file = remapJar.archiveFile
+	displayName = "${property('mod_version')} for ${property('minecraft_version')}"
+	version = project.version
+	changelog = getRootProject().file("CHANGELOG.md").text
+	type = STABLE
+	modLoaders.add("fabric")
+
+	def min = property('publish_target_min')
+	def max = property('publish_target_max')
+
+	if (providers.gradleProperty('enjaraiModrinthToken').present) {
+		modrinth {
+			projectId = property('mod_modrinth')
+			accessToken = providers.gradleProperty('enjaraiModrinthToken').get()
+
+			if (min == max) {
+				minecraftVersions.add(min)
+			} else {
+				minecraftVersionRange {
+					start = min
+					end = max
+				}
+			}
+
+			requires {
+				slug = "fabric-api"
+			}
+			embeds {
+				slug = "cardinal-components-api"
+			}
+		}
+	}
+
+	if (providers.gradleProperty('enjaraiCurseforgeToken').present) {
+		curseforge {
+			projectId = property('mod_curseforge')
+			accessToken = providers.gradleProperty('enjaraiCurseforgeToken').get()
+
+			if (min == max) {
+				minecraftVersions.add(min)
+			} else {
+				minecraftVersionRange {
+					start = min
+					end = max
+				}
+			}
+
+			requires {
+				slug = "fabric-api"
+			}
+			embeds {
+				slug = "cardinal-components-api"
+			}
+		}
+	}
+
+	if (providers.gradleProperty('enjaraiGithubToken').present) {
+		github {
+			repository = property('mod_github')
+			accessToken = providers.gradleProperty('enjaraiGithubToken').get()
+
+			commitish = property('git_branch')
+			tagName = project.version
+		}
+	}
 }
