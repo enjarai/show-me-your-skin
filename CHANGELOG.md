@@ -1,1 +1,4 @@
-- Fixed compatibility with Create Fabric 0.5.1.
+- Added compatibility with Armored Elytra.
+- Explicitly marked OptiFabric as incompatible to avoid confusion.
+- Disabled compat module for Wildfire's Female Gender mod to at least avoid crashing.
+  - Compat will be reimplemented once I figure out a way around their internal changes.
