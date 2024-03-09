@@ -10,7 +10,8 @@ public enum HideableEquipment {
     LEGS,
     FEET,
     ELYTRA,
-    SHIELD;
+    SHIELD,
+    HAT;
 
     private final String id;
 

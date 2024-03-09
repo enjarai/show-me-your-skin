@@ -1,4 +1,4 @@
-package nl.enjarai.showmeyourskin.mixin;
+package nl.enjarai.showmeyourskin.mixin.shield;
 
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.HeldItemRenderer;
@@ -19,7 +19,7 @@ public abstract class HeldItemRendererMixin {
             at = @At("HEAD")
     )
     private void showmeyourskin$captureItemRenderContext(LivingEntity entity, ItemStack stack, ModelTransformationMode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
-        MixinContext.HELD_ITEM.setContext(entity);
+        MixinContext.ENTITY.setContext(entity);
     }
 
     @Inject(
@@ -27,6 +27,6 @@ public abstract class HeldItemRendererMixin {
             at = @At("RETURN")
     )
     private void showmeyourskin$clearItemRenderContext(LivingEntity entity, ItemStack stack, ModelTransformationMode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
-        MixinContext.HELD_ITEM.clearContext();
+        MixinContext.ENTITY.clearContext();
     }
 }

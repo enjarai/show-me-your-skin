@@ -1,1 +1,1 @@
-- Updated a dependency to fix a small issue downstream.
+- Added support for player and mob heads.

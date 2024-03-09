@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 public class MixinContext<T> {
 
     public static final MixinContext<ArmorContext> ARMOR = new MixinContext<>();
-    public static final MixinContext<LivingEntity> HELD_ITEM = new MixinContext<>();
+    public static final MixinContext<LivingEntity> ENTITY = new MixinContext<>();
 
     private final ThreadLocal<T> currentContext = new ThreadLocal<>();
 
