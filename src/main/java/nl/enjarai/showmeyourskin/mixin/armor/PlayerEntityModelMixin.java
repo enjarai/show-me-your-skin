@@ -1,4 +1,4 @@
-package nl.enjarai.showmeyourskin.mixin;
+package nl.enjarai.showmeyourskin.mixin.armor;
 
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;

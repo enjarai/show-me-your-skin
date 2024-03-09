@@ -9,16 +9,18 @@
     "defaultRequire": 1
   },
   "client": [
-    "ArmorFeatureRendererMixin",
-    "BannerBlockEntityRendererMixin",
-    "BuiltinModelItemRendererMixin",
-    "CapeFeatureRendererMixin",
     "ClientPlayerEntityMixin",
-    "ElytraFeatureRendererMixin",
-    "HeldItemRendererMixin",
     "LivingEntityRendererMixin",
     "OtherClientPlayerEntityMixin",
-    "PlayerEntityModelMixin",
-    "fabric.ArmorRendererMixin"
+    "armor.ArmorFeatureRendererMixin",
+    "armor.PlayerEntityModelMixin",
+    "armor.fabric.ArmorRendererMixin",
+    "elytra.CapeFeatureRendererMixin",
+    "elytra.ElytraFeatureRendererMixin",
+    "hat.HeadFeatureRendererMixin",
+    "hat.SkullBlockEntityRendererMixin",
+    "shield.BannerBlockEntityRendererMixin",
+    "shield.BuiltinModelItemRendererMixin",
+    "shield.HeldItemRendererMixin"
   ]
 }

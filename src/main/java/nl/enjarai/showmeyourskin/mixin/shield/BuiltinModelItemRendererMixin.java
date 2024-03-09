@@ -1,4 +1,4 @@
-package nl.enjarai.showmeyourskin.mixin;
+package nl.enjarai.showmeyourskin.mixin.shield;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class BuiltinModelItemRendererMixin {
 
     private boolean showmeyourskin$getShieldGlint() {
-        var ctx = MixinContext.HELD_ITEM.getContext();
+        var ctx = MixinContext.ENTITY.getContext();
 
         if (ctx instanceof PlayerEntity) {
             return ModConfig.INSTANCE.getApplicable(ctx.getUuid()).getGlints().get(HideableEquipment.SHIELD).getTransparency() > 0;
@@ -66,7 +66,7 @@ public abstract class BuiltinModelItemRendererMixin {
             cancellable = true
     )
     private void showmeyourskin$cancelShieldRender(ItemStack stack, ModelTransformationMode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, CallbackInfo ci) {
-        var ctx = MixinContext.HELD_ITEM.getContext();
+        var ctx = MixinContext.ENTITY.getContext();
 
         if (ctx instanceof PlayerEntity) {
             if (ModConfig.INSTANCE.getApplicablePieceTransparency(ctx.getUuid(), HideableEquipment.SHIELD) <= 0) {
@@ -84,7 +84,7 @@ public abstract class BuiltinModelItemRendererMixin {
             )
     )
     private RenderLayer showmeyourskin$enableShieldTransparency(ShieldEntityModel model, Identifier texture, Operation<RenderLayer> original) {
-        var ctx = MixinContext.HELD_ITEM.getContext();
+        var ctx = MixinContext.ENTITY.getContext();
 
         if (ctx instanceof PlayerEntity) {
             if (ModConfig.INSTANCE.getApplicablePieceTransparency(ctx.getUuid(), HideableEquipment.SHIELD) < 1) {
@@ -104,7 +104,7 @@ public abstract class BuiltinModelItemRendererMixin {
             index = 7
     )
     private float showmeyourskin$modifyShieldTransparency(float original) {
-        var ctx = MixinContext.HELD_ITEM.getContext();
+        var ctx = MixinContext.ENTITY.getContext();
 
         if (ctx instanceof PlayerEntity) {
             return ModConfig.INSTANCE.getApplicablePieceTransparency(ctx.getUuid(), HideableEquipment.SHIELD);
