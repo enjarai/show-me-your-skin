@@ -10,9 +10,8 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.client.ModRenderLayers;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
@@ -32,15 +31,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class GenderArmorLayerMixin {
     @Dynamic
     @Inject(
-            method = "renderBreastArmor",
+            method = "render",
             at = @At("HEAD"),
             cancellable = true
     )
-    private void showmeyourskin$cancelBreastArmorRendering(PlayerEntity player, CallbackInfo ci) {
-        if (ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.CHEST) <= 0) {
-            ci.cancel();
-        } else {
-            MixinContext.ARMOR.setContext(new ArmorContext(HideableEquipment.CHEST, player));
+    private void showmeyourskin$cancelBreastArmorRendering(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider,
+                                                           int light, LivingEntity entity, float limbAngle, float limbDistance,
+                                                           float partialTicks, float animationProgress, float headYaw, float headPitch,
+                                                           CallbackInfo ci) {
+        if (entity instanceof PlayerEntity player) {
+            if (ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.CHEST) <= 0) {
+                ci.cancel();
+            } else {
+                MixinContext.ARMOR.setContext(new ArmorContext(HideableEquipment.CHEST, player));
+            }
         }
     }
 
@@ -52,8 +56,11 @@ public abstract class GenderArmorLayerMixin {
                     target = "Lnet/minecraft/item/ItemStack;hasGlint()Z"
             )
     )
-    private boolean showmeyourskin$modifyBreastArmorGlint(boolean original, @Local(argsOnly = true) PlayerEntity player) {
-        return original && ModConfig.INSTANCE.getApplicableGlintTransparency(player.getUuid(), HideableEquipment.CHEST) > 0;
+    private boolean showmeyourskin$modifyBreastArmorGlint(boolean original, @Local(argsOnly = true) LivingEntity entity) {
+        if (entity instanceof PlayerEntity player) {
+            return original && ModConfig.INSTANCE.getApplicableGlintTransparency(player.getUuid(), HideableEquipment.CHEST) > 0;
+        }
+        return original;
     }
 
     @Dynamic
@@ -62,16 +69,17 @@ public abstract class GenderArmorLayerMixin {
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/render/item/ItemRenderer;getArmorGlintConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;ZZ)Lnet/minecraft/client/render/VertexConsumer;"
-            ),
-            require = 2
+            )
     )
     private VertexConsumer showmeyourskin$enableBreastArmorTransparency1(VertexConsumerProvider vertexConsumerProvider,
                                                                          RenderLayer renderLayer, boolean solid,
                                                                          boolean hasGlint, Operation<VertexConsumer> original,
-                                                                         @Local(argsOnly = true) PlayerEntity player) {
-        var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.CHEST);
-        if (transparency < 1) {
-            return ItemRenderer.getDirectItemGlintConsumer(vertexConsumerProvider, renderLayer, solid, hasGlint);
+                                                                         @Local(argsOnly = true) LivingEntity entity) {
+        if (entity instanceof PlayerEntity player) {
+            var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.CHEST);
+            if (transparency < 1) {
+                return ItemRenderer.getDirectItemGlintConsumer(vertexConsumerProvider, renderLayer, solid, hasGlint);
+            }
         }
 
         return original.call(vertexConsumerProvider, renderLayer, solid, hasGlint);
@@ -83,14 +91,15 @@ public abstract class GenderArmorLayerMixin {
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"
-            ),
-            require = 2
+            )
     )
     private RenderLayer showmeyourskin$enableBreastArmorTransparency2(Identifier texture, Operation<RenderLayer> original,
-                                                                      @Local(argsOnly = true) PlayerEntity player) {
-        var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.CHEST);
-        if (transparency < 1) {
-            return RenderLayer.getEntityTranslucent(texture);
+                                                                      @Local(argsOnly = true) LivingEntity entity) {
+        if (entity instanceof PlayerEntity player) {
+            var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.CHEST);
+            if (transparency < 1) {
+                return RenderLayer.getEntityTranslucent(texture);
+            }
         }
 
         return original.call(texture);
@@ -101,15 +110,16 @@ public abstract class GenderArmorLayerMixin {
             method = "renderBreastArmor",
             at = @At(
                     value = "INVOKE",
-                    target = "Lcom/wildfire/render/GenderLayer;renderBox(Lcom/wildfire/render/WildfireModelRenderer$ModelBox;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V"
+                    target = "Lcom/wildfire/render/GenderArmorLayer;renderBox(Lcom/wildfire/render/WildfireModelRenderer$ModelBox;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V"
             ),
-            index = 8,
-            require = 2
+            index = 8
     )
-    private float showmeyourskin$applyBreastArmorTransparency(float original, @Local(argsOnly = true) PlayerEntity player) {
-        var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.CHEST);
-        if (transparency < 1) {
-            return transparency;
+    private float showmeyourskin$applyBreastArmorTransparency(float original, @Local(argsOnly = true) LivingEntity entity) {
+        if (entity instanceof PlayerEntity player) {
+            var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.CHEST);
+            if (transparency < 1) {
+                return transparency;
+            }
         }
 
         return original;
@@ -142,7 +152,7 @@ public abstract class GenderArmorLayerMixin {
             method = "renderArmorTrim",
             at = @At(
                     value = "INVOKE",
-                    target = "Lcom/wildfire/render/GenderLayer;renderBox(Lcom/wildfire/render/WildfireModelRenderer$ModelBox;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V"
+                    target = "Lcom/wildfire/render/GenderArmorLayer;renderBox(Lcom/wildfire/render/WildfireModelRenderer$ModelBox;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V"
             ),
             index = 8
     )
