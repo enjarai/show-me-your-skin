@@ -40,7 +40,7 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	include modImplementation("nl.enjarai:cicada-lib:${project.cicada_version}") {
+	modImplementation("nl.enjarai:cicada-lib:${project.cicada_version}") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 
@@ -132,6 +132,9 @@ publishMods {
 			requires {
 				slug = "fabric-api"
 			}
+			requires {
+				slug = "cicada"
+			}
 			embeds {
 				slug = "cardinal-components-api"
 			}
@@ -154,6 +157,9 @@ publishMods {
 
 			requires {
 				slug = "fabric-api"
+			}
+			requires {
+				slug = "cicada"
 			}
 			embeds {
 				slug = "cardinal-components-api"
