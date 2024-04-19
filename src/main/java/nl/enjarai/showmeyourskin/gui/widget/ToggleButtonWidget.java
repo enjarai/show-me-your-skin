@@ -1,22 +1,34 @@
 package nl.enjarai.showmeyourskin.gui.widget;
 
-import net.minecraft.client.gui.screen.ButtonTextures;
+import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.TexturedButtonWidget;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import nl.enjarai.showmeyourskin.ShowMeYourSkin;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.BiConsumer;
-
-public class ToggleButtonWidget extends PressButtonWidget {
+public class ToggleButtonWidget extends TexturedButtonWidget {
+    private final Screen parent;
+    @Nullable
+    private final Text tooltip;
     protected boolean enabled;
-    protected final BiConsumer<ToggleButtonWidget, Boolean> toggleAction;
+    protected final BooleanConsumer toggleAction;
 
-    public ToggleButtonWidget(int x, int y, int width, int height, ButtonTextures textures,
-                              boolean initial, BiConsumer<ToggleButtonWidget, Boolean> toggleAction,
-                              @Nullable Text tooltip) {
-        super(x, y, width, height, textures, btn -> {}, tooltip);
+    public ToggleButtonWidget(Screen parent, int x, int y, int u, int v, Identifier texture, boolean initial, BooleanConsumer toggleAction, @Nullable Text tooltip) {
+        super(x, y, 20, 20, u + (initial ? 0 : 20), v, texture, null);
+        this.parent = parent;
+        this.tooltip = tooltip;
         this.enabled = initial;
         this.toggleAction = toggleAction;
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        setTooltip(Tooltip.of(tooltip));
+        super.render(context, mouseX, mouseY, delta);
     }
 
     @Override
@@ -25,26 +37,15 @@ public class ToggleButtonWidget extends PressButtonWidget {
     }
 
     public void toggle() {
+        u += enabled ? 20 : -20;
         enabled = !enabled;
 
-        toggleAction.accept(this, enabled);
+        toggleAction.accept(enabled);
     }
 
     public void setEnabled(boolean enabled) {
         if (this.enabled != enabled) {
             toggle();
         }
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public static ButtonTextures createTextures(String path) {
-        return new ButtonTextures(
-                ShowMeYourSkin.id("button/" + path), ShowMeYourSkin.id("button/" + path + "_disabled"),
-                ShowMeYourSkin.id("button/" + path)
-        );
     }
 }

@@ -2,7 +2,10 @@ accessWidener   v1  named
 
 extendable  class   net/minecraft/item/ItemStack
 
+accessible  field   net/minecraft/client/gui/widget/TexturedButtonWidget    u   I
+mutable     field   net/minecraft/client/gui/widget/TexturedButtonWidget    u   I
+accessible  field   net/minecraft/client/gui/widget/TexturedButtonWidget    v   I
+mutable     field   net/minecraft/client/gui/widget/TexturedButtonWidget    v   I
+
 accessible  class   net/minecraft/client/render/RenderLayer$MultiPhaseParameters
 accessible  class   net/minecraft/client/render/RenderPhase$Texture
-
-accessible  class   net/minecraft/client/gui/screen/advancement/AdvancementTabType

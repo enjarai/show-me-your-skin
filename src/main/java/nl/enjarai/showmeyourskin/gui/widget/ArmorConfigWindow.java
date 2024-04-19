@@ -7,11 +7,11 @@ import net.minecraft.block.entity.BannerPatterns;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
+import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
@@ -26,6 +26,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -38,11 +39,13 @@ import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.config.ModConfig;
+import nl.enjarai.showmeyourskin.config.SyncedModConfig;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class ArmorConfigWindow extends AbstractParentElement implements Drawable, Element, Selectable {
@@ -54,9 +57,6 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     private static final Text GLINT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.glintTooltip");
     private static final Text COMBAT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.combatTooltip");
     private static final Text NAME_TAG_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.nameTagTooltip");
-    protected static final ButtonTextures TOGGLE_GLINT_BUTTON_TEXTURES = ToggleButtonWidget.createTextures("show_glint");
-    protected static final ButtonTextures SHOW_IN_COMBAT_BUTTON_TEXTURES = ToggleButtonWidget.createTextures("show_in_combat");
-    protected static final ButtonTextures SHOW_NAME_TAG_BUTTON_TEXTURES = ToggleButtonWidget.createTextures("show_nametag");
 
     private static final ItemStack HEAD_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_HELMET);
     private static final ItemStack CHEST_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_CHESTPLATE);
@@ -132,17 +132,15 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
 
         if (!hideOptions || serverConfig.get().allowNotShowInCombat()) {
             buttons.add(new ToggleButtonWidget(
-                    getWindowLeft() + 14, getWindowTop() + 115, 20, 20,
-                    SHOW_IN_COMBAT_BUTTON_TEXTURES,
-                    armorConfig.showInCombat, (btn, b) -> armorConfig.showInCombat = b, COMBAT_TOOLTIP
+                    parent, getWindowLeft() + 14, getWindowTop() + 115, 40, 38,
+                    TEXTURE, armorConfig.showInCombat, b -> armorConfig.showInCombat = b, COMBAT_TOOLTIP
             ));
         }
 
         if (!hideOptions || serverConfig.get().allowNotShowNameTag()) {
             buttons.add(new ToggleButtonWidget(
-                    getWindowLeft() + 14, getWindowTop() + 141, 20, 20,
-                    SHOW_NAME_TAG_BUTTON_TEXTURES,
-                    armorConfig.showNameTag, (btn, b) -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP
+                    parent, getWindowLeft() + 14, getWindowTop() + 141, 80, 38,
+                    TEXTURE, armorConfig.showNameTag, b -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP
             ));
         }
 
@@ -308,11 +306,11 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         };
     }
 
-    protected ToggleButtonWidget getGlintButton(HideableEquipment slot, int x, int y) {
+    protected TexturedButtonWidget getGlintButton(HideableEquipment slot, int x, int y) {
         return new ToggleButtonWidget(
-                getWindowLeft() + x, getWindowTop() + y, 20, 20,
-                TOGGLE_GLINT_BUTTON_TEXTURES, armorConfig.getGlints().get(slot).getTransparency() > 0,
-                (btn, b) -> armorConfig.getGlints().get(slot).setTransparency((byte) (b ? 100 : 0)), GLINT_TOOLTIP
+                parent, getWindowLeft() + x, getWindowTop() + y, 0, 38,
+                TEXTURE, armorConfig.getGlints().get(slot).getTransparency() > 0,
+                b -> armorConfig.getGlints().get(slot).setTransparency((byte) (b ? 100 : 0)), GLINT_TOOLTIP
         );
     }
 

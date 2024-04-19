@@ -2,9 +2,7 @@ package nl.enjarai.showmeyourskin.client.cursed;
 
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientConnectionState;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ServerInfo;
 import net.minecraft.entity.damage.DamageScaling;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.network.ClientConnection;
@@ -12,7 +10,6 @@ import net.minecraft.network.NetworkSide;
 import net.minecraft.registry.*;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
@@ -20,6 +17,7 @@ import net.minecraft.world.dimension.DimensionTypes;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.OptionalLong;
 import java.util.stream.Stream;
@@ -58,14 +56,14 @@ public class DummyClientPlayNetworkHandler extends ClientPlayNetworkHandler {
         return instance;
     }
 
-    private static final Registry<Biome> cursedBiomeRegistry = new SimpleDefaultedRegistry<>("dummy", RegistryKeys.BIOME, Lifecycle.stable(), true) {
+    private final Registry<Biome> cursedBiomeRegistry = new SimpleDefaultedRegistry<>("dummy", RegistryKeys.BIOME, Lifecycle.stable(), true) {
         @Override
         public RegistryEntry.Reference<Biome> entryOf(RegistryKey<Biome> key) {
             return null;
         }
     };
 
-    private static final DynamicRegistryManager.Immutable cursedRegistryManager = new DynamicRegistryManager.Immutable() {
+    private final DynamicRegistryManager cursedRegistryManager = new DynamicRegistryManager.Immutable() {
         private final CursedRegistry<DamageType> damageTypes = new CursedRegistry<>(RegistryKeys.DAMAGE_TYPE, ShowMeYourSkin.id("fake_damage"),
                 new DamageType("", DamageScaling.NEVER, 0));
 
@@ -95,21 +93,16 @@ public class DummyClientPlayNetworkHandler extends ClientPlayNetworkHandler {
     private DummyClientPlayNetworkHandler() {
         super(
                 MinecraftClient.getInstance(),
+                null,
                 new ClientConnection(NetworkSide.CLIENTBOUND),
-                new ClientConnectionState(
-                        MinecraftClient.getInstance().getGameProfile(),
-                        MinecraftClient.getInstance().getTelemetryManager().createWorldSession(true, Duration.ZERO, null),
-                        cursedRegistryManager.toImmutable(),
-                        FeatureSet.empty(),
-                        "",
-                        new ServerInfo("", "", ServerInfo.ServerType.OTHER),
-                        null
-                )
+                MinecraftClient.getInstance().getCurrentServerEntry(),
+                MinecraftClient.getInstance().getSession().getProfile(),
+                MinecraftClient.getInstance().getTelemetryManager().createWorldSession(true, Duration.of(0, ChronoUnit.SECONDS), null)
         );
     }
 
     @Override
-    public DynamicRegistryManager.Immutable getRegistryManager() {
+    public DynamicRegistryManager getRegistryManager() {
         return cursedRegistryManager;
     }
 }

@@ -1,6 +1,7 @@
 package nl.enjarai.showmeyourskin;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -9,6 +10,7 @@ import nl.enjarai.cicada.api.util.ProperLogger;
 import nl.enjarai.showmeyourskin.config.SyncedModConfig;
 import nl.enjarai.showmeyourskin.config.SyncedModConfigServer;
 import nl.enjarai.showmeyourskin.net.HandshakeServer;
+import nl.enjarai.showmeyourskin.util.ArmorConfigComponent;
 import org.slf4j.Logger;
 
 public class ShowMeYourSkin implements ModInitializer {

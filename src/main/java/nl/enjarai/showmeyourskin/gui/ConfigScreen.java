@@ -2,25 +2,22 @@ package nl.enjarai.showmeyourskin.gui;
 
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.text.Text;
 import nl.enjarai.showmeyourskin.client.ModKeyBindings;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
 import nl.enjarai.showmeyourskin.gui.widget.ConfigEntryWidget;
-import nl.enjarai.showmeyourskin.gui.widget.PressButtonWidget;
 import nl.enjarai.showmeyourskin.gui.widget.ToggleButtonWidget;
 
 public abstract class ConfigScreen extends Screen {
-    protected static final ButtonTextures BACK_BUTTON_TEXTURES = PressButtonWidget.createTextures("back");
-    protected static final ButtonTextures GLOBAL_TOGGLE_TEXTURES = ToggleButtonWidget.createTextures("global_toggle");
     public static final int TEXT_COLOR = 0x404040;
-
     protected final Screen parent;
     protected ArmorConfigWindow armorConfigWindow;
-    private PressButtonWidget backButton;
-    private ToggleButtonWidget globalToggle;
+    private ButtonWidget backButton;
+    private ButtonWidget globalToggle;
 
     public ConfigScreen(Screen parent, Text title) {
         super(title);
@@ -29,27 +26,27 @@ public abstract class ConfigScreen extends Screen {
 
     @Override
     protected void init() {
-        backButton = new PressButtonWidget(
+        backButton = new TexturedButtonWidget(
                 getBackButtonX(), getBackButtonY(), 20, 20,
-                BACK_BUTTON_TEXTURES, button -> close(), null
+                0, 78, ArmorConfigWindow.TEXTURE, button -> close()
         );
         globalToggle = new ToggleButtonWidget(
-                getGlobalToggleX(), getGlobalToggleY(), 20, 20,
-                GLOBAL_TOGGLE_TEXTURES, ModConfig.INSTANCE.globalEnabled,
-                (btn, enabled) -> ModConfig.INSTANCE.globalEnabled = enabled,
+                this, getGlobalToggleX(), getGlobalToggleY(),
+                0, 160, OverrideableConfigScreen.SELECTOR_TEXTURE, ModConfig.INSTANCE.globalEnabled,
+                (enabled) -> ModConfig.INSTANCE.globalEnabled = enabled,
                 Text.translatable("gui.showmeyourskin.armorScreen.globalToggleTooltip",
                         KeyBindingHelper.getBoundKeyOf(ModKeyBindings.GLOBAL_TOGGLE).getLocalizedText())
         );
     }
 
     @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void renderBackground(DrawContext context) {
         var matrices = context.getMatrices();
 
         matrices.push();
         matrices.translate(0, 0, -999);
 
-        super.renderBackground(context, mouseX, mouseY, delta);
+        super.renderBackground(context);
         renderBackgroundTextures(context);
 
         matrices.pop();

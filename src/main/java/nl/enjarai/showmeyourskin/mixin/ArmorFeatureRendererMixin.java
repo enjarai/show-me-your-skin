@@ -18,6 +18,7 @@ import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.trim.ArmorTrim;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.client.ModRenderLayers;
+import nl.enjarai.showmeyourskin.compat.armored_elytra.ArmoredElytraCompat;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.util.ArmorContext;
 import nl.enjarai.showmeyourskin.util.MixinContext;
@@ -31,6 +32,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.LinkedList;
+import java.util.Queue;
 
 @Mixin(value = ArmorFeatureRenderer.class, priority = 500)
 public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> {
@@ -46,6 +48,10 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
             at = @At(value = "HEAD")
     )
     private void showmeyourskin$captureContext(MatrixStack matrices, VertexConsumerProvider vertexConsumers, T entity, EquipmentSlot armorSlot, int light, A model, CallbackInfo ci) {
+        if (ArmoredElytraCompat.IS_LOADED && armorSlot == EquipmentSlot.OFFHAND) {
+            armorSlot = EquipmentSlot.CHEST;
+        }
+
         MixinContext.ARMOR.setContext(new ArmorContext(HideableEquipment.fromSlot(armorSlot), entity));
     }
 
@@ -71,7 +77,10 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
         var ctx = MixinContext.ARMOR.getContext();
         if (ctx == null) throw new IllegalStateException("ArmorContext is null");
 
-        if (overlay == null && ArmorTrim.getTrim(ctx.getEntity().getWorld().getRegistryManager(), ctx.getEntity().getEquippedStack(ctx.getSlot().toSlot()), true).isPresent()) {
+        // Some mod is probably up to no good. That's fine, but we should make sure to ignore it.
+        if (ctx.getSlot() == null) return;
+
+        if (overlay == null && ArmorTrim.getTrim(ctx.getEntity().getWorld().getRegistryManager(), ctx.getEntity().getEquippedStack(ctx.getSlot().toSlot())).isPresent()) {
             trimContextQueue.offer(ctx);
         }
 

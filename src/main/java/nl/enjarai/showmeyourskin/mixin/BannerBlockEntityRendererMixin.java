@@ -1,6 +1,8 @@
 package nl.enjarai.showmeyourskin.mixin;
 
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.client.model.ModelPart;

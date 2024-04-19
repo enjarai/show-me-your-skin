@@ -7,7 +7,7 @@
   "mixins": [
   ],
   "client": [
-    "GenderLayerMixin"
+    "GenderArmorLayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
