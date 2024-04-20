@@ -7,7 +7,6 @@ import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -17,31 +16,27 @@ import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 public class ConfigEntryWidget extends AbstractParentElement implements Drawable, Selectable {
     protected static final int WHITE = 0xEEEEEEEE;
     protected static final int GRAY = 0xCCCCCCCC;
     protected static final Identifier SELECTION_TEXTURE = ShowMeYourSkin.id("textures/gui/selection.png");
+    protected static final Identifier GLOBAL_ICON = ShowMeYourSkin.id("textures/gui/global_icon.png");
 
     public int x;
     public int y;
     public final MinecraftClient client;
     public final PlayerSelectorWidget parent;
     private final Text name;
-    public final Supplier<Identifier> texture;
-    public final Supplier<String> model;
     protected ArmorConfig armorConfig;
     public boolean selected = false;
 
-    public ConfigEntryWidget(MinecraftClient client, PlayerSelectorWidget parent, int x, int y, Text name, Supplier<Identifier> texture, Supplier<String> model) {
+    public ConfigEntryWidget(MinecraftClient client, PlayerSelectorWidget parent, int x, int y, Text name) {
         this.client = client;
         this.parent = parent;
         this.x = x;
         this.y = y;
         this.name = name;
-        this.texture = texture;
-        this.model = model;
         this.armorConfig = ModConfig.INSTANCE.global;
     }
 
@@ -94,7 +89,7 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
     }
 
     protected void renderIcon(DrawContext context, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        context.drawTexture(texture.get(), x + 3, y + 3, 24, 24, 0, 0, 24, 24, 24, 24);
+        context.drawTexture(GLOBAL_ICON, x + 3, y + 3, 24, 24, 0, 0, 24, 24, 24, 24);
     }
 
     public void playDownSound(SoundManager soundManager) {
