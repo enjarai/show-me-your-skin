@@ -1,1 +1,3 @@
-- Added support for player and mob heads.
+- Fixed compatibility with Wildfire's Female Gender Mod (Thanks @celestialfault)
+- Removed CICADA as an included jar, it must now be downloaded separately.
+  - This allows me to update it separately from any dependent mods, hopefully providing a more stable experience.
