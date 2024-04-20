@@ -64,6 +64,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     private static final ItemStack FEET_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_BOOTS);
     private static final ItemStack SHIELD = new AlwaysGlintingStack(Items.SHIELD);
     private static final ItemStack ELYTRA = new AlwaysGlintingStack(Items.ELYTRA);
+    private static final ItemStack HAT = new AlwaysGlintingStack(Items.CREEPER_HEAD);
 
     static {
         var shieldNbt = new NbtCompound();
@@ -121,9 +122,12 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
                             14, 11, "gui.showmeyourskin.armorScreen.piece.elytra"));
                     sliders.add(getOpacitySlider(HideableEquipment.SHIELD,
                             14, 35, "gui.showmeyourskin.armorScreen.piece.shield"));
+                    sliders.add(getOpacitySlider(HideableEquipment.HAT,
+                            14, 59, "gui.showmeyourskin.armorScreen.piece.hat"));
 
                     sliders.add(getGlintButton(HideableEquipment.ELYTRA, 94, 11));
                     sliders.add(getGlintButton(HideableEquipment.SHIELD, 94, 35));
+                    sliders.add(getGlintButton(HideableEquipment.HAT, 94, 59));
                 }, ArmorConfigWindow::getDummyEquipment, -180, SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA))
         );
 
@@ -456,6 +460,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         return switch (slot) {
             case OFFHAND -> SHIELD;
             case CHEST -> ELYTRA;
+            case HEAD -> HAT;
             default -> ItemStack.EMPTY;
         };
     }

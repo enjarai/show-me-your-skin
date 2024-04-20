@@ -34,6 +34,7 @@ public class ArmorConfig {
         pieces.put(HideableEquipment.FEET, new ArmorPieceConfig());
         pieces.put(HideableEquipment.ELYTRA, new ArmorPieceConfig());
         pieces.put(HideableEquipment.SHIELD, new ArmorPieceConfig());
+        pieces.put(HideableEquipment.HAT, new ArmorPieceConfig());
 
         trims.put(EquipmentSlot.HEAD, new ArmorPieceConfig());
         trims.put(EquipmentSlot.CHEST, new ArmorPieceConfig());
@@ -46,9 +47,11 @@ public class ArmorConfig {
         glints.put(HideableEquipment.FEET, new ArmorPieceConfig());
         glints.put(HideableEquipment.ELYTRA, new ArmorPieceConfig());
         glints.put(HideableEquipment.SHIELD, new ArmorPieceConfig());
+        glints.put(HideableEquipment.HAT, new ArmorPieceConfig());
     }
 
     public ArmorConfig(boolean showInCombat, boolean showNameTag, Map<HideableEquipment, ArmorPieceConfig> pieces, Map<EquipmentSlot, ArmorPieceConfig> trims, Map<HideableEquipment, ArmorPieceConfig> glints) {
+        this();
         this.showInCombat = showInCombat;
         this.showNameTag = showNameTag;
         this.pieces.putAll(pieces);

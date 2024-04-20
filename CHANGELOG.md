@@ -1,4 +1,3 @@
-- Added compatibility with Armored Elytra.
-- Explicitly marked OptiFabric as incompatible to avoid confusion.
-- Disabled compat module for Wildfire's Female Gender mod to at least avoid crashing.
-  - Compat will be reimplemented once I figure out a way around their internal changes.
+- Fixed compatibility with Wildfire's Female Gender Mod (Thanks @celestialfault)
+- Removed CICADA as an included jar, it must now be downloaded separately.
+  - This allows me to update it separately from any dependent mods, hopefully providing a more stable experience.

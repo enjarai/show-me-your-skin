@@ -1,4 +1,4 @@
-package nl.enjarai.showmeyourskin.mixin;
+package nl.enjarai.showmeyourskin.mixin.shield;
 
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -41,7 +41,7 @@ public abstract class BannerBlockEntityRendererMixin {
         showmeyourskin$isShield.set(!isBanner);
 
         if (!isBanner) {
-            var ctx = MixinContext.HELD_ITEM.getContext();
+            var ctx = MixinContext.ENTITY.getContext();
 
             if (ctx instanceof PlayerEntity) {
                 var t = ModConfig.INSTANCE.getApplicablePieceTransparency(ctx.getUuid(), HideableEquipment.SHIELD);
@@ -63,7 +63,7 @@ public abstract class BannerBlockEntityRendererMixin {
     )
     private static Function<Identifier, RenderLayer> showmeyourskin$modifyBannerCanvasRenderLayer(Function<Identifier, RenderLayer> original) {
         if (showmeyourskin$isShield.get()) {
-            var ctx = MixinContext.HELD_ITEM.getContext();
+            var ctx = MixinContext.ENTITY.getContext();
 
             if (ctx instanceof PlayerEntity) {
                 var t = ModConfig.INSTANCE.getApplicablePieceTransparency(ctx.getUuid(), HideableEquipment.SHIELD);
@@ -86,7 +86,7 @@ public abstract class BannerBlockEntityRendererMixin {
     )
     private static boolean showmeyourskin$applyShieldCanvasTransparency(ModelPart canvas, MatrixStack matrices, VertexConsumer vertexConsumer, int light, int overlay) {
         if (showmeyourskin$isShield.get()) {
-            var ctx = MixinContext.HELD_ITEM.getContext();
+            var ctx = MixinContext.ENTITY.getContext();
 
             if (ctx instanceof PlayerEntity) {
                 var t = ModConfig.INSTANCE.getApplicablePieceTransparency(ctx.getUuid(), HideableEquipment.SHIELD);
@@ -118,7 +118,7 @@ public abstract class BannerBlockEntityRendererMixin {
     )
     private static Function<Identifier, RenderLayer> showmeyourskin$modifyBannerPatternRenderLayer(Function<Identifier, RenderLayer> original) {
         if (showmeyourskin$isShield.get()) {
-            var ctx = MixinContext.HELD_ITEM.getContext();
+            var ctx = MixinContext.ENTITY.getContext();
 
             if (ctx instanceof PlayerEntity) {
                 var t = ModConfig.INSTANCE.getApplicablePieceTransparency(ctx.getUuid(), HideableEquipment.SHIELD);
@@ -142,7 +142,7 @@ public abstract class BannerBlockEntityRendererMixin {
     )
     private static float showmeyourskin$modifyBannerPatternTransparency(float original) {
         if (showmeyourskin$isShield.get()) {
-            var ctx = MixinContext.HELD_ITEM.getContext();
+            var ctx = MixinContext.ENTITY.getContext();
 
             if (ctx instanceof PlayerEntity) {
                 var t = ModConfig.INSTANCE.getApplicablePieceTransparency(ctx.getUuid(), HideableEquipment.SHIELD);

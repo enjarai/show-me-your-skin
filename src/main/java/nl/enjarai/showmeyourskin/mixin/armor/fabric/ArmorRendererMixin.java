@@ -1,4 +1,4 @@
-package nl.enjarai.showmeyourskin.mixin.fabric;
+package nl.enjarai.showmeyourskin.mixin.armor.fabric;
 
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
 import net.minecraft.client.model.Model;

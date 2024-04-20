@@ -1,4 +1,4 @@
-package nl.enjarai.showmeyourskin.mixin;
+package nl.enjarai.showmeyourskin.mixin.armor;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.fabricmc.loader.api.FabricLoader;
