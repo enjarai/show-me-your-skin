@@ -2,7 +2,7 @@ package nl.enjarai.showmeyourskin.gui.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.screen.advancement.AdvancementTabType;
 import net.minecraft.util.Identifier;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 
@@ -25,7 +25,7 @@ public class SliderSetTab {
 
     public void render(DrawContext context, int mouseX, int mouseY, boolean selected) {
         int v = selected ? 64 + 28 : 64;
-        context.drawTexture(TABS_TEXTURE, x, y, 32, v, 32, 28);
+        AdvancementTabType.LEFT.drawBackground(context, x + 28, y - 29, selected, 1); // index 1 always renders the "middle" texture
         RenderSystem.enableBlend();
         context.drawTexture(ICON_TEXTURE, x + (selected ? 6 : 10), y + 5, iconX, iconY, 16, 16);
         RenderSystem.disableBlend();
