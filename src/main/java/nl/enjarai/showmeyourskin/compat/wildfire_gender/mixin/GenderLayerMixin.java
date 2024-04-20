@@ -28,15 +28,18 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Pseudo
-@Mixin(targets = "com.wildfire.render.GenderArmorLayer")
-public abstract class GenderArmorLayerMixin {
+@Mixin(targets = "com.wildfire.render.GenderLayer")
+public abstract class GenderLayerMixin {
     @Dynamic
     @Inject(
-            method = "renderBreastArmor",
+            method = "Lcom/wildfire/render/GenderLayer;renderVanillaLikeBreastArmor(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/item/ArmorItem;Lnet/minecraft/item/ItemStack;IZ)V",
             at = @At("HEAD"),
             cancellable = true
     )
-    private void showmeyourskin$cancelBreastArmorRendering(PlayerEntity player, CallbackInfo ci) {
+    private void showmeyourskin$cancelBreastArmorRendering(PlayerEntity player, MatrixStack matrixStack,
+                                                           VertexConsumerProvider vertexConsumerProvider,
+                                                           ArmorItem armorItem, ItemStack armorStack,
+                                                           int packedLightIn, boolean left, CallbackInfo ci) {
         if (ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.CHEST) <= 0) {
             ci.cancel();
         } else {
@@ -46,7 +49,7 @@ public abstract class GenderArmorLayerMixin {
 
     @Dynamic
     @ModifyExpressionValue(
-            method = "renderBreastArmor",
+            method = "Lcom/wildfire/render/GenderLayer;renderVanillaLikeBreastArmor(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/item/ArmorItem;Lnet/minecraft/item/ItemStack;IZ)V",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/item/ItemStack;hasGlint()Z"
@@ -58,7 +61,7 @@ public abstract class GenderArmorLayerMixin {
 
     @Dynamic
     @WrapOperation(
-            method = "renderBreastArmor",
+            method = "Lcom/wildfire/render/GenderLayer;renderVanillaLikeBreastArmor(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/item/ArmorItem;Lnet/minecraft/item/ItemStack;IZ)V",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/render/item/ItemRenderer;getArmorGlintConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;ZZ)Lnet/minecraft/client/render/VertexConsumer;"
@@ -79,7 +82,7 @@ public abstract class GenderArmorLayerMixin {
 
     @Dynamic
     @WrapOperation(
-            method = "renderBreastArmor",
+            method = "Lcom/wildfire/render/GenderLayer;renderVanillaLikeBreastArmor(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/item/ArmorItem;Lnet/minecraft/item/ItemStack;IZ)V",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"
@@ -98,7 +101,7 @@ public abstract class GenderArmorLayerMixin {
 
     @Dynamic
     @ModifyArg(
-            method = "renderBreastArmor",
+            method = "Lcom/wildfire/render/GenderLayer;renderVanillaLikeBreastArmor(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/item/ArmorItem;Lnet/minecraft/item/ItemStack;IZ)V",
             at = @At(
                     value = "INVOKE",
                     target = "Lcom/wildfire/render/GenderLayer;renderBox(Lcom/wildfire/render/WildfireModelRenderer$ModelBox;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V"
@@ -117,7 +120,7 @@ public abstract class GenderArmorLayerMixin {
 
     @Dynamic
     @ModifyArg(
-            method = "renderArmorTrim",
+            method = "Lcom/wildfire/render/GenderLayer;renderArmorTrim(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrim;ZZ)V",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/texture/Sprite;getTextureSpecificVertexConsumer(Lnet/minecraft/client/render/VertexConsumer;)Lnet/minecraft/client/render/VertexConsumer;"
@@ -139,7 +142,7 @@ public abstract class GenderArmorLayerMixin {
 
     @Dynamic
     @ModifyArg(
-            method = "renderArmorTrim",
+            method = "Lcom/wildfire/render/GenderLayer;renderArmorTrim(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrim;ZZ)V",
             at = @At(
                     value = "INVOKE",
                     target = "Lcom/wildfire/render/GenderLayer;renderBox(Lcom/wildfire/render/WildfireModelRenderer$ModelBox;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V"
