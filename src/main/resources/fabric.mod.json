@@ -43,6 +43,7 @@
   "accessWidener" : "showmeyourskin.accesswidener",
 
   "depends": {
+    "fabricloader": ">=0.15.0",
     "fabric-api": "*",
     "minecraft": ">=1.20- <1.20.2-",
     "cicada": ">=0.6.0 <1.0.0",
