@@ -2,7 +2,7 @@ package nl.enjarai.showmeyourskin.mixin;
 
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.entity.LivingEntity;
-import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
+import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
