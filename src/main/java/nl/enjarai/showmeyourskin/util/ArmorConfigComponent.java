@@ -1,15 +1,16 @@
 package nl.enjarai.showmeyourskin.util;
 
-import dev.onyxstudios.cca.api.v3.component.ComponentV3;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.SyncedModConfigServer;
 import nl.enjarai.showmeyourskin.net.HandshakeServer;
 import org.jetbrains.annotations.NotNull;
+import org.ladysnake.cca.api.v3.component.ComponentV3;
+import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 
 public class ArmorConfigComponent implements ComponentV3, AutoSyncedComponent {
     private ArmorConfig config;
@@ -19,14 +20,14 @@ public class ArmorConfigComponent implements ComponentV3, AutoSyncedComponent {
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
         if (tag.contains("config")) {
             ArmorConfig.CODEC.decode(NbtOps.INSTANCE, tag.getCompound("config")).result().ifPresent(pair -> config = pair.getFirst());
         }
     }
 
     @Override
-    public void writeToNbt(@NotNull NbtCompound tag) {
+    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
         ArmorConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).result().ifPresent(nbt -> tag.put("config", nbt));
     }
 
@@ -38,8 +39,8 @@ public class ArmorConfigComponent implements ComponentV3, AutoSyncedComponent {
         this.config = config;
     }
 
-    public void setFromNbt(NbtCompound tag) {
-        readFromNbt(tag);
+    public void setFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+        readFromNbt(tag, registryLookup);
     }
 
     public void ensureValid() {

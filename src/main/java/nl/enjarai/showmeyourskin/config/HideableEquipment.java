@@ -1,7 +1,10 @@
 package nl.enjarai.showmeyourskin.config;
 
 import com.mojang.serialization.Codec;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import org.jetbrains.annotations.Nullable;
 
 public enum HideableEquipment {
@@ -61,5 +64,13 @@ public enum HideableEquipment {
 
     public static Codec<EquipmentSlot> getSlotCodec() {
         return Codec.STRING.xmap(EquipmentSlot::byName, EquipmentSlot::getName);
+    }
+
+    public static PacketCodec<ByteBuf, HideableEquipment> getPacketCodec() {
+        return PacketCodecs.STRING.xmap(HideableEquipment::fromId, HideableEquipment::getId);
+    }
+
+    public static PacketCodec<ByteBuf, EquipmentSlot> getPacketSlotCodec() {
+        return PacketCodecs.STRING.xmap(EquipmentSlot::byName, EquipmentSlot::getName);
     }
 }

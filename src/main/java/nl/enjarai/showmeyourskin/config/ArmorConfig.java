@@ -2,9 +2,12 @@ package nl.enjarai.showmeyourskin.config;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +15,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ArmorConfig {
+    public static final ArmorConfig VANILLA_VALUES = new ArmorConfig();
     public static final Codec<ArmorConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.BOOL.fieldOf("showInCombat").forGetter(config -> config.showInCombat),
             Codec.BOOL.fieldOf("showNameTag").forGetter(config -> config.showNameTag),
@@ -19,7 +23,14 @@ public class ArmorConfig {
             Codec.unboundedMap(HideableEquipment.getSlotCodec(), ArmorPieceConfig.CODEC).fieldOf("trims").forGetter(config -> config.trims),
             Codec.unboundedMap(HideableEquipment.getCodec(), ArmorPieceConfig.CODEC).fieldOf("glints").forGetter(config -> config.glints)
     ).apply(instance, ArmorConfig::new));
-    public static final ArmorConfig VANILLA_VALUES = new ArmorConfig();
+    public static final PacketCodec<ByteBuf, ArmorConfig> PACKET_CODEC = PacketCodec.tuple(
+            PacketCodecs.BOOL, c -> c.showInCombat,
+            PacketCodecs.BOOL, c -> c.showNameTag,
+            PacketCodecs.map(HashMap::new, HideableEquipment.getPacketCodec(), ArmorPieceConfig.PACKET_CODEC, VANILLA_VALUES.pieces.size()), ArmorConfig::getPieces,
+            PacketCodecs.map(HashMap::new, HideableEquipment.getPacketSlotCodec(), ArmorPieceConfig.PACKET_CODEC, VANILLA_VALUES.trims.size()), ArmorConfig::getTrims,
+            PacketCodecs.map(HashMap::new, HideableEquipment.getPacketCodec(), ArmorPieceConfig.PACKET_CODEC, VANILLA_VALUES.glints.size()), ArmorConfig::getGlints,
+            ArmorConfig::new
+    );
 
     public final HashMap<HideableEquipment, ArmorPieceConfig> pieces = new HashMap<>();
     public final HashMap<EquipmentSlot, ArmorPieceConfig> trims = new HashMap<>();
@@ -147,6 +158,8 @@ public class ArmorConfig {
     public static class ArmorPieceConfig {
         public static final Codec<ArmorPieceConfig> CODEC = Codec.BYTE.fieldOf("transparency")
                 .codec().xmap(ArmorPieceConfig::new, ArmorPieceConfig::getTransparency);
+        public static final PacketCodec<ByteBuf, ArmorPieceConfig> PACKET_CODEC =
+                PacketCodecs.BYTE.xmap(ArmorPieceConfig::new, ArmorPieceConfig::getTransparency);
         public static final ArmorPieceConfig VANILLA_VALUES = new ArmorPieceConfig();
 
         public byte transparency = 100;

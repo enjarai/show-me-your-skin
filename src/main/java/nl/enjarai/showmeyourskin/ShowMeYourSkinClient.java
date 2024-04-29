@@ -20,12 +20,14 @@ import nl.enjarai.showmeyourskin.config.SyncedModConfig;
 import nl.enjarai.showmeyourskin.gui.ClientConfigScreen;
 import nl.enjarai.showmeyourskin.gui.ConfigScreen;
 import nl.enjarai.showmeyourskin.gui.ServerIntegratedConfigScreen;
+import nl.enjarai.showmeyourskin.net.ConfigSyncPacket;
 import nl.enjarai.showmeyourskin.net.HandshakeClient;
+import nl.enjarai.showmeyourskin.net.SettingsUpdatePacket;
 import org.jetbrains.annotations.Nullable;
 
 public class ShowMeYourSkinClient implements ClientModInitializer, CicadaEntrypoint {
-	public static final HandshakeClient<SyncedModConfig> HANDSHAKE_CLIENT =
-			new HandshakeClient<>(SyncedModConfig.CODEC, config -> {});
+	public static final HandshakeClient HANDSHAKE_CLIENT =
+			new HandshakeClient(config -> {});
 
 	@Override
 	public void onInitializeClient() {
@@ -43,9 +45,8 @@ public class ShowMeYourSkinClient implements ClientModInitializer, CicadaEntrypo
 
 	private void initHandshake() {
 		ClientPlayConnectionEvents.INIT.register((handler, client) -> {
-			ClientPlayNetworking.registerReceiver(ShowMeYourSkin.CONFIG_SYNC_CHANNEL, (client1, handler1, buf, responseSender) -> {
-				var returnBuf = HANDSHAKE_CLIENT.handleConfigSync(buf);
-				responseSender.sendPacket(ShowMeYourSkin.CONFIG_SYNC_CHANNEL, returnBuf);
+			ClientPlayNetworking.registerReceiver(ConfigSyncPacket.PACKET_ID, (packet, ctx) -> {
+				ctx.responseSender().sendPacket(HANDSHAKE_CLIENT.handleConfigSync(packet));
 			});
 		});
 
@@ -60,11 +61,7 @@ public class ShowMeYourSkinClient implements ClientModInitializer, CicadaEntrypo
 			var component = player.getComponent(Components.ARMOR_CONFIG);
 			component.setConfig(config);
 
-			var buf = PacketByteBufs.create();
-			var nbt = new NbtCompound();
-			component.writeToNbt(nbt);
-			buf.writeNbt(nbt);
-			ClientPlayNetworking.send(ShowMeYourSkin.UPDATE_C2S_CHANNEL, buf);
+			ClientPlayNetworking.send(new SettingsUpdatePacket(config));
 		}
 	}
 

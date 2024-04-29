@@ -18,6 +18,8 @@ import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.BannerPatternsComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.BlockItem;
@@ -67,14 +69,6 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     private static final ItemStack ELYTRA = new AlwaysGlintingStack(Items.ELYTRA);
     private static final ItemStack HAT = new AlwaysGlintingStack(Items.CREEPER_HEAD);
 
-    static {
-        var shieldNbt = new NbtCompound();
-        NbtList nbtList = new BannerPattern.Patterns().add(BannerPatterns.RHOMBUS, DyeColor.CYAN).toNbt();
-        shieldNbt.put("Patterns", nbtList);
-        shieldNbt.putInt("Base", DyeColor.WHITE.getId());
-        BlockItem.setBlockEntityNbt(SHIELD, BlockEntityType.BANNER, shieldNbt);
-    }
-
     private final List<ClickableWidget> buttons = Lists.newArrayList();
     private final List<Element> children = Lists.newArrayList();
     private final List<SliderSetTab> sliderSetTabs = Lists.newArrayList();
@@ -115,7 +109,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
                     sliders.add(getGlintButton(HideableEquipment.CHEST, 94, 35));
                     sliders.add(getGlintButton(HideableEquipment.LEGS, 94, 59));
                     sliders.add(getGlintButton(HideableEquipment.FEET, 94, 83));
-                }, ArmorConfigWindow::getDummyArmor, 0, SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE))
+                }, ArmorConfigWindow::getDummyArmor, 0, SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE.value()))
         );
         sliderSetTabs.add(new SliderSetTab(getWindowLeft() - 25, getWindowTop() + 42, 16, 240,
                 new SliderSet(this, getWindowLeft(), getWindowTop(), sliders -> {
@@ -129,7 +123,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
                     sliders.add(getGlintButton(HideableEquipment.ELYTRA, 94, 11));
                     sliders.add(getGlintButton(HideableEquipment.SHIELD, 94, 35));
                     sliders.add(getGlintButton(HideableEquipment.HAT, 94, 59));
-                }, ArmorConfigWindow::getDummyEquipment, -180, SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA))
+                }, ArmorConfigWindow::getDummyEquipment, -180, SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA.value()))
         );
 
         selectTab(sliderSetTabs.get(tabIndex));
