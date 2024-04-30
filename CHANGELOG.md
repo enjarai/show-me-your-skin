@@ -1,3 +1,2 @@
-- Fixed compatibility with Wildfire's Female Gender Mod (Thanks @celestialfault)
-- Removed CICADA as an included jar, it must now be downloaded separately.
-  - This allows me to update it separately from any dependent mods, hopefully providing a more stable experience.
+- Moved out of world entity rendering code to CICADA for easier maintenance.
+- Updated to 1.20.5-1.20.6.
