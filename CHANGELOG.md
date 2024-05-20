@@ -1,2 +1,1 @@
-- Moved out of world entity rendering code to CICADA for easier maintenance.
-- Updated to 1.20.5-1.20.6.
+- Fixed Cardinal Components jar inclusion, it no longer needs to be downloaded separately.
