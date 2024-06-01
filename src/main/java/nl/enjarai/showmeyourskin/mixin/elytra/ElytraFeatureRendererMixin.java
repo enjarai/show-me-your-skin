@@ -55,9 +55,7 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
     )
     private boolean showmeyourskin$hideElytraGlint(boolean original, @Local(argsOnly = true) LivingEntity entity) {
         if (entity instanceof PlayerEntity player) {
-            if (!player.isFallFlying()) {
-                return original && ModConfig.INSTANCE.getApplicableGlintTransparency(player.getUuid(), HideableEquipment.ELYTRA) > 0;
-            }
+            return original && ModConfig.INSTANCE.getApplicableGlintTransparency(player.getUuid(), HideableEquipment.ELYTRA) > 0;
         }
 
         return original;
