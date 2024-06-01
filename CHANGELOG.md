@@ -1,1 +1,2 @@
-- Fixed Cardinal Components jar inclusion, it no longer needs to be downloaded separately.
+- Fixed an issue preventing vanilla clients from joining servers with the mod installed.
+- Added Mexican Spanish translations (Thanks @TheLegendofSaram)
