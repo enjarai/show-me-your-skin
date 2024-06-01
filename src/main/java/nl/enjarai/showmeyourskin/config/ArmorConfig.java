@@ -19,6 +19,7 @@ public class ArmorConfig {
     public static final Codec<ArmorConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.BOOL.fieldOf("showInCombat").forGetter(config -> config.showInCombat),
             Codec.BOOL.fieldOf("showNameTag").forGetter(config -> config.showNameTag),
+            Codec.BOOL.fieldOf("forceElytraWhenFlying").forGetter(config -> config.forceElytraWhenFlying),
             Codec.unboundedMap(HideableEquipment.getCodec(), ArmorPieceConfig.CODEC).fieldOf("pieces").forGetter(config -> config.pieces),
             Codec.unboundedMap(HideableEquipment.getSlotCodec(), ArmorPieceConfig.CODEC).fieldOf("trims").forGetter(config -> config.trims),
             Codec.unboundedMap(HideableEquipment.getCodec(), ArmorPieceConfig.CODEC).fieldOf("glints").forGetter(config -> config.glints)
@@ -26,6 +27,7 @@ public class ArmorConfig {
     public static final PacketCodec<ByteBuf, ArmorConfig> PACKET_CODEC = PacketCodec.tuple(
             PacketCodecs.BOOL, c -> c.showInCombat,
             PacketCodecs.BOOL, c -> c.showNameTag,
+            PacketCodecs.BOOL, c -> c.forceElytraWhenFlying,
             PacketCodecs.map(HashMap::new, HideableEquipment.getPacketCodec(), ArmorPieceConfig.PACKET_CODEC, VANILLA_VALUES.pieces.size()), ArmorConfig::getPieces,
             PacketCodecs.map(HashMap::new, HideableEquipment.getPacketSlotCodec(), ArmorPieceConfig.PACKET_CODEC, VANILLA_VALUES.trims.size()), ArmorConfig::getTrims,
             PacketCodecs.map(HashMap::new, HideableEquipment.getPacketCodec(), ArmorPieceConfig.PACKET_CODEC, VANILLA_VALUES.glints.size()), ArmorConfig::getGlints,
@@ -37,6 +39,7 @@ public class ArmorConfig {
     public final HashMap<HideableEquipment, ArmorPieceConfig> glints = new HashMap<>();
     public boolean showInCombat = true;
     public boolean showNameTag = true;
+    public boolean forceElytraWhenFlying = true;
 
     public ArmorConfig() {
         pieces.put(HideableEquipment.HEAD, new ArmorPieceConfig());
@@ -61,10 +64,11 @@ public class ArmorConfig {
         glints.put(HideableEquipment.HAT, new ArmorPieceConfig());
     }
 
-    public ArmorConfig(boolean showInCombat, boolean showNameTag, Map<HideableEquipment, ArmorPieceConfig> pieces, Map<EquipmentSlot, ArmorPieceConfig> trims, Map<HideableEquipment, ArmorPieceConfig> glints) {
+    public ArmorConfig(boolean showInCombat, boolean showNameTag, boolean forceElytraWhenFlying, Map<HideableEquipment, ArmorPieceConfig> pieces, Map<EquipmentSlot, ArmorPieceConfig> trims, Map<HideableEquipment, ArmorPieceConfig> glints) {
         this();
         this.showInCombat = showInCombat;
         this.showNameTag = showNameTag;
+        this.forceElytraWhenFlying = forceElytraWhenFlying;
         this.pieces.putAll(pieces);
         this.trims.putAll(trims);
         this.glints.putAll(glints);
@@ -125,6 +129,7 @@ public class ArmorConfig {
         return new ArmorConfig(
                 showInCombat,
                 showNameTag,
+                forceElytraWhenFlying,
                 pieces.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().copy())),
                 trims.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().copy())),
                 glints.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().copy()))
@@ -140,6 +145,7 @@ public class ArmorConfig {
 
         if (showInCombat != that.showInCombat) return false;
         if (showNameTag != that.showNameTag) return false;
+        if (forceElytraWhenFlying != that.forceElytraWhenFlying) return false;
         if (!pieces.equals(that.pieces)) return false;
         if (!trims.equals(that.trims)) return false;
         return glints.equals(that.glints);
@@ -152,6 +158,7 @@ public class ArmorConfig {
         result = 31 * result + glints.hashCode();
         result = 31 * result + (showInCombat ? 1 : 0);
         result = 31 * result + (showNameTag ? 1 : 0);
+        result = 31 * result + (forceElytraWhenFlying ? 1 : 0);
         return result;
     }
 

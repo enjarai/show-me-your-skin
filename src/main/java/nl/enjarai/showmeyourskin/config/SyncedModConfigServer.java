@@ -22,6 +22,7 @@ public class SyncedModConfigServer implements SyncedModConfig {
 
     public boolean allowNotShowInCombat = false;
     public boolean allowNotShowNameTag = false;
+    public boolean allowNotForceElytraWhenFlying = false;
 
     public static void load() {
         INSTANCE = loadConfigFile(CONFIG_FILE);
@@ -80,5 +81,9 @@ public class SyncedModConfigServer implements SyncedModConfig {
 
     public boolean allowNotShowNameTag() {
         return allowNotShowNameTag;
+    }
+
+    public boolean allowNotForceElytraWhenFlying() {
+        return allowNotForceElytraWhenFlying;
     }
 }
