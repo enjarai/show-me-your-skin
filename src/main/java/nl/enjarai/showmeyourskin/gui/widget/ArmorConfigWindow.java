@@ -60,6 +60,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     protected static final ButtonTextures TOGGLE_GLINT_BUTTON_TEXTURES = ToggleButtonWidget.createTextures("show_glint");
     protected static final ButtonTextures SHOW_IN_COMBAT_BUTTON_TEXTURES = ToggleButtonWidget.createTextures("show_in_combat");
     protected static final ButtonTextures SHOW_NAME_TAG_BUTTON_TEXTURES = ToggleButtonWidget.createTextures("show_nametag");
+    protected static final ButtonTextures FORCE_ELYTRA_WHEN_FLYING_BUTTON_TEXTURES = ToggleButtonWidget.createTextures("force_elytra_when_flying");
 
     private static final ItemStack HEAD_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_HELMET);
     private static final ItemStack CHEST_ARMOR = new AlwaysGlintingStack(Items.NETHERITE_CHESTPLATE);
@@ -139,9 +140,17 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
 
         if (!hideOptions || serverConfig.get().allowNotShowNameTag()) {
             buttons.add(new ToggleButtonWidget(
-                    getWindowLeft() + 14, getWindowTop() + 141, 20, 20,
+                    getWindowLeft() + 40, getWindowTop() + 115, 20, 20,
                     SHOW_NAME_TAG_BUTTON_TEXTURES,
                     armorConfig.showNameTag, (btn, b) -> armorConfig.showNameTag = b, NAME_TAG_TOOLTIP
+            ));
+        }
+
+        if (!hideOptions || serverConfig.get().allowNotForceElytraWhenFlying()) {
+            buttons.add(new ToggleButtonWidget(
+                    getWindowLeft() + 66, getWindowTop() + 115, 20, 20,
+                    FORCE_ELYTRA_WHEN_FLYING_BUTTON_TEXTURES,
+                    armorConfig.forceElytraWhenFlying, (btn, b) -> armorConfig.forceElytraWhenFlying = b, NAME_TAG_TOOLTIP
             ));
         }
 

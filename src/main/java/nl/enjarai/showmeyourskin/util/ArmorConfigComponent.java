@@ -46,6 +46,7 @@ public class ArmorConfigComponent implements ComponentV3, AutoSyncedComponent {
     public void ensureValid() {
         if (!SyncedModConfigServer.INSTANCE.allowNotShowInCombat()) getConfig().showInCombat = true;
         if (!SyncedModConfigServer.INSTANCE.allowNotShowNameTag()) getConfig().showNameTag = true;
+        if (!SyncedModConfigServer.INSTANCE.allowNotForceElytraWhenFlying()) getConfig().forceElytraWhenFlying = true;
     }
 
     @Override
