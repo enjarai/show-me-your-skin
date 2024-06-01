@@ -52,4 +52,9 @@ public class ArmorConfigComponent implements ComponentV3, AutoSyncedComponent {
     public boolean shouldSyncWith(ServerPlayerEntity player) {
         return ShowMeYourSkin.HANDSHAKE_SERVER.getHandshakeState(player) != HandshakeServer.HandshakeState.FAILED;
     }
+
+    @Override
+    public boolean isRequiredOnClient() {
+        return false;
+    }
 }
