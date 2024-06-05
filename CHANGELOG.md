@@ -1,2 +1,2 @@
-- Fixed an issue preventing vanilla clients from joining servers with the mod installed.
-- Added Mexican Spanish translations (Thanks @TheLegendofSaram)
+- Added an option to make Elytras reappear while flying. (Thanks @EminGT)
+- Fixed button tooltips not appearing at all.

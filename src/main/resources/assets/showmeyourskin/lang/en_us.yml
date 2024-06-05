@@ -1,0 +1,40 @@
+category:
+  showmeyourskin:
+    showmeyourskin: Show Me Your Skin!
+key:
+  showmeyourskin:
+    open_settings: Open Armor Config
+    global_toggle:
+      .: Toggle Mod
+      enable: "§aEnabled §rarmor rendering customisation."
+      disable: "§cDisabled §rarmor rendering customisation."
+gui:
+  showmeyourskin:
+    armorScreen:
+      title:
+        .: Armor Config
+        serverIntegrated: Armor Config (Server)
+        serverOverrides: Armor Config (Local Overrides)
+      globalToggleTooltip: Global toggle, press %1$s to toggle ingame.
+      overridesEnabled: "Enable local overrides.\n(not visible to other players)"
+      overridesConfigure: "Configure local overrides.\n(not visible to other players)"
+      global: Global
+      synced: Synced
+      overridden: Overridden
+      playerName: "%s"
+      playerSelector: Armor Config
+      piece:
+        head: "Helmet: %d%%"
+        chest: "Chestplate: %d%%"
+        legs: "Leggings: %d%%"
+        feet: "Boots: %d%%"
+        elytra: "Elytra: %d%%"
+        shield: "Shield: %d%%"
+        hat: "Hat: %d%%"
+      glintTooltip: Enable enchantment glint
+      combatTooltip: Automatically disable transparency in combat
+      nameTagTooltip: Show player name tag
+      showElytraTooltip: Show Elytra
+      shieldGlintTooltip: Show enchantment glint on shield
+      openButtonTooltip: Open armor transparency override
+      deleteButtonTooltip: Delete transparency override
