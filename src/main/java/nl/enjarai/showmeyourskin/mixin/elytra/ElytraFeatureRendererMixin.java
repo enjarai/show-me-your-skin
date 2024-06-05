@@ -38,8 +38,10 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
             MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f,
             float g, float h, float j, float k, float l, CallbackInfo ci) {
         if (livingEntity instanceof PlayerEntity player) {
-            if (ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.ELYTRA) <= 0) {
-                ci.cancel();
+            if (!player.isFallFlying() || !ModConfig.INSTANCE.getApplicable(player.getUuid()).forceElytraWhenFlying) {
+                if (ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.ELYTRA) <= 0) {
+                    ci.cancel();
+                }
             }
         }
     }
@@ -71,9 +73,11 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
             VertexConsumerProvider vertexConsumerProvider, RenderLayer renderLayer, boolean solid, boolean hasGlint,
             Operation<VertexConsumer> original, @Local(argsOnly = true) LivingEntity entity) {
         if (entity instanceof PlayerEntity player) {
-            var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.ELYTRA);
-            if (transparency < 1) {
-                return ItemRenderer.getDirectItemGlintConsumer(vertexConsumerProvider, renderLayer, solid, hasGlint);
+            if (!player.isFallFlying() || !ModConfig.INSTANCE.getApplicable(player.getUuid()).forceElytraWhenFlying) {
+                var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.ELYTRA);
+                if (transparency < 1) {
+                    return ItemRenderer.getDirectItemGlintConsumer(vertexConsumerProvider, renderLayer, solid, hasGlint);
+                }
             }
         }
 
@@ -90,9 +94,11 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
     private RenderLayer showmeyourskin$enableElytraTransparency2(
             Identifier texture, Operation<RenderLayer> original, @Local(argsOnly = true) LivingEntity entity) {
         if (entity instanceof PlayerEntity player) {
-            var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.ELYTRA);
-            if (transparency < 1) {
-                return RenderLayer.getEntityTranslucent(texture);
+            if (!player.isFallFlying() || !ModConfig.INSTANCE.getApplicable(player.getUuid()).forceElytraWhenFlying) {
+                var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.ELYTRA);
+                if (transparency < 1) {
+                    return RenderLayer.getEntityTranslucent(texture);
+                }
             }
         }
 
@@ -109,9 +115,11 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
     )
     private float showmeyourskin$applyElytraTransparency(float original, @Local(argsOnly = true) LivingEntity entity) {
         if (entity instanceof PlayerEntity player) {
-            var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.ELYTRA);
-            if (transparency < 1) {
-                return transparency;
+            if (!player.isFallFlying() || !ModConfig.INSTANCE.getApplicable(player.getUuid()).forceElytraWhenFlying) {
+                var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.ELYTRA);
+                if (transparency < 1) {
+                    return transparency;
+                }
             }
         }
 
