@@ -1,0 +1,28 @@
+category:
+  showmeyourskin:
+    showmeyourskin: Show Me Your Skin!
+key:
+  showmeyourskin:
+    open_settings: 打开护甲配置
+    global_toggle:
+      .: 调整模组
+      enable: 启用自定义护甲渲染
+      disable: 禁用自定义护甲渲染
+gui:
+  showmeyourskin:
+    armorScreen:
+      globalToggleTooltip: 全局切换，按 %1$s 在游戏中切换。
+      global: 全局
+      playerSelector: 护甲配置
+      piece:
+        head: "头盔: %d%%"
+        chest: "胸甲: %d%%"
+        legs: "护腿: %d%%"
+        feet: "靴子: %d%%"
+      glintTooltip: 启用附魔光效
+      combatTooltip: 在战斗中自动禁用透明
+      nameTagTooltip: 显示玩家姓名标签
+      showElytraTooltip: 显示鞘翅
+      shieldGlintTooltip: 在盾牌上显示附魔光效
+      openButtonTooltip: 打开护甲透明
+      deleteButtonTooltip: 删除透明
