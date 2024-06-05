@@ -13,8 +13,8 @@ import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.SkinTextures;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
-import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 
 import java.util.List;

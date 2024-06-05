@@ -1,0 +1,39 @@
+category:
+  showmeyourskin:
+    showmeyourskin: Show Me Your Skin!
+key:
+  showmeyourskin:
+    open_settings: Открыть настройки брони
+    global_toggle:
+      .: Переключить режим
+      enable: "§aВключить §rперсонализацию отрисовки брони."
+      disable: "§cОтключить §rперсонализацию отрисовки брони."
+gui:
+  showmeyourskin:
+    armorScreen:
+      title:
+        .: Настройка брони
+        serverIntegrated: Настройка брони (Сервер)
+        serverOverrides: Настройка брони (Локальные переопределения)
+      globalToggleTooltip: Переключение на общие, нажмите %1$s для внутриигрового переключения.
+      overridesEnabled: "Включить локальные переопределения.\n(не видно другим игрокам)"
+      overridesConfigure: "Настройка локальных переопределения.\n(не видно другим игрокам)"
+      global: Общие
+      synced: Синхронизировано
+      overridden: Переопределено
+      playerName: "%s"
+      playerSelector: Настройка брони
+      piece:
+        head: "Шлем: %d%%"
+        chest: "Нагрудник: %d%%"
+        legs: "Поножи: %d%%"
+        feet: "Ботинки: %d%%"
+        elytra: "Элитры: %d%%"
+        shield: "Щит: %d%%"
+      glintTooltip: Включить мерцание чар
+      combatTooltip: Автоматически отключать прозрачность в бою
+      nameTagTooltip: Показать тэг имени игрока
+      showElytraTooltip: Показать элитры
+      shieldGlintTooltip: Показать на щите мерцание чара
+      openButtonTooltip: Открыть переопределение прозрачности брони
+      deleteButtonTooltip: Удалить переопределение прозрачности

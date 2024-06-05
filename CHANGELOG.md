@@ -1,3 +1,3 @@
-- Fixed compatibility with Wildfire's Female Gender Mod (Thanks @celestialfault)
-- Removed CICADA as an included jar, it must now be downloaded separately.
-  - This allows me to update it separately from any dependent mods, hopefully providing a more stable experience.
+- Added an option to make Elytras reappear while flying. (Thanks @EminGT)
+- Fixed button tooltips not appearing at all.
+- Added Mexican Spanish translations (Thanks @TheLegendofSaram)

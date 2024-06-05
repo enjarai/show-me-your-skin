@@ -6,7 +6,7 @@ import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.text.Text;
-import nl.enjarai.showmeyourskin.client.cursed.DummyClientPlayerEntity;
+import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

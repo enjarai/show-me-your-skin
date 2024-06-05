@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
@@ -22,15 +23,15 @@ public class PressButtonWidget extends PressableWidget {
 
     protected final ButtonTextures textures;
     private final Consumer<PressButtonWidget> pressAction;
-    @Nullable
-    protected final Text tooltip;
 
     public PressButtonWidget(int x, int y, int width, int height, ButtonTextures textures,
                              Consumer<PressButtonWidget> pressAction, @Nullable Text tooltip) {
         super(x, y, width, height, ScreenTexts.EMPTY);
         this.textures = textures;
         this.pressAction = pressAction;
-        this.tooltip = tooltip;
+        if (tooltip != null) {
+            setTooltip(Tooltip.of(tooltip));
+        }
     }
 
     @Override

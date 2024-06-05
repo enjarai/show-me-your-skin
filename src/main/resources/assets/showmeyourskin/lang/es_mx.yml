@@ -1,0 +1,40 @@
+category:
+  showmeyourskin:
+    showmeyourskin: Show Me Your Skin!
+key:
+  showmeyourskin:
+    open_settings: Abrir configuración de armadura
+    global_toggle:
+      .: Alternar Mod
+      enable: "§aHabilitado§r personalización de armadura."
+      disable: "§cDeshabilitado§r personalización de armadura."
+gui:
+  showmeyourskin:
+    armorScreen:
+      title:
+        .: Configuración de Armadura
+        serverIntegrated: Configuración de Armadura (Servidor)
+        serverOverrides: Configuración de Armadura (Anulaciones Locales)
+      globalToggleTooltip: Alternar globalmente, presiona %1$s para alternar en el juego.
+      overridesEnabled: "Habilitar anulaciones locales.\n(no visible para otros jugadores)"
+      overridesConfigure: "Configurar anulaciones locales.\n(no visible para otros jugadores)"
+      global: Global
+      synced: Sincronizado
+      overridden: Anulado
+      playerName: "%s"
+      playerSelector: Configuración de Armadura
+      piece:
+        head: "Yelmo: %d%%"
+        chest: "Pechera: %d%%"
+        legs: "Grebas: %d%%"
+        feet: "Botas: %d%%"
+        elytra: "Elytra: %d%%"
+        shield: "Escudo: %d%%"
+        hat: "Sombrero: %d%%"
+      glintTooltip: Habilitar brillo de encantamiento
+      combatTooltip: Desactivar automáticamente la transparencia en combate
+      nameTagTooltip: Mostrar etiqueta de nombre del jugador
+      showElytraTooltip: Mostrar Elytra
+      shieldGlintTooltip: Mostrar brillo de encantamiento en el escudo
+      openButtonTooltip: Abrir anulación de transparencia de armadura
+      deleteButtonTooltip: Eliminar anulación de transparencia

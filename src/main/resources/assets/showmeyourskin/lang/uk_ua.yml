@@ -1,0 +1,27 @@
+category:
+  showmeyourskin:
+    showmeyourskin: Show Me Your Skin!
+key:
+  showmeyourskin:
+    open_settings: Відкрити глобальні параметри
+    global_toggle:
+      .: Переключити Мод
+      enable: Включена настройка рендеринга броні.
+      disable: Відключена настройка рендеринга броні.
+gui:
+  showmeyourskin:
+    armorScreen:
+      globalToggleTooltip: Глобальне перемикання, натисніть %1$S, щоб переключитися в грі.
+      global: Глобальнi параметри
+      playerSelector: Налаштування бронi
+      piece:
+        head: "Шолом: %d%%"
+        chest: "Нагрудник: %d%%"
+        legs: "Наголінники: %d%%"
+        feet: "Чоботи: %d%%"
+      glintTooltip: Ефект зачаровування
+      combatTooltip: Автоматично вимикати прозорість в бою
+      nameTagTooltip: Показувати нік гравця
+      showElytraTooltip: Показувати елітри
+      openButtonTooltip: Відкрити параметри прозорості броні
+      deleteButtonTooltip: Скинути налаштування прозорості

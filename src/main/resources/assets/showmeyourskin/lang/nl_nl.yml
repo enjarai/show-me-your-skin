@@ -1,0 +1,30 @@
+category:
+  showmeyourskin:
+    showmeyourskin: Show Me Your Skin!
+key:
+  showmeyourskin:
+    open_settings: Open Harnas Configuratie
+    global_toggle:
+      .: Globale Schakelaar
+      enable: Harnas render aanpassingen aangezet.
+      disable: Harnas render aanpassingen uitgezet.
+gui:
+  showmeyourskin:
+    armorScreen:
+      globalToggleTooltip: Globale schakel, druk op %1$s om aan of uit te zetten in het spel.
+      global: Globaal
+      playerSelector: Harnas Configuratie
+      piece:
+        head: "Helm: %d%%"
+        chest: "Kuras: %d%%"
+        legs: "Beenstukken: %d%%"
+        feet: "Laarzen: %d%%"
+        elytra: "Dekschild: %d%%"
+        shield: "Schild: %d%%"
+      glintTooltip: Activeer betoveringsgloed
+      combatTooltip: Deactiveer automatisch de transparantie in een gevecht
+      nameTagTooltip: Laat het naamplaatje van de speler zien
+      showElytraTooltip: Laat Dekschild zien
+      shieldGlintTooltip: Betoveringsgloed laten zien op schild
+      openButtonTooltip: Open harnas transparantie overschrijving
+      deleteButtonTooltip: Verwijder transparantie overschrijving

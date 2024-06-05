@@ -1,7 +1,8 @@
 plugins {
-	id 'fabric-loom' version '1.4-SNAPSHOT'
+	id 'fabric-loom' version '1.6-SNAPSHOT'
 	id 'maven-publish'
 	id "me.modmuss50.mod-publish-plugin" version "0.4.4"
+	id 'me.fallenbreath.yamlang' version '1.3.1'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -33,23 +34,23 @@ repositories {
 
 dependencies {
 	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	minecraft "com.mojang:minecraft:${property("deps.minecraft")}"
+	mappings "net.fabricmc:yarn:${property("deps.yarn")}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${property("deps.fabricloader")}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${property("deps.fabric-api")}"
 
-	modImplementation("nl.enjarai:cicada-lib:${project.cicada_version}") {
+	modImplementation("nl.enjarai:cicada-lib:${property("deps.cicada")}") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 
 	// Mod Menu integration.
-	modImplementation "com.terraformersmc:modmenu:${modmenu_version}"
+	modImplementation "com.terraformersmc:modmenu:${property("deps.modmenu")}"
 
 	// Cardinal Components for shrimple™ server syncing.
-	include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cardinal_components_version}")
-	include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cardinal_components_version}")
+	include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${property("deps.cardinal-components-api")}")
+	include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${property("deps.cardinal-components-api")}")
 
 	// Make it easier to test skin compat.
 //	modImplementation 'com.ptsmods:devlogin:2.1'
@@ -63,7 +64,7 @@ processResources {
 	}
 }
 
-version = "$version+$minecraft_version"
+version = "$version+${property("deps.minecraft")}"
 
 tasks.withType(JavaCompile).configureEach {
 	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
@@ -81,6 +82,11 @@ jar {
 	from("LICENSE") {
 		rename { "${it}_${project.archivesBaseName}"}
 	}
+}
+
+yamlang {
+	targetSourceSets = [sourceSets.main]
+	inputDir = "assets/showmeyourskin/lang"
 }
 
 // configure the maven publication
@@ -106,7 +112,7 @@ loom {
 
 publishMods {
 	file = remapJar.archiveFile
-	displayName = "${property('mod_version')} for ${property('minecraft_version')}"
+	displayName = "${property('mod_version')} for ${property('deps.minecraft')}"
 	version = project.version
 	changelog = getRootProject().file("CHANGELOG.md").text
 	type = STABLE
