@@ -9,7 +9,7 @@
     "enjarai"
   ],
   "contact": {
-    "homepage": "https://enjarai.nl/",
+    "homepage": "https://enjarai.dev/",
     "sources": "https://github.com/enjarai/show-me-your-skin",
     "issues": "https://github.com/enjarai/show-me-your-skin/issues"
   },
@@ -46,7 +46,7 @@
     "fabricloader": ">=0.15.0",
     "fabric-api": "*",
     "minecraft": ">=1.20.3- <=1.20.4",
-    "cicada": ">=0.6.0 <1.0.0",
+    "cicada": ">=0.7.0 <1.0.0",
     "cardinal-components-base": "*",
     "cardinal-components-entity": "*"
   },
