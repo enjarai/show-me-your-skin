@@ -19,6 +19,7 @@ import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.trim.ArmorTrim;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
 import nl.enjarai.showmeyourskin.client.ModRenderLayers;
 import nl.enjarai.showmeyourskin.compat.armored_elytra.ArmoredElytraCompat;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
@@ -72,7 +73,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
             at = @At(value = "HEAD"),
             cancellable = true
     )
-    private void showmeyourskin$armorTransparency(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, A model, float red, float green, float blue, Identifier overlay, CallbackInfo ci) {
+    private void showmeyourskin$armorTransparency(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, A model, int i, Identifier overlay, CallbackInfo ci) {
         var ctx = MixinContext.ARMOR.getContext();
         if (ctx == null) throw new IllegalStateException("ArmorContext is null");
 
@@ -90,7 +91,9 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
                 if (t > 0) {
                     VertexConsumer vertexConsumer = vertexConsumers.getBuffer(
                             ModRenderLayers.ARMOR_TRANSLUCENT_NO_CULL.apply(overlay));
-                    model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, red, green, blue, t);
+                    model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV,
+                            ColorHelper.Argb.withAlpha(ColorHelper.channelFromFloat(t), i)
+                    );
                 }
 
                 ci.cancel();
@@ -116,7 +119,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
                     Sprite sprite = this.armorTrimsAtlas.getSprite(leggings ? trim.getLeggingsModelId(armorMaterial) : trim.getGenericModelId(armorMaterial));
                     VertexConsumer vertexConsumer = sprite.getTextureSpecificVertexConsumer(vertexConsumers
                             .getBuffer(ModRenderLayers.ARMOR_TRANSLUCENT_NO_CULL.apply(TexturedRenderLayers.ARMOR_TRIMS_ATLAS_TEXTURE)));
-                    model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, t);
+                    model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, ColorHelper.Argb.fromFloats(t, 1.0f, 1.0f, 1.0f));
                 }
 
                 ci.cancel();

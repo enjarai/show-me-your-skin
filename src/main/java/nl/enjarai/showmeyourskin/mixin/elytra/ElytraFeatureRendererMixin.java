@@ -9,12 +9,14 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ElytraFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
+import net.minecraft.client.render.entity.model.ElytraEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import org.spongepowered.asm.mixin.Mixin;
@@ -50,9 +52,9 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/render/item/ItemRenderer;getArmorGlintConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;ZZ)Lnet/minecraft/client/render/VertexConsumer;"
+                    target = "Lnet/minecraft/client/render/item/ItemRenderer;getArmorGlintConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;Z)Lnet/minecraft/client/render/VertexConsumer;"
             ),
-            index = 3
+            index = 2
     )
     private boolean showmeyourskin$hideElytraGlint(boolean original, @Local(argsOnly = true) LivingEntity entity) {
         if (entity instanceof PlayerEntity player) {
@@ -66,22 +68,21 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/render/item/ItemRenderer;getArmorGlintConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;ZZ)Lnet/minecraft/client/render/VertexConsumer;"
+                    target = "Lnet/minecraft/client/render/item/ItemRenderer;getArmorGlintConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;Z)Lnet/minecraft/client/render/VertexConsumer;"
             )
     )
     private VertexConsumer showmeyourskin$enableElytraTransparency1(
-            VertexConsumerProvider vertexConsumerProvider, RenderLayer renderLayer, boolean solid, boolean hasGlint,
-            Operation<VertexConsumer> original, @Local(argsOnly = true) LivingEntity entity) {
+            VertexConsumerProvider vertexConsumerProvider, RenderLayer renderLayer, boolean solid, Operation<VertexConsumer> original, @Local(argsOnly = true) LivingEntity entity) {
         if (entity instanceof PlayerEntity player) {
             if (!player.isFallFlying() || !ModConfig.INSTANCE.getApplicable(player.getUuid()).forceElytraWhenFlying) {
                 var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.ELYTRA);
                 if (transparency < 1) {
-                    return ItemRenderer.getDirectItemGlintConsumer(vertexConsumerProvider, renderLayer, solid, hasGlint);
+                    return ItemRenderer.getDirectItemGlintConsumer(vertexConsumerProvider, renderLayer, solid, solid);
                 }
             }
         }
 
-        return original.call(vertexConsumerProvider, renderLayer, solid, hasGlint);
+        return original.call(vertexConsumerProvider, renderLayer, solid);
     }
 
     @WrapOperation(
@@ -105,24 +106,26 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
         return original.call(texture);
     }
 
-    @ModifyArg(
+    @WrapOperation(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/render/entity/model/ElytraEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V"
-            ),
-            index = 7
+                    target = "Lnet/minecraft/client/render/entity/model/ElytraEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V"
+            )
     )
-    private float showmeyourskin$applyElytraTransparency(float original, @Local(argsOnly = true) LivingEntity entity) {
+    private void showmeyourskin$applyElytraTransparency(ElytraEntityModel instance, MatrixStack matrixStack, VertexConsumer vertexConsumer, int i, int uv, Operation<Void> original, @Local(argsOnly = true) LivingEntity entity) {
         if (entity instanceof PlayerEntity player) {
             if (!player.isFallFlying() || !ModConfig.INSTANCE.getApplicable(player.getUuid()).forceElytraWhenFlying) {
                 var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.ELYTRA);
                 if (transparency < 1) {
-                    return transparency;
+                    instance.render(matrixStack, vertexConsumer, i, uv,
+                            ColorHelper.Argb.withAlpha(ColorHelper.channelFromFloat(transparency), -1)
+                    );
+                    return;
                 }
             }
         }
 
-        return original;
+        original.call(instance, matrixStack, vertexConsumer, i, uv);
     }
 }

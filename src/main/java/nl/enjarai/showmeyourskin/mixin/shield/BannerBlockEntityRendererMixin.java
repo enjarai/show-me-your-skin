@@ -1,8 +1,6 @@
 package nl.enjarai.showmeyourskin.mixin.shield;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import com.mojang.datafixers.util.Pair;
-import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -12,9 +10,9 @@ import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.type.BannerPatternsComponent;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.util.MixinContext;
@@ -95,7 +93,7 @@ public abstract class BannerBlockEntityRendererMixin {
                         canvas.render(
                                 matrices, vertexConsumer,
                                 light, overlay,
-                                1.0f, 1.0f, 1.0f, t
+                                ColorHelper.Argb.fromFloats(t, 1.0f, 1.0f, 1.0f)
                         );
                     }
 
@@ -135,11 +133,11 @@ public abstract class BannerBlockEntityRendererMixin {
             method = "renderLayer",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/model/ModelPart;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V"
+                    target = "Lnet/minecraft/client/model/ModelPart;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;III)V"
             ),
-            index = 7
+            index = 4
     )
-    private static float showmeyourskin$modifyBannerPatternTransparency(float original) {
+    private static int showmeyourskin$modifyBannerPatternTransparency(int original) {
         if (showmeyourskin$isShield.get()) {
             var ctx = MixinContext.ENTITY.getContext();
 
@@ -147,7 +145,7 @@ public abstract class BannerBlockEntityRendererMixin {
                 var t = ModConfig.INSTANCE.getApplicablePieceTransparency(ctx.getUuid(), HideableEquipment.SHIELD);
 
                 if (t < 1) {
-                    return t;
+                    return ColorHelper.Argb.withAlpha(ColorHelper.channelFromFloat(t), original);
                 }
             }
         }

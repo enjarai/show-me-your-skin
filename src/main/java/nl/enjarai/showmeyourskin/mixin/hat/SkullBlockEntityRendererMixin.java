@@ -8,6 +8,7 @@ import net.minecraft.client.render.block.entity.SkullBlockEntityModel;
 import net.minecraft.client.render.block.entity.SkullBlockEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.util.MixinContext;
@@ -20,10 +21,10 @@ public abstract class SkullBlockEntityRendererMixin {
             method = "renderSkull",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/render/block/entity/SkullBlockEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V"
+                    target = "Lnet/minecraft/client/render/block/entity/SkullBlockEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V"
             )
     )
-    private static void modifySkullTransparency(SkullBlockEntityModel instance, MatrixStack matrixStack, VertexConsumer vertexConsumer, int light, int uv, float r, float g, float b, float a, Operation<Void> original) {
+    private static void modifySkullTransparency(SkullBlockEntityModel instance, MatrixStack matrixStack, VertexConsumer vertexConsumer, int light, int uv, Operation<Void> original) {
         var wearingEntity = MixinContext.ENTITY.getContext();
 
         if (wearingEntity != null) {
@@ -32,7 +33,9 @@ public abstract class SkullBlockEntityRendererMixin {
             if (transparency < 1) {
                 if (transparency > 0) {
                     // If transparency is below one but above 0, we *should* call the original but modify the alpha
-                    original.call(instance, matrixStack, vertexConsumer, light, uv, r, g, b, transparency);
+                    instance.render(matrixStack, vertexConsumer, light, uv,
+                            ColorHelper.Argb.withAlpha(ColorHelper.channelFromFloat(transparency), -1)
+                    );
                 }
 
                 // If transparency is below 1, we potentially don't want to call the original
@@ -41,7 +44,7 @@ public abstract class SkullBlockEntityRendererMixin {
         }
 
         // Continue as usual
-        original.call(instance, matrixStack, vertexConsumer, light, uv, r, g, b, a);
+        original.call(instance, matrixStack, vertexConsumer, light, uv);
     }
 
     @WrapOperation(
