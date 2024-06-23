@@ -70,6 +70,6 @@ public class ShowMeYourSkin implements ModInitializer {
     }
 
     public static Identifier id(String path) {
-        return new Identifier(MODID, path);
+        return Identifier.of(MODID, path);
     }
 }
