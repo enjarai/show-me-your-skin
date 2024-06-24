@@ -57,6 +57,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     private static final Text GLINT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.glintTooltip");
     private static final Text COMBAT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.combatTooltip");
     private static final Text NAME_TAG_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.nameTagTooltip");
+    private static final Text FORCE_ELYTRA_WHEN_FLYING_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.forceElytraWhenFlyingTooltip");
     protected static final ButtonTextures TOGGLE_GLINT_BUTTON_TEXTURES = ToggleButtonWidget.createTextures("show_glint");
     protected static final ButtonTextures SHOW_IN_COMBAT_BUTTON_TEXTURES = ToggleButtonWidget.createTextures("show_in_combat");
     protected static final ButtonTextures SHOW_NAME_TAG_BUTTON_TEXTURES = ToggleButtonWidget.createTextures("show_nametag");
@@ -150,7 +151,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
             buttons.add(new ToggleButtonWidget(
                     getWindowLeft() + 66, getWindowTop() + 115, 20, 20,
                     FORCE_ELYTRA_WHEN_FLYING_BUTTON_TEXTURES,
-                    armorConfig.forceElytraWhenFlying, (btn, b) -> armorConfig.forceElytraWhenFlying = b, NAME_TAG_TOOLTIP
+                    armorConfig.forceElytraWhenFlying, (btn, b) -> armorConfig.forceElytraWhenFlying = b, FORCE_ELYTRA_WHEN_FLYING_TOOLTIP
             ));
         }
 

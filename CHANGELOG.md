@@ -1,2 +1,2 @@
-- Added an option to make Elytras reappear while flying. (Thanks @EminGT)
-- Fixed button tooltips not appearing at all.
+- Added support for 1.21. (Thanks @ImUrX!)
+- Fix elytra transparency button tooltip.
