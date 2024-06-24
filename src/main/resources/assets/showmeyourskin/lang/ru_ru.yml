@@ -30,9 +30,11 @@ gui:
         feet: "Ботинки: %d%%"
         elytra: "Элитры: %d%%"
         shield: "Щит: %d%%"
+        hat: "Шляпа: %d%%"
       glintTooltip: Включить мерцание чар
       combatTooltip: Автоматически отключать прозрачность в бою
       nameTagTooltip: Показать тэг имени игрока
+      forceElytraWhenFlyingTooltip: Отключить прозрачность элитр во время полета
       showElytraTooltip: Показать элитры
       shieldGlintTooltip: Показать на щите мерцание чара
       openButtonTooltip: Открыть переопределение прозрачности брони
