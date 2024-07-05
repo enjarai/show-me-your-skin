@@ -1,0 +1,41 @@
+category:
+  showmeyourskin:
+    showmeyourskin: Show Me Your Skin!
+key:
+  showmeyourskin:
+    open_settings: 갑옷 설정창
+    global_toggle:
+      .: 모드 전환
+      enable: "사용자 정의 갑옷 렌더링 §a활성화됨§r"
+      disable: "사용자 정의 갑옷 렌더링 §c비활성화됨 §r"
+gui:
+  showmeyourskin:
+    armorScreen:
+      title:
+        .: 갑옷 설정
+        serverIntegrated: 갑옷 설정 (서버)
+        serverOverrides: 갑옷 설정 (사용자 재정의)
+      globalToggleTooltip: 전역설정 전환, 게임 내 전환을 위해 %1$s 누르기.
+      overridesEnabled: "사용자 재정의를 활성화합니다.\n(다른 플레이어에게는 표시되지 않음)"
+      overridesConfigure: "사용자 재정의를 구성합니다.\n(다른 플레이어에게 표시되지 않음)"
+      global: 전역설정
+      synced: 동기화됨
+      overridden: 재정의됨
+      playerName: "%s"
+      playerSelector: 갑옷 설정
+      piece:
+        head: "헬멧: %d%%"
+        chest: "흉갑: %d%%"
+        legs: "레깅스: %d%%"
+        feet: "부츠: %d%%"
+        elytra: "겉날개: %d%%"
+        shield: "방패: %d%%"
+        hat: "모자: %d%%"
+      glintTooltip: 인챈트 효과 활성화
+      combatTooltip: 전투 중 투명도 자동 비활성화
+      nameTagTooltip: 플레이어 이름표 표시
+      forceElytraWhenFlyingTooltip: 비행 중 겉날개 투명도 비활성화
+      showElytraTooltip: 겉날개 표시
+      shieldGlintTooltip: 방패에 인챈트 효과 부여
+      openButtonTooltip: 갑옷 투명도 재정의 열기
+      deleteButtonTooltip: 투명도 재정의 삭제
