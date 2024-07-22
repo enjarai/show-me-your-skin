@@ -1,2 +1,1 @@
-- Added support for 1.21. (Thanks @ImUrX!)
-- Fix elytra transparency button tooltip.
+- Modified mod config loading system to hopefully prevent compatibility issues.
