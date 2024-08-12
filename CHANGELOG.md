@@ -1,2 +1,1 @@
-- Added support for 1.21. (Thanks @ImUrX!)
-- Fix elytra transparency button tooltip.
+- Added support for 1.21.1.
