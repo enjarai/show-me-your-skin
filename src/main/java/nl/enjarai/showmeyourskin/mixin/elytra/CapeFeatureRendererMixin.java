@@ -17,8 +17,10 @@ public abstract class CapeFeatureRendererMixin {
     )
     private boolean showmeyourskin$renderCapeIfElytraHidden(boolean original, @Local(argsOnly = true) AbstractClientPlayerEntity player) {
         if (player != null) {
-            var uuid = player.getUuid();
-            return original && ModConfig.INSTANCE.getApplicablePieceTransparency(uuid, HideableEquipment.ELYTRA) > 0;
+            if (!player.isFallFlying() || !ModConfig.INSTANCE.getApplicable(player.getUuid()).forceElytraWhenFlying) {
+                var uuid = player.getUuid();
+                return original && ModConfig.INSTANCE.getApplicablePieceTransparency(uuid, HideableEquipment.ELYTRA) > 0;
+            }
         }
         return original;
     }
