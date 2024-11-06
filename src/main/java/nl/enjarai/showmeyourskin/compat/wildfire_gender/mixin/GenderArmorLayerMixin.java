@@ -78,7 +78,7 @@ public abstract class GenderArmorLayerMixin {
         if (entity instanceof PlayerEntity player) {
             var transparency = ModConfig.INSTANCE.getApplicablePieceTransparency(player.getUuid(), HideableEquipment.CHEST);
             if (transparency < 1) {
-                return ItemRenderer.getDirectItemGlintConsumer(vertexConsumerProvider, renderLayer, solid, hasGlint);
+                return ItemRenderer.getItemGlintConsumer(vertexConsumerProvider, renderLayer, solid, hasGlint);
             }
         }
 

@@ -13,6 +13,7 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.render.DiffuseLighting;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -262,7 +263,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
 
         matrices.push();
         matrices.translate(0, 0, zIndex);
-        context.drawTexture(backgroundTexture, leftSide, topSide, 1, 1, 236, 254);
+        context.drawTexture(RenderLayer::getGuiTextured, backgroundTexture, leftSide, topSide, 1, 1, 236, 254, 256, 256);
         matrices.pop();
 
         RenderSystem.disableBlend();

@@ -5,6 +5,7 @@ import net.minecraft.client.render.RenderPhase;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.TriState;
 import net.minecraft.util.Util;
 
 import java.util.function.Function;
@@ -15,7 +16,7 @@ public class ModRenderLayers {
     public static final Function<Identifier, RenderLayer> ARMOR_TRANSLUCENT_NO_CULL = Util.memoize(texture -> {
         var params = RenderLayer.MultiPhaseParameters.builder()
                 .program(ARMOR_CUTOUT_NO_CULL_PROGRAM)
-                .texture(new RenderPhase.Texture(texture, false, false))
+                .texture(new RenderPhase.Texture(texture, TriState.DEFAULT, false))
                 .transparency(TRANSLUCENT_TRANSPARENCY)
                 .cull(DISABLE_CULLING)
                 .lightmap(ENABLE_LIGHTMAP)
