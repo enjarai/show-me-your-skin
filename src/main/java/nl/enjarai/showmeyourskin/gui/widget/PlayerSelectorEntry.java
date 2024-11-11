@@ -8,6 +8,7 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.SkinTextures;
@@ -75,9 +76,9 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
 
     @Override
     protected void renderIcon(DrawContext context, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        context.drawTexture(skinTextures.get().texture(), x + 3, y + 3, 24, 24, 8.0F, 8.0F, 8, 8, 64, 64);
+        context.drawTexture(RenderLayer::getGuiTextured, skinTextures.get().texture(), x + 3, y + 3, 8.0F, 8.0F, 24, 24, 8, 8, 64, 64);
         RenderSystem.enableBlend();
-        context.drawTexture(skinTextures.get().texture(), x + 3, y + 3, 24, 24, 40.0F, 8.0F, 8, 8, 64, 64);
+        context.drawTexture(RenderLayer::getGuiTextured, skinTextures.get().texture(), x + 3, y + 3, 40.0F, 8.0F, 24, 24, 8, 8, 64, 64);
         RenderSystem.disableBlend();
     }
 

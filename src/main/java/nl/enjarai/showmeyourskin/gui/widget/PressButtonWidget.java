@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.PressableWidget;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
@@ -46,18 +47,15 @@ public class PressButtonWidget extends PressableWidget {
 
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-        context.setShaderColor(1.0f, 1.0f, 1.0f, this.alpha);
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
 
         renderButtonBackground(context, mouseX, mouseY, delta);
-        context.drawGuiTexture(textures.get(isEnabled(), isSelected()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-
-        context.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        context.drawGuiTexture(RenderLayer::getGuiTextured, textures.get(isEnabled(), isSelected()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
     }
 
     protected void renderButtonBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-        context.drawGuiTexture(BACKGROUND_TEXTURES.get(isEnabled(), isSelected()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        context.drawGuiTexture(RenderLayer::getGuiTextured, BACKGROUND_TEXTURES.get(isEnabled(), isSelected()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
     }
 
     @Override

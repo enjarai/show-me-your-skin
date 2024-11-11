@@ -12,11 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntityRenderer.class)
 public abstract class LivingEntityRendererMixin<T extends LivingEntity> {
     @Inject(
-            method = "hasLabel(Lnet/minecraft/entity/LivingEntity;)Z",
+            method = "hasLabel(Lnet/minecraft/entity/LivingEntity;D)Z",
             at = @At("HEAD"),
             cancellable = true
     )
-    private void showmeyourskin$removeLabel(T livingEntity, CallbackInfoReturnable<Boolean> cir) {
+    private void showmeyourskin$removeLabel(T livingEntity, double d, CallbackInfoReturnable<Boolean> cir) {
         if (
                 livingEntity instanceof DummyClientPlayerEntity ||
                 !ModConfig.INSTANCE.getApplicable(livingEntity.getUuid()).showNameTag

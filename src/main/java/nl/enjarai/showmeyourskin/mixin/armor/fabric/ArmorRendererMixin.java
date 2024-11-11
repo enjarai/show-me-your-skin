@@ -36,7 +36,7 @@ public interface ArmorRendererMixin {
                             vertexConsumers, ModRenderLayers.ARMOR_TRANSLUCENT_NO_CULL.apply(texture),
                             stack.hasGlint() && ctx.getApplicableGlintTransparency() > 0
                     );
-                    model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, ColorHelper.Argb.fromFloats(t, 1.0f, 1.0f, 1.0f));
+                    model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, ColorHelper.fromFloats(t, 1.0f, 1.0f, 1.0f));
                 }
 
                 ci.cancel();

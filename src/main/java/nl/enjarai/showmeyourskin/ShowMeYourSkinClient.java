@@ -31,7 +31,6 @@ public class ShowMeYourSkinClient implements ClientModInitializer, CicadaEntrypo
 
 	@Override
 	public void onInitializeClient() {
-		ModConfig.load();
 		ModConfig.INSTANCE.ensureValid();
 
 		ModKeyBindings.register();
