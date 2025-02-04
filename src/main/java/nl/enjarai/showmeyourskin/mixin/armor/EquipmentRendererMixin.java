@@ -3,8 +3,6 @@ package nl.enjarai.showmeyourskin.mixin.armor;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -14,8 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.equipment.EquipmentModel;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
-import nl.enjarai.showmeyourskin.ShowMeYourSkin;
-import nl.enjarai.showmeyourskin.util.ArmorContext;
+import nl.enjarai.showmeyourskin.util.IWishMixinAllowedForPublicStaticFields;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -31,10 +28,10 @@ public class EquipmentRendererMixin {
                     target = "Lnet/minecraft/item/ItemStack;hasGlint()Z"
             )
     )
-    private boolean toggleGlint(boolean original,
-                                @Share(namespace = ShowMeYourSkin.MODID, value = "renderEquipmentContext") LocalRef<ArmorContext> ctx) {
-        if (ctx.get() != null && ctx.get().shouldModify()) {
-            return original && ctx.get().getApplicableGlintTransparency() > 0;
+    private boolean toggleGlint(boolean original) {
+        var ctx = IWishMixinAllowedForPublicStaticFields.currentArmorContext;
+        if (ctx != null && ctx.shouldModify()) {
+            return original && ctx.getApplicableGlintTransparency() > 0;
         }
         return original;
     }
@@ -46,9 +43,9 @@ public class EquipmentRendererMixin {
                     target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"
             )
     )
-    private RenderLayer modifyRenderLayer(Identifier texture, Operation<RenderLayer> original,
-                                          @Share(namespace = ShowMeYourSkin.MODID, value = "renderEquipmentContext") LocalRef<ArmorContext> ctx) {
-        if (ctx.get() != null && ctx.get().getApplicablePieceTransparency() < 1) {
+    private RenderLayer modifyRenderLayer(Identifier texture, Operation<RenderLayer> original) {
+        var ctx = IWishMixinAllowedForPublicStaticFields.currentArmorContext;
+        if (ctx!= null && ctx.getApplicablePieceTransparency() < 1) {
             return RenderLayer.createArmorTranslucent(texture);
         }
         return original.call(texture);
@@ -62,10 +59,11 @@ public class EquipmentRendererMixin {
             ),
             index = 4
     )
-    private int modifyAlpha(int color,
-                            @Share(namespace = ShowMeYourSkin.MODID, value = "renderEquipmentContext") LocalRef<ArmorContext> ctx) {
-        if (ctx.get() != null && ctx.get().getApplicablePieceTransparency() < 1) {
-            return ColorHelper.withAlpha(ColorHelper.channelFromFloat(ctx.get().getApplicablePieceTransparency()), color);
+    private int modifyAlpha(int color) {
+        var ctx = IWishMixinAllowedForPublicStaticFields.currentArmorContext;
+
+        if (ctx != null && ctx.getApplicablePieceTransparency() < 1) {
+            return ColorHelper.withAlpha(ColorHelper.channelFromFloat(ctx.getApplicablePieceTransparency()), color);
         }
         return color;
     }
@@ -76,8 +74,8 @@ public class EquipmentRendererMixin {
     )
     private void resetContext(EquipmentModel.LayerType layerType, Identifier modelId, Model model,
                               ItemStack stack, MatrixStack matrices, VertexConsumerProvider vertexConsumers,
-                              int light, Identifier texture, CallbackInfo ci,
-                              @Share(namespace = ShowMeYourSkin.MODID, value = "renderEquipmentContext") LocalRef<ArmorContext> ctx) {
-        ctx.set(null);
+                              int light, Identifier texture, CallbackInfo ci) {
+
+        IWishMixinAllowedForPublicStaticFields.currentArmorContext = null;
     }
 }

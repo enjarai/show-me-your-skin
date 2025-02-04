@@ -1,19 +1,16 @@
 package nl.enjarai.showmeyourskin.mixin.armor;
 
-import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.state.BipedEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.util.ArmorContext;
+import nl.enjarai.showmeyourskin.util.IWishMixinAllowedForPublicStaticFields;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -26,11 +23,9 @@ public abstract class ArmorFeatureRendererMixin<T extends BipedEntityRenderState
             at = @At(value = "HEAD")
     )
     private void setArmorContext(MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack,
-                                 EquipmentSlot slot, int light, A armorModel, CallbackInfo ci,
-                                 @Share(namespace = ShowMeYourSkin.MODID, value = "renderedEntity") LocalRef<Entity> entity,
-                                 @Share(namespace = ShowMeYourSkin.MODID, value = "renderEquipmentContext") LocalRef<ArmorContext> ctx) {
-        if (entity.get() instanceof LivingEntity livingEntity) {
-            ctx.set(new ArmorContext(HideableEquipment.fromSlot(slot), livingEntity));
+                                 EquipmentSlot slot, int light, A armorModel, CallbackInfo ci) {
+        if (IWishMixinAllowedForPublicStaticFields.currentEntity instanceof LivingEntity livingEntity) {
+            IWishMixinAllowedForPublicStaticFields.currentArmorContext = new ArmorContext(HideableEquipment.fromSlot(slot), livingEntity);
         }
     }
 
