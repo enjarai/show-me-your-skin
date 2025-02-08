@@ -7,8 +7,18 @@ public class MixinContext<T> {
 
     public static final MixinContext<ArmorContext> ARMOR = new MixinContext<>();
     public static final MixinContext<LivingEntity> ENTITY = new MixinContext<>();
+    public static final MixinContext<Boolean> TRIM_RENDER = new MixinContext<>(false);
+    public static final MixinContext<Boolean> SHIELD_PLATE_RENDER = new MixinContext<>(false);
 
-    private final ThreadLocal<T> currentContext = new ThreadLocal<>();
+    private final ThreadLocal<T> currentContext;
+
+    public MixinContext() {
+        currentContext = new ThreadLocal<>();
+    }
+
+    public MixinContext(T initialValue) {
+        currentContext = ThreadLocal.withInitial(() -> initialValue);
+    }
 
     public void setContext(T context) {
         currentContext.set(context);
@@ -20,7 +30,7 @@ public class MixinContext<T> {
     }
 
     public void clearContext() {
-        currentContext.set(null);
+        currentContext.remove();
     }
 
     @Nullable
