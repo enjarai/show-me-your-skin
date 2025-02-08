@@ -6,7 +6,8 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import nl.enjarai.showmeyourskin.util.IWishMixinAllowedForPublicStaticFields;
+import net.minecraft.entity.player.PlayerEntity;
+import nl.enjarai.showmeyourskin.util.MixinContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,7 +24,9 @@ public class EntityRenderDispatcherMixin {
                                                                                       VertexConsumerProvider vertexConsumers,
                                                                                       int light, EntityRenderer<? super E, S> renderer,
                                                                                       CallbackInfo ci) {
-        IWishMixinAllowedForPublicStaticFields.currentEntity = entity;
+        if(entity instanceof PlayerEntity livingEntity) {
+            MixinContext.ENTITY.setContext(livingEntity);
+        }
     }
 
     @Inject(
@@ -35,6 +38,6 @@ public class EntityRenderDispatcherMixin {
                                                                                       VertexConsumerProvider vertexConsumers,
                                                                                       int light, EntityRenderer<? super E, S> renderer,
                                                                                       CallbackInfo ci) {
-        IWishMixinAllowedForPublicStaticFields.currentEntity = null;
+        MixinContext.ENTITY.clearContext();
     }
 }
