@@ -44,6 +44,10 @@ public class SliderSet extends AbstractParentElement implements Drawable, Elemen
             );
         }
     }
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        return sliders.stream().anyMatch(widget -> widget.isMouseOver(mouseX, mouseY));
+    }
 
     public int getLeft() {
         return x;

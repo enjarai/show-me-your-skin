@@ -1,41 +1,28 @@
 package nl.enjarai.showmeyourskin.gui.widget;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.block.entity.BannerPattern;
-import net.minecraft.block.entity.BannerPatterns;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.BannerPatternsComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
-import nl.enjarai.cicada.api.screen.DrawUtils;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.client.cursed.AlwaysGlintingStack;
@@ -45,6 +32,7 @@ import nl.enjarai.showmeyourskin.config.ModConfig;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -53,8 +41,8 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     public static final Identifier TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen.png");
     public static final Identifier BACKGROUND_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_background.png");
     public static final Identifier OVERLAY_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_disabled.png");
-    private static final int TEXT_COLOR = 0x505050;
-    private static final int TEXT_COLOR_RED = 0x880000;
+    private static final int TEXT_COLOR = ColorHelper.getArgb(80,80,80);
+    private static final int TEXT_COLOR_RED = ColorHelper.getArgb(136, 0, 0);
     private static final Text GLINT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.glintTooltip");
     private static final Text COMBAT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.combatTooltip");
     private static final Text NAME_TAG_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.nameTagTooltip");
@@ -189,7 +177,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
             sliderSetTabs.render(context, mouseX, mouseY, sliderSetTabs == selectedSliderSetTab);
         }
 
-        renderBackground(context, BACKGROUND_TEXTURE, -999);
+        renderBackground(context, BACKGROUND_TEXTURE);
         for (var drawable : buttons) {
             drawable.render(
                     context,
@@ -205,10 +193,6 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
                 delta
         );
 
-        var playerX = getWindowRight() - 59;
-        var playerY = getWindowTop() + 155;
-        var playerRotation = getCurrentPlayerRotation();
-
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         context.drawText(
                 textRenderer, name,
@@ -221,27 +205,10 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
                     getWindowRight() - 7 - textRenderer.getWidth(text), getWindowTop() + 10, TEXT_COLOR_RED, false
             );
         }
-
-        var matrices = context.getMatrices();
-
-        matrices.push();
-        matrices.translate(playerX, playerY, -950);
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(playerRotation));
-        matrices.translate(0, 0, 950.0);
-        context.enableScissor(
-                getWindowRight() - 112, getWindowTop() + 8,
-                getWindowRight() - 5, getWindowTop() + 168
-        );
-        DrawUtils.drawEntityFollowingMouse(
-                matrices, 0, 0, 70,
-                getCurrentPlayerRotation(), mouseX - playerX, mouseY - playerY,
-                player
-        );
-        context.disableScissor();
-        matrices.pop();
+        drawEntity(context, getWindowRight() - 112, getWindowTop() -108, getWindowRight() - 5, getWindowTop()+168, 70, 1, mouseX, mouseY,player,getCurrentPlayerRotation());
 
         if (!isEditable()) {
-            renderBackground(context, OVERLAY_TEXTURE, 999);
+            renderBackground(context, OVERLAY_TEXTURE);
         }
     }
 
@@ -254,19 +221,11 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         return MathHelper.lerp(getPlayerRotationDelta(), lastPlayerRotation, selectedSliderSetTab.sliderSet.rotatedBy);
     }
 
-    public void renderBackground(DrawContext context, Identifier backgroundTexture, int zIndex) {
+    public void renderBackground(DrawContext context, Identifier backgroundTexture) {
         int leftSide = getWindowLeft() + 3;
         int topSide = getWindowTop();
-        var matrices = context.getMatrices();
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, backgroundTexture, leftSide, topSide, 1, 1, 236, 254, 256, 256);
 
-        RenderSystem.enableBlend();
-
-        matrices.push();
-        matrices.translate(0, 0, zIndex);
-        context.drawTexture(RenderLayer::getGuiTextured, backgroundTexture, leftSide, topSide, 1, 1, 236, 254, 256, 256);
-        matrices.pop();
-
-        RenderSystem.disableBlend();
     }
 
     protected SliderWidget getOpacitySlider(HideableEquipment slot, int x, int y, String translationKey) {
@@ -371,7 +330,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         }
 
         for (var sliderSetTab : sliderSetTabs) {
-            if (sliderSetTab.isMouseOver(mouseX, mouseY)) {
+            if (sliderSetTab.isMouseOver2(mouseX, mouseY)) {
                 MinecraftClient.getInstance().getSoundManager()
                         .play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
@@ -414,6 +373,20 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
             default -> ItemStack.EMPTY;
         };
     }
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        for (Element element:children){
+            if (element.isMouseOver(mouseX, mouseY)) {
+                return true;
+            }
+        }
+        for(SliderSetTab sliderSetTab:sliderSetTabs){
+            if (sliderSetTab.isMouseOver2(mouseX, mouseY)) {
+                return true;
+            }
+        }
+        return super.isMouseOver(mouseX, mouseY) || selectedSliderSetTab.isMouseOver(mouseX, mouseY);
+    }
 
     private static ItemStack getDummyEquipment(EquipmentSlot slot) {
         return switch (slot) {
@@ -422,5 +395,38 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
             case HEAD -> HAT;
             default -> ItemStack.EMPTY;
         };
+    }
+    public static void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, int size, float scale, float mouseX, float mouseY, LivingEntity entity,float playerRotation) {
+        float f = (x1 + x2) / 2.0F;
+        float g = (y1 + y2) / 2.0F;
+        context.enableScissor(x1, y1, x2, y2);
+        float h = (float)Math.atan((f - mouseX) / 40.0F);
+        float i = (float)Math.atan((g - mouseY) / 40.0F);
+        float h2= (float) (h* Math.sin((playerRotation / 180.0 + 0.5) * Math.PI));
+        Quaternionf quaternionf = new Quaternionf().rotateZ((float) Math.PI);
+        Quaternionf quaternionf2 = new Quaternionf().rotateX(i * 20.0F * (float) (Math.PI / 180.0));
+        quaternionf.mul(RotationAxis.POSITIVE_Y.rotationDegrees(-playerRotation));
+        quaternionf.mul(quaternionf2);
+        quaternionf2.mul(RotationAxis.POSITIVE_Y.rotationDegrees(-playerRotation));
+        float j = entity.bodyYaw;
+        float k = entity.getYaw();
+        float l = entity.getPitch();
+        float m = entity.lastHeadYaw;
+        float n = entity.headYaw;
+        entity.bodyYaw = 180.0F + h2 * 20.0F;
+        entity.setYaw(180.0F + h2 * 40.0F);
+        entity.setPitch(-i * 20.0F);
+        entity.headYaw = entity.getYaw();
+        entity.lastHeadYaw = entity.getYaw();
+        float o = entity.getScale();
+        Vector3f vector3f = new Vector3f(0.0F, entity.getHeight() / 2.0F + scale * o, 0.0F);
+        float p = size / o;
+        InventoryScreen.drawEntity(context, x1, y1, x2, y2, p, vector3f, quaternionf, quaternionf2, entity);
+        entity.bodyYaw = j;
+        entity.setYaw(k);
+        entity.setPitch(l);
+        entity.lastHeadYaw = m;
+        entity.headYaw = n;
+        context.disableScissor();
     }
 }

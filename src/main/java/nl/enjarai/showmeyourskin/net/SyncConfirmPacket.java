@@ -9,7 +9,7 @@ import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 public record SyncConfirmPacket(boolean success) implements CustomPayload {
     public static final Id<SyncConfirmPacket> PACKET_ID = new Id<>(ShowMeYourSkin.id("sync_confirm"));
     public static final PacketCodec<ByteBuf, SyncConfirmPacket> PACKET_CODEC =
-            PacketCodecs.BOOL.xmap(SyncConfirmPacket::new, SyncConfirmPacket::success);
+            PacketCodecs.BOOLEAN.xmap(SyncConfirmPacket::new, SyncConfirmPacket::success);
 
     @Override
     public Id<? extends CustomPayload> getId() {

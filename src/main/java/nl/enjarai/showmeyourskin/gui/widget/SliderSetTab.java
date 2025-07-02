@@ -1,6 +1,7 @@
 package nl.enjarai.showmeyourskin.gui.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.advancement.AdvancementTabType;
 import net.minecraft.client.render.RenderLayer;
@@ -26,12 +27,13 @@ public class SliderSetTab {
     public void render(DrawContext context, int mouseX, int mouseY, boolean selected) {
         int v = selected ? 64 + 28 : 64;
         AdvancementTabType.LEFT.drawBackground(context, x + 28, y - 29, selected, 1); // index 1 always renders the "middle" texture
-        RenderSystem.enableBlend();
-        context.drawTexture(RenderLayer::getGuiTextured, ICON_TEXTURE, x + (selected ? 6 : 10), y + 5, iconX, iconY, 16, 16, 256, 256);
-        RenderSystem.disableBlend();
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, ICON_TEXTURE, x + (selected ? 6 : 10), y + 5, iconX, iconY, 16, 16, 256, 256);
     }
 
     public boolean isMouseOver(double mouseX, double mouseY) {
-        return mouseX >= x && mouseY >= y && mouseX < x + 32 && mouseY < y + 28;
+        return (mouseX >= x && mouseY >= y && mouseX < x + 32 && mouseY < y + 28)||sliderSet.isMouseOver(mouseX, mouseY);
+    }
+    public boolean isMouseOver2(double mouseX, double mouseY) {
+        return (mouseX >= x && mouseY >= y && mouseX < x + 32 && mouseY < y + 28);
     }
 }

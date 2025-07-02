@@ -1,8 +1,10 @@
 package nl.enjarai.showmeyourskin.gui.widget;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.render.RenderLayer;
@@ -76,21 +78,18 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
     }
 
     public void directRender(DrawContext context, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        RenderSystem.enableBlend();
-
         if (selected) {
-            context.drawTexture(RenderLayer::getGuiTextured, SELECTION_TEXTURE, x - 1, y - 1, 0, 0, 32, 32, 128, 128);
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, SELECTION_TEXTURE, x - 1, y - 1, 0, 0, 32, 32, 128, 128);
         } else if (hovered && children().stream().noneMatch(element -> element.isMouseOver(mouseX, mouseY))) {
-            context.drawTexture(RenderLayer::getGuiTextured, SELECTION_TEXTURE, x - 1, y - 1, 32, 0, 32, 32, 128, 128);
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, SELECTION_TEXTURE, x - 1, y - 1, 32, 0, 32, 32, 128, 128);
         }
 
         renderIcon(context, index, x, y, mouseX, mouseY, hovered, tickDelta);
 
-        RenderSystem.disableBlend();
     }
 
     protected void renderIcon(DrawContext context, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        context.drawTexture(RenderLayer::getGuiTextured, GLOBAL_ICON, x + 3, y + 3, 24, 24, 0, 0, 24, 24, 24, 24);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, GLOBAL_ICON, x + 3, y + 3, 24, 24, 0, 0, 24, 24, 24, 24);
     }
 
     public void playDownSound(SoundManager soundManager) {

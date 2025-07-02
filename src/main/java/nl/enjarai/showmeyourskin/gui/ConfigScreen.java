@@ -1,21 +1,24 @@
 package nl.enjarai.showmeyourskin.gui;
 
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.ColorHelper;
 import nl.enjarai.showmeyourskin.client.ModKeyBindings;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
 import nl.enjarai.showmeyourskin.gui.widget.ConfigEntryWidget;
 import nl.enjarai.showmeyourskin.gui.widget.PressButtonWidget;
 import nl.enjarai.showmeyourskin.gui.widget.ToggleButtonWidget;
+import org.joml.Vector3f;
 
 public abstract class ConfigScreen extends Screen {
     protected static final ButtonTextures BACK_BUTTON_TEXTURES = PressButtonWidget.createTextures("back");
     protected static final ButtonTextures GLOBAL_TOGGLE_TEXTURES = ToggleButtonWidget.createTextures("global_toggle");
-    public static final int TEXT_COLOR = 0x404040;
+    public static final int TEXT_COLOR = ColorHelper.getArgb(64,64,64);
 
     protected final Screen parent;
     protected ArmorConfigWindow armorConfigWindow;
@@ -44,15 +47,10 @@ public abstract class ConfigScreen extends Screen {
 
     @Override
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-        var matrices = context.getMatrices();
-
-        matrices.push();
-        matrices.translate(0, 0, -999);
-
-        super.renderBackground(context, mouseX, mouseY, delta);
+        if(this.client.world == null) {
+            super.renderBackground(context, mouseX, mouseY, delta);
+        }
         renderBackgroundTextures(context);
-
-        matrices.pop();
     }
 
     protected void renderBackgroundTextures(DrawContext context) {

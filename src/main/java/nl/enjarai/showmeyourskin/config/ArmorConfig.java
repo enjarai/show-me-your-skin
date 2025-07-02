@@ -25,9 +25,9 @@ public class ArmorConfig {
             Codec.unboundedMap(HideableEquipment.getCodec(), ArmorPieceConfig.CODEC).fieldOf("glints").forGetter(config -> config.glints)
     ).apply(instance, ArmorConfig::new));
     public static final PacketCodec<ByteBuf, ArmorConfig> PACKET_CODEC = PacketCodec.tuple(
-            PacketCodecs.BOOL, c -> c.showInCombat,
-            PacketCodecs.BOOL, c -> c.showNameTag,
-            PacketCodecs.BOOL, c -> c.forceElytraWhenFlying,
+            PacketCodecs.BOOLEAN, c -> c.showInCombat,
+            PacketCodecs.BOOLEAN, c -> c.showNameTag,
+            PacketCodecs.BOOLEAN, c -> c.forceElytraWhenFlying,
             PacketCodecs.map(HashMap::new, HideableEquipment.getPacketCodec(), ArmorPieceConfig.PACKET_CODEC, VANILLA_VALUES.pieces.size()), ArmorConfig::getPieces,
             PacketCodecs.map(HashMap::new, HideableEquipment.getPacketSlotCodec(), ArmorPieceConfig.PACKET_CODEC, VANILLA_VALUES.trims.size()), ArmorConfig::getTrims,
             PacketCodecs.map(HashMap::new, HideableEquipment.getPacketCodec(), ArmorPieceConfig.PACKET_CODEC, VANILLA_VALUES.glints.size()), ArmorConfig::getGlints,
@@ -169,7 +169,7 @@ public class ArmorConfig {
                 PacketCodecs.BYTE.xmap(ArmorPieceConfig::new, ArmorPieceConfig::getTransparency);
         public static final ArmorPieceConfig VANILLA_VALUES = new ArmorPieceConfig();
 
-        public byte transparency = 100;
+        public byte transparency = 50;
 
         public ArmorPieceConfig() {
         }

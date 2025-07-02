@@ -9,8 +9,9 @@
     "defaultRequire": 1
   },
   "client": [
-    "LivingEntityMixin",
     "EntityRenderDispatcherMixin",
+    "InventoryScreenMixin",
+    "LivingEntityMixin",
     "LivingEntityRendererMixin",
     "armor.ArmorFeatureRendererMixin",
     "armor.EquipmentRendererMixin",
