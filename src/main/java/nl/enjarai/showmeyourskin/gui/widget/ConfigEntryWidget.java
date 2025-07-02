@@ -89,7 +89,7 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
     }
 
     protected void renderIcon(DrawContext context, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, GLOBAL_ICON, x + 3, y + 3, 24, 24, 0, 0, 24, 24, 24, 24);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, GLOBAL_ICON, x + 3, y + 3, 0, 0, 24, 24, 24, 24, 24, 24);
     }
 
     public void playDownSound(SoundManager soundManager) {

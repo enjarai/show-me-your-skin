@@ -4,8 +4,10 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
+import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import nl.enjarai.showmeyourskin.fake.FakePlayerEntityRendererState;
 import nl.enjarai.showmeyourskin.util.IWishMixinAllowedForPublicStaticFields;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,6 +16,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntityRenderDispatcher.class)
 public class EntityRenderDispatcherMixin {
+    @Inject(method="render(Lnet/minecraft/client/render/entity/state/EntityRenderState;DDDLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At("HEAD"))
+    private <E extends Entity, S extends EntityRenderState> void captureEntityContext(S entityRenderState, double x, double y, double z, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
+        if(entityRenderState instanceof PlayerEntityRenderState playerEntityRenderState){
+            IWishMixinAllowedForPublicStaticFields.currentEntity = ((FakePlayerEntityRendererState)playerEntityRenderState).show_me_your_skin$getPlayer();
+        }
+    }
     @Inject(method="render(Lnet/minecraft/client/render/entity/state/EntityRenderState;DDDLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At("TAIL"))
     private <E extends Entity, S extends EntityRenderState> void clearEntityContext(S entityRenderState, double x, double y, double z, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
         IWishMixinAllowedForPublicStaticFields.currentEntity = null;

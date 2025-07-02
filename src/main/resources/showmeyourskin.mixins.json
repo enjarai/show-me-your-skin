@@ -10,11 +10,19 @@
   },
   "client": [
     "EntityRenderDispatcherMixin",
-    "InventoryScreenMixin",
     "LivingEntityMixin",
     "LivingEntityRendererMixin",
+    "PlayerEntityRendererMixin",
+    "PlayerEntityRenderStateMixin",
     "armor.ArmorFeatureRendererMixin",
     "armor.EquipmentRendererMixin",
-    "armor.fabric.ArmorRendererMixin"
+    "armor.fabric.ArmorRendererMixin",
+    "elytra.CapeFeatureRendererMixin",
+    "elytra.ElytraFeatureRendererMixin",
+    "hat.HeadFeatureRendererMixin",
+    "hat.SkullBlockEntityRendererMixin",
+    "shield.BannerBlockEntityRendererMixin",
+    "shield.HeldItemFeatureRendererMixin",
+    "shield.ShieldModelRendererMixin"
   ]
 }
