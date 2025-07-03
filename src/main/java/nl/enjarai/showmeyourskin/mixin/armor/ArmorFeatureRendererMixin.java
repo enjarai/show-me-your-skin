@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = ArmorFeatureRenderer.class, priority = 500)
 public abstract class ArmorFeatureRendererMixin<T extends BipedEntityRenderState, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> {
+    //label helmet, chestplate, leggings, boots
     @Inject(
             method = "renderArmor",
             at = @At(value = "HEAD")

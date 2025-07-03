@@ -5,9 +5,9 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.TexturedRenderLayers;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexConsumers;
 import net.minecraft.client.render.entity.equipment.EquipmentModel;
 import net.minecraft.client.render.entity.equipment.EquipmentRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -21,11 +21,11 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EquipmentRenderer.class)
 public class EquipmentRendererMixin {
+    //check glint for helmet, chestplate, leggings, boots, elytra
     @ModifyExpressionValue(
             method = "render(Lnet/minecraft/client/render/entity/equipment/EquipmentModel$LayerType;Lnet/minecraft/registry/RegistryKey;Lnet/minecraft/client/model/Model;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/util/Identifier;)V",
             at = @At(
@@ -33,28 +33,14 @@ public class EquipmentRendererMixin {
                     target = "Lnet/minecraft/item/ItemStack;hasGlint()Z"
             )
     )
-    private boolean toggleGlint(boolean original) {
+    private boolean modifyGlint(boolean original) {
         var ctx = IWishMixinAllowedForPublicStaticFields.currentArmorContext;
         if (ctx != null && ctx.shouldModify()) {
             return original && ctx.getApplicableGlintTransparency() > 0;
         }
         return original;
     }
-    @WrapOperation(
-            method = "render(Lnet/minecraft/client/render/entity/equipment/EquipmentModel$LayerType;Lnet/minecraft/registry/RegistryKey;Lnet/minecraft/client/model/Model;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/util/Identifier;)V",
-            at = @At(
-                    value = "INVOKE",
-                    target="net/minecraft/client/render/item/ItemRenderer.getArmorGlintConsumer (Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;Z)Lnet/minecraft/client/render/VertexConsumer;"
-            )
-    )
-    private VertexConsumer modifyGlint123(VertexConsumerProvider vertexConsumers, RenderLayer layer, boolean glint, Operation<VertexConsumer> original) {
-        var ctx=IWishMixinAllowedForPublicStaticFields.currentArmorContext;
-        if(ctx!=null&&ctx.shouldModify()) {
-            return glint&& ctx.getApplicablePieceTransparency()>0 ? VertexConsumers.union(vertexConsumers.getBuffer(RenderLayer.getGlint()), vertexConsumers.getBuffer(layer)) : vertexConsumers.getBuffer(layer);
-        }
-        return original.call(vertexConsumers,layer,glint);
-    }
-
+    //use transparent layer for helmet, chestplate, leggings, boots, elytra
     @WrapOperation(
             method = "render(Lnet/minecraft/client/render/entity/equipment/EquipmentModel$LayerType;Lnet/minecraft/registry/RegistryKey;Lnet/minecraft/client/model/Model;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/util/Identifier;)V",
             at = @At(
@@ -64,27 +50,47 @@ public class EquipmentRendererMixin {
     )
     private RenderLayer modifyRenderLayer(Identifier texture, Operation<RenderLayer> original) {
         var ctx = IWishMixinAllowedForPublicStaticFields.currentArmorContext;
-        if (ctx!= null && ctx.getApplicablePieceTransparency() < 1) {
+        if (ctx!= null && ctx.shouldModify() && ctx.getApplicablePieceTransparency() < 1) {
             return RenderLayer.createArmorTranslucent(texture);
         }
         return original.call(texture);
     }
+    @WrapOperation(method = "render(Lnet/minecraft/client/render/entity/equipment/EquipmentModel$LayerType;Lnet/minecraft/registry/RegistryKey;Lnet/minecraft/client/model/Model;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/util/Identifier;)V",
+            at=@At(value="INVOKE",target="net/minecraft/client/render/TexturedRenderLayers.getArmorTrims (Z)Lnet/minecraft/client/render/RenderLayer;"))
+    private RenderLayer modifyTrimRenderLayer(boolean decal, Operation<RenderLayer> original){
+        var ctx = IWishMixinAllowedForPublicStaticFields.currentArmorContext;
+        if (ctx != null && ctx.shouldModify() && ctx.getApplicablePieceTransparency() < 1) {
+            return RenderLayer.createArmorTranslucent(TexturedRenderLayers.ARMOR_TRIMS_ATLAS_TEXTURE);
+        }
+        return original.call(decal);
+    }
+    @WrapOperation(method = "render(Lnet/minecraft/client/render/entity/equipment/EquipmentModel$LayerType;Lnet/minecraft/registry/RegistryKey;Lnet/minecraft/client/model/Model;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/util/Identifier;)V",
+            at=@At(value="INVOKE",target="net/minecraft/client/model/Model.render (Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V"))
+    private void modifyTrimColor(Model instance, MatrixStack matrices, VertexConsumer vertices, int light, int overlay, Operation<Void> original) {
+        var ctx = IWishMixinAllowedForPublicStaticFields.currentArmorContext;
+        var percentage=1F;
+        if (ctx != null && ctx.shouldModify()) {
+            percentage=ctx.getApplicablePieceTransparency();
+            if (percentage<=0.1){
+                return;
+            }
+        }
+        instance.render( matrices, vertices, light, overlay,ColorHelper.getWhite(percentage));
+    }
+    //modify color for helmet, chestplate, leggings, boots, elytra
     @WrapOperation(method="render(Lnet/minecraft/client/render/entity/equipment/EquipmentModel$LayerType;Lnet/minecraft/registry/RegistryKey;Lnet/minecraft/client/model/Model;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/util/Identifier;)V",
             at=@At(value="INVOKE",target="net/minecraft/client/model/Model.render (Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;III)V")
     )
-    private void modifyRenderLayer(Model instance, MatrixStack matrices, VertexConsumer vertices, int light, int overlay, int color, Operation<Void> original) {
+    private void modifyColor(Model instance, MatrixStack matrices, VertexConsumer vertices, int light, int overlay, int color, Operation<Void> original) {
         var ctx = IWishMixinAllowedForPublicStaticFields.currentArmorContext;
         var percentage=1F;
-        if (ctx != null) {
+        if (ctx != null&& ctx.shouldModify()) {
             percentage=ctx.getApplicablePieceTransparency();
-            if (percentage==0){
+            if (percentage<=0.1){
                 return;
             }
-            if (percentage < 1) {
-                color= ColorHelper.withAlpha(ColorHelper.channelFromFloat(percentage), color);
-            }
         }
-        original.call(instance, matrices, vertices, light, overlay, color);
+        original.call(instance, matrices, vertices, light, overlay, ColorHelper.withAlpha(ColorHelper.channelFromFloat(percentage), color));
     }
 
     @Inject(

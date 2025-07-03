@@ -1,5 +1,8 @@
 package nl.enjarai.showmeyourskin.client;
 
+import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.platform.DepthTestFunction;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderPhase;
@@ -8,10 +11,19 @@ import net.minecraft.util.Util;
 
 import java.util.function.Function;
 
+import static net.minecraft.client.gl.RenderPipelines.ENTITY_SNIPPET;
 import static net.minecraft.client.render.RenderPhase.*;
 
 public class ModRenderLayers {
-    public static final Function<Identifier, RenderLayer> ARMOR_TRANSLUCENT_NO_CULL = Util.memoize(texture -> {
+    public static final RenderPipeline MOD_ARMOR_DECAL_TRANSLUCENT = RenderPipelines.register(
+            RenderPipeline.builder(ENTITY_SNIPPET)
+                    .withLocation("pipeline/armor_decal_cutout_no_cull")
+                    .withShaderDefine("ALPHA_CUTOUT", 0.1F)
+                    .withShaderDefine("NO_OVERLAY")
+                    .withCull(false)
+                    .withBlend(BlendFunction.TRANSLUCENT)
+                    .build());
+    public static final Function<Identifier, RenderLayer> MOD_ARMOR_DECAL_TRANSLUCENT_NO_CULL = Util.memoize(texture -> {
         var params = RenderLayer.MultiPhaseParameters.builder()
                 .texture(new RenderPhase.Texture(texture, false))
                 .lightmap(ENABLE_LIGHTMAP)
@@ -19,7 +31,7 @@ public class ModRenderLayers {
                 .layering(VIEW_OFFSET_Z_LAYERING)
                 .build(true);
         return RenderLayer.of(
-                "armor_cutout_no_cull", 1536, true, false, RenderPipelines.ARMOR_CUTOUT_NO_CULL, params);
+                "armor_cutout_no_cull", 1536, true, false, MOD_ARMOR_DECAL_TRANSLUCENT, params);
     });
 
 }

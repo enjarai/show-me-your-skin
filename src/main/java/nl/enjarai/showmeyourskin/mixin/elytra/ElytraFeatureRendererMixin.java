@@ -35,13 +35,13 @@ public abstract class ElytraFeatureRendererMixin<S extends BipedEntityRenderStat
     public ElytraFeatureRendererMixin(FeatureRendererContext<S, M> context) {
         super(context);
     }
-
+    //label elytra
     @Inject(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/state/BipedEntityRenderState;FF)V",
             at = @At("HEAD"),
             cancellable = true
     )
-    private void showmeyourskin$hideElytra(
+    private void setArmorContext(
             MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, S bipedEntityRenderState, float f, float g, CallbackInfo ci) {
         if (bipedEntityRenderState instanceof PlayerEntityRenderState playerEntityRenderState){
             PlayerEntity player = ((FakePlayerEntityRendererState)playerEntityRenderState).show_me_your_skin$getPlayer();

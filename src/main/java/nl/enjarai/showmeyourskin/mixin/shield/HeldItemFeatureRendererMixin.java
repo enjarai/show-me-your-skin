@@ -13,6 +13,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Arm;
 import nl.enjarai.showmeyourskin.fake.FakePlayerEntityRendererState;
 import nl.enjarai.showmeyourskin.util.IWishMixinAllowedForPublicStaticFields;
+import nl.enjarai.showmeyourskin.util.MixinContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,13 +26,13 @@ public abstract class HeldItemFeatureRendererMixin<S extends ArmedEntityRenderSt
     }
 
     @Inject(method="renderItem",at=@At("HEAD"))
-    private void renderItem1(S entityState, ItemRenderState itemState, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
+    private void grabHandRenderContext(S entityState, ItemRenderState itemState, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
         if (entityState instanceof PlayerEntityRenderState playerEntityRenderState){
-            IWishMixinAllowedForPublicStaticFields.currentEntity=((FakePlayerEntityRendererState)playerEntityRenderState).show_me_your_skin$getPlayer();
+            MixinContext.ENTITY.setContext(((FakePlayerEntityRendererState)playerEntityRenderState).show_me_your_skin$getPlayer());
         }
     }
     @Inject(method="renderItem",at=@At("RETURN"))
-    private void renderItem2(S entityState, ItemRenderState itemState, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
-        IWishMixinAllowedForPublicStaticFields.currentEntity=null;
+    private void clearHandRenderContext(S entityState, ItemRenderState itemState, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
+        MixinContext.ENTITY.clearContext();
     }
 }

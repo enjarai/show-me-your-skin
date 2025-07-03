@@ -16,7 +16,6 @@
     "PlayerEntityRenderStateMixin",
     "armor.ArmorFeatureRendererMixin",
     "armor.EquipmentRendererMixin",
-    "armor.fabric.ArmorRendererMixin",
     "elytra.CapeFeatureRendererMixin",
     "elytra.ElytraFeatureRendererMixin",
     "hat.HeadFeatureRendererMixin",

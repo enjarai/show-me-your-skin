@@ -26,22 +26,18 @@ import java.util.function.Function;
 
 @Mixin(BannerBlockEntityRenderer.class)
 public abstract class BannerBlockEntityRendererMixin {
-    /*
     private static final ThreadLocal<Boolean> showmeyourskin$isShield = ThreadLocal.withInitial(() -> false);
 
     @Inject(
             method = "renderCanvas(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/util/SpriteIdentifier;ZLnet/minecraft/util/DyeColor;Lnet/minecraft/component/type/BannerPatternsComponent;ZZ)V",at = @At("HEAD"),
             cancellable = true
     )
-    private static void showmeyourskin$captureBannerCanvasContext(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, ModelPart canvas, SpriteIdentifier baseSprite, boolean isBanner, DyeColor color, BannerPatternsComponent patterns, boolean glint, boolean solid, CallbackInfo ci) {
+    private static void captureBannerCanvasContext(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, ModelPart canvas, SpriteIdentifier baseSprite, boolean isBanner, DyeColor color, BannerPatternsComponent patterns, boolean glint, boolean solid, CallbackInfo ci) {
         showmeyourskin$isShield.set(!isBanner);
-
         if (!isBanner) {
             var ctx = MixinContext.ENTITY.getContext();
-
-            if (ctx instanceof PlayerEntity) {
+            if (ctx!= null) {
                 var t = ModConfig.INSTANCE.getApplicablePieceTransparency(ctx.getUuid(), HideableEquipment.SHIELD);
-
                 if (t <= 0) {
                     ci.cancel();
                 }
@@ -56,13 +52,12 @@ public abstract class BannerBlockEntityRendererMixin {
             ),
             index = 1
     )
-    private static Function<Identifier, RenderLayer> showmeyourskin$modifyBannerCanvasRenderLayer(Function<Identifier, RenderLayer> layerFactory) {
+    private static Function<Identifier, RenderLayer> modifyBannerCanvasRenderLayer(Function<Identifier, RenderLayer> layerFactory) {
         if (showmeyourskin$isShield.get()) {
             var ctx = MixinContext.ENTITY.getContext();
 
-            if (ctx instanceof PlayerEntity) {
+            if (ctx !=null) {
                 var t = ModConfig.INSTANCE.getApplicablePieceTransparency(ctx.getUuid(), HideableEquipment.SHIELD);
-
                 if (t < 1) {
                     return RenderLayer::getEntityTranslucent;
                 }
@@ -82,7 +77,7 @@ public abstract class BannerBlockEntityRendererMixin {
         if (showmeyourskin$isShield.get()) {
             var ctx = MixinContext.ENTITY.getContext();
 
-            if (ctx instanceof PlayerEntity) {
+            if (ctx!=null) {
                 var t = ModConfig.INSTANCE.getApplicablePieceTransparency(ctx.getUuid(), HideableEquipment.SHIELD);
 
                 if (t < 1) {
@@ -114,7 +109,7 @@ public abstract class BannerBlockEntityRendererMixin {
         if (showmeyourskin$isShield.get()) {
             var ctx = MixinContext.ENTITY.getContext();
 
-            if (ctx instanceof PlayerEntity) {
+            if (ctx!=null) {
                 var t = ModConfig.INSTANCE.getApplicablePieceTransparency(ctx.getUuid(), HideableEquipment.SHIELD);
 
                 if (t < 1) {
@@ -138,7 +133,7 @@ public abstract class BannerBlockEntityRendererMixin {
         if (showmeyourskin$isShield.get()) {
             var ctx = MixinContext.ENTITY.getContext();
 
-            if (ctx instanceof PlayerEntity) {
+            if (ctx!=null) {
                 var t = ModConfig.INSTANCE.getApplicablePieceTransparency(ctx.getUuid(), HideableEquipment.SHIELD);
 
                 if (t < 1) {
@@ -149,6 +144,4 @@ public abstract class BannerBlockEntityRendererMixin {
 
         return original;
     }
-
-     */
 }
