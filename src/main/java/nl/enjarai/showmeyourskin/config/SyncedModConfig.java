@@ -13,9 +13,9 @@ public interface SyncedModConfig {
             Codec.BOOL.optionalFieldOf("allowNotForceElytraWhenFlying", true).forGetter(SyncedModConfig::allowNotForceElytraWhenFlying)
     ).apply(instance, SyncedModConfigClient::new));
     PacketCodec<RegistryByteBuf, SyncedModConfig> PACKET_CODEC = PacketCodec.tuple(
-            PacketCodecs.BOOL, SyncedModConfig::allowNotShowInCombat,
-            PacketCodecs.BOOL, SyncedModConfig::allowNotShowNameTag,
-            PacketCodecs.BOOL, SyncedModConfig::allowNotForceElytraWhenFlying,
+            PacketCodecs.BOOLEAN, SyncedModConfig::allowNotShowInCombat,
+            PacketCodecs.BOOLEAN, SyncedModConfig::allowNotShowNameTag,
+            PacketCodecs.BOOLEAN, SyncedModConfig::allowNotForceElytraWhenFlying,
             SyncedModConfigClient::new
     );
 

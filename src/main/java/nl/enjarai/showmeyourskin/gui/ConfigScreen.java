@@ -15,7 +15,7 @@ import nl.enjarai.showmeyourskin.gui.widget.ToggleButtonWidget;
 public abstract class ConfigScreen extends Screen {
     protected static final ButtonTextures BACK_BUTTON_TEXTURES = PressButtonWidget.createTextures("back");
     protected static final ButtonTextures GLOBAL_TOGGLE_TEXTURES = ToggleButtonWidget.createTextures("global_toggle");
-    public static final int TEXT_COLOR = 0x404040;
+    public static final int TEXT_COLOR = 0xff404040;
 
     protected final Screen parent;
     protected ArmorConfigWindow armorConfigWindow;
@@ -44,15 +44,8 @@ public abstract class ConfigScreen extends Screen {
 
     @Override
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-        var matrices = context.getMatrices();
-
-        matrices.push();
-        matrices.translate(0, 0, -999);
-
         super.renderBackground(context, mouseX, mouseY, delta);
         renderBackgroundTextures(context);
-
-        matrices.pop();
     }
 
     protected void renderBackgroundTextures(DrawContext context) {

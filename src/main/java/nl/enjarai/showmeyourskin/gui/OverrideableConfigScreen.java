@@ -1,6 +1,7 @@
 package nl.enjarai.showmeyourskin.gui;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.RenderLayer;
@@ -43,7 +44,7 @@ public abstract class OverrideableConfigScreen extends ConfigScreen {
         int leftSide = getWindowLeft() + 3;
         int topSide = getSelectorTop();
 
-        context.drawTexture(RenderLayer::getGuiTextured, OverrideableConfigScreen.SELECTOR_TEXTURE, leftSide, topSide, 1, 1, 236, 127, 256, 256);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, OverrideableConfigScreen.SELECTOR_TEXTURE, leftSide, topSide, 1, 1, 236, 127, 256, 256);
     }
 
     @Override
