@@ -1,1 +1,2 @@
-- Added support for 1.21.1.
+- Added support for 1.21.6-8. (Thank you @LightgraycaAT!)
+- Removed shield transparency options for now to make a release more feasible.

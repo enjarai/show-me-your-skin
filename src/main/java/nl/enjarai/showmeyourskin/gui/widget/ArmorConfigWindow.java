@@ -120,14 +120,14 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
                 new SliderSet(this, getWindowLeft(), getWindowTop(), sliders -> {
                     sliders.add(getOpacitySlider(HideableEquipment.ELYTRA,
                             14, 11, "gui.showmeyourskin.armorScreen.piece.elytra"));
-                    sliders.add(getOpacitySlider(HideableEquipment.SHIELD,
-                            14, 35, "gui.showmeyourskin.armorScreen.piece.shield"));
+//                    sliders.add(getOpacitySlider(HideableEquipment.SHIELD,
+//                            14, 35, "gui.showmeyourskin.armorScreen.piece.shield"));
                     sliders.add(getOpacitySlider(HideableEquipment.HAT,
-                            14, 59, "gui.showmeyourskin.armorScreen.piece.hat"));
+                            14, 35, "gui.showmeyourskin.armorScreen.piece.hat"));
 
                     sliders.add(getGlintButton(HideableEquipment.ELYTRA, 94, 11));
-                    sliders.add(getGlintButton(HideableEquipment.SHIELD, 94, 35));
-                    sliders.add(getGlintButton(HideableEquipment.HAT, 94, 59));
+//                    sliders.add(getGlintButton(HideableEquipment.SHIELD, 94, 35));
+                    sliders.add(getGlintButton(HideableEquipment.HAT, 94, 35));
                 }, ArmorConfigWindow::getDummyEquipment, -180, SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA.value()))
         );
 
@@ -224,6 +224,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
                 getWindowRight() - 112, getWindowTop() + 8,
                 getWindowRight() - 5, getWindowTop() + 168
         );
+        player.elytraFlightController.update();
         DrawUtils.drawEntityFollowingMouse(
                 context,
                 getWindowRight() - 112, getWindowTop() - 108, getWindowRight() - 5, getWindowTop() + 168,
