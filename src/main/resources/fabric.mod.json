@@ -36,16 +36,15 @@
     ]
   },
   "mixins": [
-    "showmeyourskin.mixins.json",
-    "showmeyourskin.compat.wildfire_gender.mixins.json"
+    "showmeyourskin.mixins.json"
   ],
   "accessWidener" : "showmeyourskin.accesswidener",
 
   "depends": {
     "fabricloader": ">=0.15.0",
     "fabric-api": "*",
-    "minecraft": ">=1.21.2- <=1.21.3",
-    "cicada": ">=0.7.0 <1.0.0",
+    "minecraft": ">=1.21.6- <=1.21.8",
+    "cicada": ">=0.14.0 <1.0.0",
     "cardinal-components-base": "*",
     "cardinal-components-entity": "*"
   },

@@ -3,6 +3,7 @@ package nl.enjarai.showmeyourskin.mixin.armor.fabric;
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -33,7 +34,7 @@ public interface ArmorRendererMixin {
             if (t < 1) {
                 if (t > 0) {
                     VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(
-                            vertexConsumers, ModRenderLayers.ARMOR_TRANSLUCENT_NO_CULL.apply(texture),
+                            vertexConsumers, RenderLayer.createArmorTranslucent(texture),
                             stack.hasGlint() && ctx.getApplicableGlintTransparency() > 0
                     );
                     model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, ColorHelper.fromFloats(t, 1.0f, 1.0f, 1.0f));

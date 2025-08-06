@@ -3,6 +3,7 @@ package nl.enjarai.showmeyourskin.gui.widget;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.ButtonTextures;
@@ -76,10 +77,8 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
 
     @Override
     protected void renderIcon(DrawContext context, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        context.drawTexture(RenderLayer::getGuiTextured, skinTextures.get().texture(), x + 3, y + 3, 8.0F, 8.0F, 24, 24, 8, 8, 64, 64);
-        RenderSystem.enableBlend();
-        context.drawTexture(RenderLayer::getGuiTextured, skinTextures.get().texture(), x + 3, y + 3, 40.0F, 8.0F, 24, 24, 8, 8, 64, 64);
-        RenderSystem.disableBlend();
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, skinTextures.get().texture(), x + 3, y + 3, 8.0F, 8.0F, 24, 24, 8, 8, 64, 64);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, skinTextures.get().texture(), x + 3, y + 3, 40.0F, 8.0F, 24, 24, 8, 8, 64, 64);
     }
 
     @Override

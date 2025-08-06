@@ -6,6 +6,7 @@ import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.block.entity.BannerPatterns;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.Screen;
@@ -32,6 +33,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
@@ -53,8 +55,8 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     public static final Identifier TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen.png");
     public static final Identifier BACKGROUND_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_background.png");
     public static final Identifier OVERLAY_TEXTURE = ShowMeYourSkin.id("textures/gui/armor_screen_disabled.png");
-    private static final int TEXT_COLOR = 0x505050;
-    private static final int TEXT_COLOR_RED = 0x880000;
+    private static final int TEXT_COLOR = ColorHelper.getArgb(80, 80, 80);
+    private static final int TEXT_COLOR_RED = ColorHelper.getArgb(136, 0, 0);
     private static final Text GLINT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.glintTooltip");
     private static final Text COMBAT_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.combatTooltip");
     private static final Text NAME_TAG_TOOLTIP = Text.translatable("gui.showmeyourskin.armorScreen.nameTagTooltip");
@@ -189,7 +191,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
             sliderSetTabs.render(context, mouseX, mouseY, sliderSetTabs == selectedSliderSetTab);
         }
 
-        renderBackground(context, BACKGROUND_TEXTURE, -999);
+        renderBackground(context, BACKGROUND_TEXTURE);
         for (var drawable : buttons) {
             drawable.render(
                     context,
@@ -205,10 +207,6 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
                 delta
         );
 
-        var playerX = getWindowRight() - 59;
-        var playerY = getWindowTop() + 155;
-        var playerRotation = getCurrentPlayerRotation();
-
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         context.drawText(
                 textRenderer, name,
@@ -222,26 +220,19 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
             );
         }
 
-        var matrices = context.getMatrices();
-
-        matrices.push();
-        matrices.translate(playerX, playerY, -950);
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(playerRotation));
-        matrices.translate(0, 0, 950.0);
         context.enableScissor(
                 getWindowRight() - 112, getWindowTop() + 8,
                 getWindowRight() - 5, getWindowTop() + 168
         );
         DrawUtils.drawEntityFollowingMouse(
-                matrices, 0, 0, 70,
-                getCurrentPlayerRotation(), mouseX - playerX, mouseY - playerY,
-                player
+                context,
+                getWindowRight() - 112, getWindowTop() - 108, getWindowRight() - 5, getWindowTop() + 168,
+                70, 1, getCurrentPlayerRotation(), mouseX, mouseY - 65, player
         );
         context.disableScissor();
-        matrices.pop();
 
         if (!isEditable()) {
-            renderBackground(context, OVERLAY_TEXTURE, 999);
+            renderBackground(context, OVERLAY_TEXTURE);
         }
     }
 
@@ -254,19 +245,14 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
         return MathHelper.lerp(getPlayerRotationDelta(), lastPlayerRotation, selectedSliderSetTab.sliderSet.rotatedBy);
     }
 
-    public void renderBackground(DrawContext context, Identifier backgroundTexture, int zIndex) {
+    public void renderBackground(DrawContext context, Identifier backgroundTexture) {
         int leftSide = getWindowLeft() + 3;
         int topSide = getWindowTop();
-        var matrices = context.getMatrices();
 
-        RenderSystem.enableBlend();
-
-        matrices.push();
-        matrices.translate(0, 0, zIndex);
-        context.drawTexture(RenderLayer::getGuiTextured, backgroundTexture, leftSide, topSide, 1, 1, 236, 254, 256, 256);
-        matrices.pop();
-
-        RenderSystem.disableBlend();
+        context.drawTexture(
+                RenderPipelines.GUI_TEXTURED, backgroundTexture, leftSide, topSide,
+                1, 1, 236, 254, 256, 256
+        );
     }
 
     protected SliderWidget getOpacitySlider(HideableEquipment slot, int x, int y, String translationKey) {
@@ -333,7 +319,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     public boolean isEditable() {
         return ModConfig.INSTANCE.globalEnabled;
     }
-    
+
     public boolean isOverridden() {
         return false; // !armorConfig.equals(ModConfig.INSTANCE.getApplicable(player.getUuid()));
     }
@@ -362,6 +348,31 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
     @Override
     public List<? extends Element> children() {
         return children;
+    }
+
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        for (Element element : children) {
+            if (element.isMouseOver(mouseX, mouseY)) {
+                return true;
+            }
+        }
+
+        for (var sliderSetTab : sliderSetTabs) {
+            if (sliderSetTab.isMouseOver(mouseX, mouseY)) {
+                MinecraftClient.getInstance().getSoundManager()
+                        .play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+
+                selectTab(sliderSetTab);
+                return true;
+            }
+        }
+
+        if (selectedSliderSetTab.sliderSet.isMouseOver(mouseX, mouseY)) {
+            return true;
+        }
+
+        return super.isMouseOver(mouseX, mouseY);
     }
 
     @Override

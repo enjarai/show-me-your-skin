@@ -7,8 +7,10 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.entity.Entity;
 import nl.enjarai.cicada.api.conversation.ConversationManager;
 import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
+import nl.enjarai.cicada.api.render.RenderStateKey;
 import nl.enjarai.cicada.api.util.CicadaEntrypoint;
 import nl.enjarai.cicada.api.util.JsonSource;
 import nl.enjarai.showmeyourskin.client.ModKeyBindings;
@@ -25,6 +27,10 @@ import org.jetbrains.annotations.Nullable;
 public class ShowMeYourSkinClient implements ClientModInitializer, CicadaEntrypoint {
 	public static final HandshakeClient HANDSHAKE_CLIENT =
 			new HandshakeClient(config -> {});
+	public static final RenderStateKey<Entity> ENTITY_RENDER_STATE_KEY = RenderStateKey.of(
+			ShowMeYourSkin.id("entity"),
+			null
+	);
 
 	@Override
 	public void onInitializeClient() {

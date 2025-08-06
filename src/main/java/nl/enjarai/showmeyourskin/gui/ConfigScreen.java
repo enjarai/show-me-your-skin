@@ -5,6 +5,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.ColorHelper;
 import nl.enjarai.showmeyourskin.client.ModKeyBindings;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.gui.widget.ArmorConfigWindow;
@@ -15,8 +16,7 @@ import nl.enjarai.showmeyourskin.gui.widget.ToggleButtonWidget;
 public abstract class ConfigScreen extends Screen {
     protected static final ButtonTextures BACK_BUTTON_TEXTURES = PressButtonWidget.createTextures("back");
     protected static final ButtonTextures GLOBAL_TOGGLE_TEXTURES = ToggleButtonWidget.createTextures("global_toggle");
-    public static final int TEXT_COLOR = 0xff404040;
-
+    public static final int TEXT_COLOR = ColorHelper.getArgb(64, 64, 64);
     protected final Screen parent;
     protected ArmorConfigWindow armorConfigWindow;
     private PressButtonWidget backButton;
