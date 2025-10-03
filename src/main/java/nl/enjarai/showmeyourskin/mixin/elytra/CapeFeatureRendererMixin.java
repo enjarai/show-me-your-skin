@@ -1,10 +1,12 @@
 package nl.enjarai.showmeyourskin.mixin.elytra;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.feature.CapeFeatureRenderer;
 import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
@@ -32,4 +34,17 @@ public abstract class CapeFeatureRendererMixin {
         }
         return original;
     }
+
+    @WrapWithCondition(
+            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/state/PlayerEntityRenderState;FF)V",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V"
+            )
+    )
+    private boolean showmeyourskin$fixCapeOffset(MatrixStack instance, float x, float y, float z, @Local(argsOnly = true) PlayerEntityRenderState playerEntityRenderState) {
+        Entity entity = ShowMeYourSkinClient.ENTITY_RENDER_STATE_KEY.get(playerEntityRenderState);
+        return entity == null || ModConfig.INSTANCE.getApplicablePieceTransparency(entity.getUuid(), HideableEquipment.CHEST) > 0;
+    }
+
 }
