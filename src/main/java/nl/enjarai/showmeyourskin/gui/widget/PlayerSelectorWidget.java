@@ -58,15 +58,15 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
             var dummyPlayer = DummyClientPlayerEntity.getInstance();
             var profile = dummyPlayer.getGameProfile();
             entries.add(new PlayerSelectorEntry(
-                    client, this, profile.getId(),
-                    Text.translatable("gui.showmeyourskin.armorScreen.playerName", profile.getName()), dummyPlayer::getSkinTextures
+                    client, this, profile.id(),
+                    Text.translatable("gui.showmeyourskin.armorScreen.playerName", profile.name()), dummyPlayer::getSkin
             ));
         } else {
             for (UUID uuid : client.player.networkHandler.getPlayerUuids()) {
                 PlayerListEntry playerListEntry = client.player.networkHandler.getPlayerListEntry(uuid);
                 if (playerListEntry != null) {
-                    UUID playerUuid = playerListEntry.getProfile().getId();
-                    String playerName = playerListEntry.getProfile().getName();
+                    UUID playerUuid = playerListEntry.getProfile().id();
+                    String playerName = playerListEntry.getProfile().name();
                     entries.add(new PlayerSelectorEntry(
                             client, this, playerUuid,
                             Text.translatable("gui.showmeyourskin.armorScreen.playerName", playerName), playerListEntry::getSkinTextures
@@ -152,13 +152,15 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(Click click, boolean doubled) {
+        double mouseX = click.x();
+        double mouseY = click.y();
         if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height) {
             for (var child : getEntries()) {
                 var childX = getEntryX(child);
                 var childY = getEntryY(child);
                 if (mouseX >= childX && mouseX < childX + child.getWidth() && mouseY >= childY && mouseY < childY + child.getHeight()) {
-                    return child.mouseClicked(mouseX, mouseY, button);
+                    return child.mouseClicked(click, doubled);
                 }
             }
         }
@@ -167,7 +169,7 @@ public class PlayerSelectorWidget extends AbstractParentElement implements Drawa
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        scroll -= (verticalAmount + horizontalAmount) * 30;
+        scroll -= (int) ((verticalAmount + horizontalAmount) * 30);
         if (scroll < 0) {
             scroll = 0;
         } else if (scroll > getMaxScroll()) {

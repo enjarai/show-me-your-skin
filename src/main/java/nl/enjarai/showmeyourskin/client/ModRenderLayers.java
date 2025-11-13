@@ -26,7 +26,7 @@ public class ModRenderLayers {
 
     public static final Function<Identifier, RenderLayer> ARMOR_DECAL_TRANSLUCENT_NO_CULL = Util.memoize(texture -> {
         var params = RenderLayer.MultiPhaseParameters.builder()
-                .texture(new RenderPhase.Texture(texture, false))
+                .texture(new Texture(texture, false))
                 .lightmap(ENABLE_LIGHTMAP)
                 .overlay(ENABLE_OVERLAY_COLOR)
                 .layering(VIEW_OFFSET_Z_LAYERING)

@@ -41,10 +41,10 @@
   "accessWidener" : "showmeyourskin.accesswidener",
 
   "depends": {
-    "fabricloader": ">=0.15.0",
+    "fabricloader": ">=0.17.0",
     "fabric-api": "*",
-    "minecraft": ">=1.21.6- <=1.21.8",
-    "cicada": ">=0.14.1 <1.0.0",
+    "minecraft": "1.21.10",
+    "cicada": ">=0.14.3 <1.0.0",
     "cardinal-components-base": "*",
     "cardinal-components-entity": "*"
   },

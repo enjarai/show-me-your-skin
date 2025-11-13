@@ -1,12 +1,15 @@
 package nl.enjarai.showmeyourskin.mixin.armor;
 
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.state.BipedEntityRenderState;
+import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.util.ArmorContext;
@@ -16,15 +19,18 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = ArmorFeatureRenderer.class, priority = 500)
+@Mixin(value = ArmorFeatureRenderer.class)
 public abstract class ArmorFeatureRendererMixin<T extends BipedEntityRenderState, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> {
-    @Inject(
-            method = "renderArmor",
-            at = @At(value = "HEAD")
-    )
-    private void setArmorContext(MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack,
-                                 EquipmentSlot slot, int light, A armorModel, CallbackInfo ci) {
-        if (IWishMixinAllowedForPublicStaticFields.currentEntity instanceof LivingEntity livingEntity) {
+    @Inject(method = "renderArmor", at = @At("HEAD"))
+    private void captureSlotAndCheckHide(
+            MatrixStack matrices,
+            OrderedRenderCommandQueue vertexConsumers,
+            ItemStack stack,
+            EquipmentSlot slot,
+            int light,
+            BipedEntityRenderState armorModel,
+            CallbackInfo ci) {
+        if (IWishMixinAllowedForPublicStaticFields.currentEntity instanceof PlayerEntity livingEntity) {
             IWishMixinAllowedForPublicStaticFields.currentArmorContext = new ArmorContext(HideableEquipment.fromSlot(slot), livingEntity);
         }
     }

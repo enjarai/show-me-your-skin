@@ -2,6 +2,7 @@ package nl.enjarai.showmeyourskin.mixin.hat;
 
 
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.feature.HeadFeatureRenderer;
@@ -25,10 +26,10 @@ public abstract class HeadFeatureRendererMixin<S extends LivingEntityRenderState
     }
 
     @Inject(
-            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/state/LivingEntityRenderState;FF)V",
+            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;ILnet/minecraft/client/render/entity/state/LivingEntityRenderState;FF)V",
             at = @At("HEAD")
     )
-    private void grabHatRenderContext(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, S livingEntityRenderState, float f, float g, CallbackInfo ci) {
+    private void grabHatRenderContext(MatrixStack matrixStack, OrderedRenderCommandQueue orderedRenderCommandQueue, int i, S livingEntityRenderState, float f, float g, CallbackInfo ci) {
         if (livingEntityRenderState instanceof PlayerEntityRenderState playerEntityRenderState &&
                 ShowMeYourSkinClient.ENTITY_RENDER_STATE_KEY.get(playerEntityRenderState) instanceof PlayerEntity player) {
             MixinContext.ENTITY.setContext(player);
@@ -36,10 +37,10 @@ public abstract class HeadFeatureRendererMixin<S extends LivingEntityRenderState
     }
 
     @Inject(
-            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/state/LivingEntityRenderState;FF)V",
+            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;ILnet/minecraft/client/render/entity/state/LivingEntityRenderState;FF)V",
             at = @At("RETURN")
     )
-    private void resetHatRenderContext(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, S livingEntityRenderState, float f, float g, CallbackInfo ci) {
+    private void resetHatRenderContext(MatrixStack matrixStack, OrderedRenderCommandQueue orderedRenderCommandQueue, int i, S livingEntityRenderState, float f, float g, CallbackInfo ci) {
         MixinContext.ENTITY.clearContext();
     }
 }

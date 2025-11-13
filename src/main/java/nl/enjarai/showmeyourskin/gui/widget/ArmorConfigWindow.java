@@ -16,7 +16,6 @@ import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.math.MatrixStack;
@@ -280,7 +279,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
             }
 
             @Override
-            public void onRelease(double mouseX, double mouseY) {
+            public void onRelease(Click click) {
             }
         };
     }
@@ -304,7 +303,7 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
             }
 
             @Override
-            public void onRelease(double mouseX, double mouseY) {
+            public void onRelease(Click click) {
             }
         };
     }
@@ -375,15 +374,15 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
 
         return super.isMouseOver(mouseX, mouseY);
     }
-
+    
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(Click click, boolean doubled) {
         if (!isEditable()) {
             return false;
         }
 
         for (var sliderSetTab : sliderSetTabs) {
-            if (sliderSetTab.isMouseOver(mouseX, mouseY)) {
+            if (sliderSetTab.isMouseOver(click.x(), click.y())) {
                 MinecraftClient.getInstance().getSoundManager()
                         .play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
@@ -392,24 +391,24 @@ public class ArmorConfigWindow extends AbstractParentElement implements Drawable
             }
         }
 
-        if (selectedSliderSetTab.sliderSet.mouseClicked(mouseX, mouseY, button)) {
+        if (selectedSliderSetTab.sliderSet.mouseClicked(click, doubled)) {
             return true;
         }
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    public boolean mouseDragged(Click click, double offsetX, double offsetY) {
         if (!isEditable()) {
             return false;
         }
 
-        if (selectedSliderSetTab.sliderSet.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
+        if (selectedSliderSetTab.sliderSet.mouseDragged(click, offsetX, offsetY)) {
             return true;
         }
 
-        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        return super.mouseDragged(click, offsetX, offsetY);
     }
 
     @Override

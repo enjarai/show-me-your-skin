@@ -60,9 +60,12 @@ public class ConfigEntryWidget extends AbstractParentElement implements Drawable
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(Click click, boolean doubled) {
+        int button = click.button();
+        double mouseX = click.x();
+        double mouseY = click.y();
         if (button == 0 && (x < 0 || y < 0 || isMouseOver(mouseX, mouseY))) {
-            if (!super.mouseClicked(mouseX, mouseY, button)) {
+            if (!super.mouseClicked(click, doubled)) {
                 playDownSound(client.getSoundManager());
                 parent.setSelected(this);
             }

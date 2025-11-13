@@ -1,6 +1,7 @@
 package nl.enjarai.showmeyourskin.mixin.elytra;
 
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.feature.ElytraFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
@@ -27,12 +28,12 @@ public abstract class ElytraFeatureRendererMixin<S extends BipedEntityRenderStat
     }
 
     @Inject(
-            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/state/BipedEntityRenderState;FF)V",
+            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;ILnet/minecraft/client/render/entity/state/BipedEntityRenderState;FF)V",
             at = @At("HEAD"),
             cancellable = true
     )
     private void setArmorContext(
-            MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, S bipedEntityRenderState, float f, float g, CallbackInfo ci) {
+            MatrixStack matrixStack, OrderedRenderCommandQueue orderedRenderCommandQueue, int i, S bipedEntityRenderState, float f, float g, CallbackInfo ci) {
         if (bipedEntityRenderState instanceof PlayerEntityRenderState playerEntityRenderState) {
             var entity = ShowMeYourSkinClient.ENTITY_RENDER_STATE_KEY.get(playerEntityRenderState);
             if (entity instanceof LivingEntity livingEntity) {
