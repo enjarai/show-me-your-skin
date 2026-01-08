@@ -1,3 +1,10 @@
+> [!WARNING]
+> Like some of my other projects, this repository has been migrated to Codeberg.
+> Any new issues or pull requests here will be ignored, please create them over at the new repository.
+> 
+> New repository:
+> https://codeberg.org/enjarai/do-a-barrel-roll
+
 # Show Me Your Skin!
 
 Show Me Your Skin! (the exclamation mark is important) is a client-side mod with
