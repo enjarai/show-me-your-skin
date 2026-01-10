@@ -9,12 +9,11 @@
     "defaultRequire": 1
   },
   "client": [
-    "EntityRenderDispatcherMixin",
+    "EntityRendererMixin",
     "LivingEntityMixin",
     "LivingEntityRendererMixin",
     "armor.ArmorFeatureRendererMixin",
     "armor.EquipmentRendererMixin",
-    "armor.fabric.ArmorRendererMixin",
     "elytra.CapeFeatureRendererMixin",
     "elytra.ElytraFeatureRendererMixin",
     "hat.HeadFeatureRendererMixin",

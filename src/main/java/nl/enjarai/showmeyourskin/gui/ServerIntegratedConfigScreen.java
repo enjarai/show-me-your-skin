@@ -34,7 +34,7 @@ public class ServerIntegratedConfigScreen extends ConfigScreen {
         var config = player.getComponent(Components.ARMOR_CONFIG).getConfig();
 
         var dummyPlayer = new DummyClientPlayerEntity(
-                player, player.getUuid(), player.getSkinTextures(),
+                player, player.getUuid(), player.getSkin(),
                 client.world, client.getNetworkHandler()
         );
 

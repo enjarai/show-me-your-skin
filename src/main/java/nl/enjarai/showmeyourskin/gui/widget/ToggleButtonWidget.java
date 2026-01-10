@@ -1,6 +1,7 @@
 package nl.enjarai.showmeyourskin.gui.widget;
 
 import net.minecraft.client.gui.screen.ButtonTextures;
+import net.minecraft.client.input.AbstractInput;
 import net.minecraft.text.Text;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +21,7 @@ public class ToggleButtonWidget extends PressButtonWidget {
     }
 
     @Override
-    public void onPress() {
+    public void onPress(AbstractInput input) {
         toggle();
     }
 

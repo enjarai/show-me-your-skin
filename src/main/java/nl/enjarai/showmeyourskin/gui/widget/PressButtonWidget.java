@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.PressableWidget;
+import net.minecraft.client.input.AbstractInput;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
@@ -35,14 +36,13 @@ public class PressButtonWidget extends PressableWidget {
     }
 
     @Override
-    public void onPress() {
+    public void onPress(AbstractInput input) {
         pressAction.accept(this);
     }
 
     public boolean isEnabled() {
         return true;
     }
-
 
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {

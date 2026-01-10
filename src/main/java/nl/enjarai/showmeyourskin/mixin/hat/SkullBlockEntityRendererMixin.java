@@ -8,10 +8,13 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.block.entity.SkullBlockEntityModel;
 import net.minecraft.client.render.block.entity.SkullBlockEntityRenderer;
+import net.minecraft.client.render.command.ModelCommandRenderer;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
+import net.minecraft.util.math.Direction;
 import nl.enjarai.showmeyourskin.config.HideableEquipment;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.util.MixinContext;
@@ -29,13 +32,13 @@ public abstract class SkullBlockEntityRendererMixin {
     private static Map<SkullBlock.SkullType, Identifier> TEXTURES;
 
     @WrapOperation(
-            method = "renderSkull",
+            method = "render(Lnet/minecraft/client/render/block/entity/state/SkullBlockEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;Lnet/minecraft/client/render/state/CameraRenderState;)V",
             at = @At(
                     value = "INVOKE",
-                    target = "net/minecraft/client/render/block/entity/SkullBlockEntityModel.render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V"
+                    target = "Lnet/minecraft/client/render/block/entity/SkullBlockEntityRenderer;render(Lnet/minecraft/util/math/Direction;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;ILnet/minecraft/client/render/block/entity/SkullBlockEntityModel;Lnet/minecraft/client/render/RenderLayer;ILnet/minecraft/client/render/command/ModelCommandRenderer$CrumblingOverlayCommand;)V"
             )
     )
-    private static void modifySkullColor(SkullBlockEntityModel instance, MatrixStack matrixStack, VertexConsumer vertexConsumer, int i1, int i2, Operation<Void> original) {
+    private static void modifySkullColor(Direction facing, float yaw, float poweredTicks, MatrixStack matrices, OrderedRenderCommandQueue queue, int light, SkullBlockEntityModel model, RenderLayer renderLayer, int outlineColor, ModelCommandRenderer.CrumblingOverlayCommand crumblingOverlay, Operation<Void> original) {
         var ctx = MixinContext.ENTITY.getContext();
         var percentage = 1F;
         if (ctx instanceof PlayerEntity) {
@@ -44,11 +47,11 @@ public abstract class SkullBlockEntityRendererMixin {
                 return;
             }
         }
-        instance.render(matrixStack, vertexConsumer, i1, i2, ColorHelper.getWhite(percentage));
+        original.call(facing, yaw, poweredTicks, matrices, queue, light, model, renderLayer, outlineColor, crumblingOverlay);
     }
 
     @WrapOperation(
-            method = "getRenderLayer",
+            method = "renderSkull",
             at = @At(
                     value = "INVOKE",
                     target = "net/minecraft/client/render/block/entity/SkullBlockEntityRenderer.getCutoutRenderLayer(Lnet/minecraft/block/SkullBlock$SkullType;Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"

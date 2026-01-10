@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(CapeFeatureRenderer.class)
 public abstract class CapeFeatureRendererMixin {
     @ModifyExpressionValue(
-            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/state/PlayerEntityRenderState;FF)V",
+            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;ILnet/minecraft/client/render/entity/state/PlayerEntityRenderState;FF)V",
             at = @At(
                     value = "INVOKE",
                     target = "net/minecraft/client/render/entity/feature/CapeFeatureRenderer.hasCustomModelForLayer(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/entity/equipment/EquipmentModel$LayerType;)Z",
@@ -36,7 +36,7 @@ public abstract class CapeFeatureRendererMixin {
     }
 
     @WrapWithCondition(
-            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/state/PlayerEntityRenderState;FF)V",
+            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;ILnet/minecraft/client/render/entity/state/PlayerEntityRenderState;FF)V",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V"

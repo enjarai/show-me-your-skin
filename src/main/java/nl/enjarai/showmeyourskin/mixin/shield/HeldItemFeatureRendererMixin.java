@@ -1,6 +1,7 @@
 package nl.enjarai.showmeyourskin.mixin.shield;
 
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.feature.HeldItemFeatureRenderer;
@@ -29,7 +30,7 @@ public abstract class HeldItemFeatureRendererMixin<S extends ArmedEntityRenderSt
             method = "renderItem",
             at = @At("HEAD")
     )
-    private void grabHandRenderContext(S entityState, ItemRenderState itemState, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
+    private void grabHandRenderContext(S entityState, ItemRenderState itemRenderState, Arm arm, MatrixStack matrices, OrderedRenderCommandQueue orderedRenderCommandQueue, int light, CallbackInfo ci) {
         if (ShowMeYourSkinClient.ENTITY_RENDER_STATE_KEY.get(entityState) instanceof PlayerEntity playerEntity) {
             MixinContext.ENTITY.setContext(playerEntity);
         }
@@ -39,7 +40,7 @@ public abstract class HeldItemFeatureRendererMixin<S extends ArmedEntityRenderSt
             method = "renderItem",
             at = @At("RETURN")
     )
-    private void clearHandRenderContext(S entityState, ItemRenderState itemState, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
+    private void clearHandRenderContext(S entityState, ItemRenderState itemRenderState, Arm arm, MatrixStack matrices, OrderedRenderCommandQueue orderedRenderCommandQueue, int light, CallbackInfo ci) {
         MixinContext.ENTITY.clearContext();
     }
 }

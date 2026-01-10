@@ -12,7 +12,7 @@ import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
-import net.minecraft.client.util.SkinTextures;
+import net.minecraft.entity.player.SkinTextures;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
@@ -31,7 +31,7 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
 
     public final UUID uuid;
     public final ButtonWidget clearButton;
-    public final Supplier<SkinTextures> skinTextures;
+    public final Supplier<net.minecraft.entity.player.SkinTextures> skinTextures;
 
     public PlayerSelectorEntry(MinecraftClient client, PlayerSelectorWidget parent, UUID uuid, Text name, Supplier<SkinTextures> skinTextures) {
         super(client, parent, -1, -1, name);
@@ -77,8 +77,8 @@ public class PlayerSelectorEntry extends ConfigEntryWidget {
 
     @Override
     protected void renderIcon(DrawContext context, int index, int x, int y, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, skinTextures.get().texture(), x + 3, y + 3, 8.0F, 8.0F, 24, 24, 8, 8, 64, 64);
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, skinTextures.get().texture(), x + 3, y + 3, 40.0F, 8.0F, 24, 24, 8, 8, 64, 64);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, skinTextures.get().body().texturePath(), x + 3, y + 3, 8.0F, 8.0F, 24, 24, 8, 8, 64, 64);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, skinTextures.get().body().texturePath(), x + 3, y + 3, 40.0F, 8.0F, 24, 24, 8, 8, 64, 64);
     }
 
     @Override
